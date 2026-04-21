@@ -155,7 +155,7 @@ export default function KasirPage() {
               <Loader2 className="w-10 h-10 text-pink-300 animate-spin" />
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 pb-32 md:pb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6 pb-32 md:pb-6">
               {filtered.map(product => (
                 <button key={product.id} onClick={() => addToCart(product)} 
                   className="group relative bg-white rounded-3xl border border-gray-100/50 p-2.5 hover:border-lb-rose/30 shadow-premium hover:shadow-rose transition-all duration-300 flex flex-col text-left active:scale-[0.98]">
