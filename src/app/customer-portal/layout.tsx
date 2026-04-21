@@ -1,16 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { User, LogOut, ShoppingBag, Heart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function CustomerPortalLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
+  const router   = useRouter();
+  const pathname = usePathname();
   const [customer, setCustomer] = useState<any>(null);
 
+  const isLoginPage = pathname === "/customer-portal/login";
+
   useEffect(() => {
+    if (isLoginPage) return;
+
     const stored = localStorage.getItem("lbqueen_customer");
     if (!stored) {
       window.location.href = "/customer-portal/login";
@@ -22,12 +27,14 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
         window.location.href = "/customer-portal/login";
       }
     }
-  }, []);
+  }, [isLoginPage]);
 
   const handleLogout = () => {
     localStorage.removeItem("lbqueen_customer");
     router.push("/customer-portal/login");
   };
+
+  if (isLoginPage) return <>{children}</>;
 
   if (!customer) return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
