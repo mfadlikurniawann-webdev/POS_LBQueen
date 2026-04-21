@@ -64,24 +64,51 @@ export default function StokPage() {
   };
 
   const handleSave = async () => {
-    if (!form.name || !form.product_code) { showToast("Kode dan nama wajib diisi!"); return; }
-    setSaving(true);
-    const payload = {
-      product_code: form.product_code, name: form.name, type: form.type,
-      purchase_price: parseFloat(form.purchase_price) || 0,
-      selling_price: parseFloat(form.selling_price) || 0,
-      stock: parseInt(form.stock) || 0, unit: form.unit,
-      image_url: form.image_url || null,
-    };
-    if (editItem) {
-      await supabase.from("products").update(payload).eq("id", editItem.id);
-      showToast("Produk berhasil diperbarui!");
-    } else {
-      const { error } = await supabase.from("products").insert(payload);
-      if (error) { showToast("Kode produk sudah ada!"); setSaving(false); return; }
-      showToast("Produk baru berhasil ditambahkan!");
+    if (!form.name || !form.product_code) { 
+      showToast("Gagal: Kode dan Nama produk wajib diisi!"); 
+      return; 
     }
-    setSaving(false); setShowModal(false); fetchProducts();
+    
+    setSaving(true);
+    try {
+      const payload = {
+        product_code: form.product_code.trim(),
+        name: form.name.trim(),
+        type: form.type,
+        purchase_price: parseFloat(form.purchase_price) || 0,
+        selling_price: parseFloat(form.selling_price) || 0,
+        stock: parseInt(form.stock) || 0,
+        unit: form.unit.trim() || (form.type === "Treatment" ? "Sesi" : "Pcs"),
+        image_url: form.image_url?.trim() || null,
+      };
+
+      let result;
+      if (editItem) {
+        result = await supabase.from("products").update(payload).eq("id", editItem.id);
+      } else {
+        result = await supabase.from("products").insert(payload);
+      }
+
+      if (result.error) {
+        console.error("Supabase Error:", result.error);
+        if (result.error.code === "23505") { // Unique violation
+          showToast(`Gagal: Kode Produk "${form.product_code}" sudah digunakan.`);
+        } else {
+          showToast(`Gagal: ${result.error.message}`);
+        }
+        setSaving(false);
+        return;
+      }
+
+      showToast(editItem ? "✨ Produk diperbarui!" : "✨ Produk baru ditambahkan!");
+      setSaving(false); 
+      setShowModal(false); 
+      fetchProducts();
+    } catch (err: any) {
+      console.error("Client Error:", err);
+      showToast("Terjadi kesalahan sistem. Coba lagi.");
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (id: number) => {
