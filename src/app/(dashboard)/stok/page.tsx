@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { Plus, Search, Edit2, Trash2, X, Loader2, Flower2, Package, Stethoscope, Briefcase, Shirt } from "lucide-react";
 import Image from "next/image";
-import PageHeader from "@/components/PageHeader";
 
 const TYPES = ["Treatment", "Retail Produk", "Barang Kantor", "Aset Karyawan"] as const;
 
@@ -101,29 +100,29 @@ export default function StokPage() {
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[999] bg-gray-900 text-white px-6 py-3 rounded-2xl text-sm font-semibold shadow-2xl">{toast}</div>
       )}
       {/* Header */}
-      <PageHeader title="Manajemen Inventaris" icon={<Package className="w-6 h-6" />} />
+      {/* (rendered by layout) */}
 
-      {/* Toolbar */}
-      <div className="bg-white border-b border-gray-100 px-6 py-4 flex items-start justify-between gap-4 shrink-0">
-        <div />
+      {/* Toolbar: Tabs + Add Button */}
+      <div className="bg-white border-b border-gray-100 px-5 flex items-center justify-between gap-4 shrink-0">
+        <div className="flex gap-0 overflow-x-auto">
+          {TYPES.map(type => {
+            const cfg = typeConfig[type];
+            const active = activeTab === type;
+            return (
+              <button key={type} onClick={() => setActiveTab(type)}
+                className={`flex items-center gap-1.5 px-4 py-3.5 text-sm font-bold border-b-2 transition-all whitespace-nowrap ${
+                  active ? "border-[#C94F78] text-[#C94F78]" : "border-transparent text-gray-400 hover:text-gray-600"
+                }`}>
+                <span className={active ? "text-[#C94F78]" : "text-gray-400"}>{cfg.icon}</span>
+                {type}
+              </button>
+            );
+          })}
+        </div>
         <button onClick={openAdd}
-          className="bg-[#C94F78] hover:bg-[#A83E60] text-white font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm transition-all shadow-lg shadow-pink-200 shrink-0">
-          <Plus className="w-4 h-4" /> Tambah Baru
+          className="bg-[#C94F78] hover:bg-[#A83E60] text-white font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 text-sm transition-all shadow-md shadow-pink-200 shrink-0">
+          <Plus className="w-4 h-4" /> Tambah
         </button>
-      </div>
-
-      {/* Tabs */}
-      <div className="bg-white border-b border-gray-100 px-6 flex gap-1 overflow-x-auto">
-        {TYPES.map(type => {
-          const cfg = typeConfig[type];
-          const active = activeTab === type;
-          return (
-            <button key={type} onClick={() => setActiveTab(type)}
-              className={`flex items-center gap-2 px-4 py-3.5 text-sm font-bold border-b-2 transition-all whitespace-nowrap ${active ? `border-[#C94F78] text-[#C94F78]` : "border-transparent text-gray-400 hover:text-gray-600"}`}>
-              <span className={active ? "text-[#C94F78]" : "text-gray-400"}>{cfg.icon}</span>{type}
-            </button>
-          );
-        })}
       </div>
 
       {/* Toolbar */}

@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { Search, ShoppingCart, Trash2, Package, CreditCard, Tag, UserCheck, X, Loader2, CheckCircle, Flower2 } from "lucide-react";
-import PageHeader from "@/components/PageHeader";
 import Image from "next/image";
 
 type Product = {
@@ -128,30 +127,25 @@ export default function KasirPage() {
 
       {/* PRODUK */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
-        {/* Header */}
-        <PageHeader title="Terminal Kasir" icon={<ShoppingCart className="w-6 h-6" />} />
-
-        {/* Search Bar */}
-        <div className="px-6 pt-4 pb-2 shrink-0">
+        {/* Toolbar: Search + Kategori */}
+        <div className="px-5 pt-4 pb-3 bg-gray-50 shrink-0 space-y-3">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input type="text" placeholder="Cari produk..." value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium focus:border-pink-300 focus:ring-2 focus:ring-pink-100 outline-none transition-all shadow-sm" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input type="text" placeholder="Cari produk atau treatment..." value={search} onChange={e => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium focus:border-pink-300 focus:ring-2 focus:ring-pink-100 outline-none transition-all shadow-sm" />
           </div>
-        </div>
-
-        {/* Kategori */}
-        <div className="px-6 pt-5 pb-2 flex gap-2 overflow-x-auto shrink-0 scrollbar-hide">
-          {["Semua", ...categories].map(cat => (
-            <button key={cat} onClick={() => setActiveCategory(cat === "Semua" ? null : cat)}
-              className={`whitespace-nowrap px-5 py-2 rounded-xl text-sm font-bold transition-all border shadow-sm ${
-                (cat === "Semua" && !activeCategory) || activeCategory === cat
-                  ? "bg-[#C94F78] text-white border-[#C94F78] shadow-pink-200"
-                  : "bg-white text-gray-600 border-gray-200 hover:border-pink-300 hover:text-[#C94F78]"
-              }`}>
-              {cat}
-            </button>
-          ))}
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+            {["Semua", ...categories].map(cat => (
+              <button key={cat} onClick={() => setActiveCategory(cat === "Semua" ? null : cat)}
+                className={`whitespace-nowrap px-4 py-1.5 rounded-xl text-sm font-bold transition-all border ${
+                  (cat === "Semua" && !activeCategory) || activeCategory === cat
+                    ? "bg-[#C94F78] text-white border-[#C94F78] shadow-sm shadow-pink-200"
+                    : "bg-white text-gray-500 border-gray-200 hover:border-pink-300 hover:text-[#C94F78]"
+                }`}>
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Grid Produk */}
@@ -206,11 +200,11 @@ export default function KasirPage() {
       {/* CART */}
       <div className="hidden md:flex w-[360px] lg:w-[400px] flex-col bg-white border-l border-gray-100 h-full shrink-0">
         {/* Cart Header */}
-        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-[#C94F78] to-[#A83E60]">
-          <h2 className="font-bold text-white flex items-center gap-2 text-lg">
+        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+          <h2 className="font-bold text-[#C94F78] flex items-center gap-2 text-lg">
             <ShoppingCart className="w-5 h-5" /> Keranjang
           </h2>
-          <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">{cart.length} Item</span>
+          <span className="bg-pink-50 text-[#C94F78] text-xs font-bold px-3 py-1 rounded-full border border-pink-100">{cart.length} Item</span>
         </div>
 
         {/* Pilih Pelanggan */}

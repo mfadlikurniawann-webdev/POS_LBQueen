@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { Plus, Search, X, Loader2, Users, Tag, Crown, Phone, Star } from "lucide-react";
-import PageHeader from "@/components/PageHeader";
 
 type Customer = { id: number; name: string; phone: string; is_member: boolean; join_date: string };
 type Voucher = { id: number; code: string; name: string; discount_amount: number; min_purchase: number; is_active: boolean };
@@ -82,45 +81,43 @@ export default function PelangganPage() {
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[999] bg-gray-900 text-white px-6 py-3 rounded-2xl text-sm font-semibold shadow-2xl">{toast}</div>
       )}
 
-      {/* Header */}
-      <PageHeader title="Pelanggan & Membership" icon={<Users className="w-6 h-6" />} />
+      {/* Header rendered by layout */}
 
-      {/* Sub-header with button */}
-      <div className="bg-white border-b border-gray-100 px-6 py-3 shrink-0">
-        <div className="flex items-center justify-between gap-4">
-          <p className="text-sm text-gray-400">Kelola database pelanggan dan voucher diskon eksklusif</p>
-          <button
-            onClick={() => tab === "pelanggan" ? setShowCustModal(true) : setShowVouchModal(true)}
-            className="bg-[#C94F78] hover:bg-[#A83E60] text-white font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm shadow-lg shadow-pink-200 transition-all shrink-0">
-            <Plus className="w-4 h-4" /> {tab === "pelanggan" ? "Pelanggan Baru" : "Buat Voucher"}
-          </button>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-3 mt-5">
+      {/* Stats + Action Toolbar */}
+      <div className="bg-white border-b border-gray-100 px-5 py-4 shrink-0">
+        <div className="grid grid-cols-3 gap-3 mb-4">
           {[
             { label: "Total Pelanggan", value: customers.length, icon: <Users className="w-5 h-5" />, color: "text-blue-500 bg-blue-50" },
-            { label: "Member Aktif", value: customers.filter(c => c.is_member).length, icon: <Crown className="w-5 h-5" />, color: "text-amber-500 bg-amber-50" },
-            { label: "Voucher Aktif", value: vouchers.filter(v => v.is_active).length, icon: <Tag className="w-5 h-5" />, color: "text-[#C94F78] bg-pink-50" },
+            { label: "Member Aktif",    value: customers.filter(c => c.is_member).length, icon: <Crown className="w-5 h-5" />, color: "text-amber-500 bg-amber-50" },
+            { label: "Voucher Aktif",   value: vouchers.filter(v => v.is_active).length,  icon: <Tag className="w-5 h-5" />,   color: "text-[#C94F78] bg-pink-50" },
           ].map(s => (
-            <div key={s.label} className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-3 shadow-sm">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.color}`}>{s.icon}</div>
+            <div key={s.label} className="bg-gray-50 border border-gray-100 rounded-2xl p-3 flex items-center gap-2.5">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${s.color}`}>{s.icon}</div>
               <div>
-                <p className="text-2xl font-extrabold text-gray-900">{s.value}</p>
-                <p className="text-xs text-gray-400 font-semibold">{s.label}</p>
+                <p className="text-xl font-extrabold text-gray-900 leading-none">{s.value}</p>
+                <p className="text-[10px] text-gray-400 font-semibold mt-0.5">{s.label}</p>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-1 mt-5 bg-gray-100 rounded-xl p-1 w-fit">
-          {(["pelanggan", "voucher"] as const).map(t => (
-            <button key={t} onClick={() => setTab(t)}
-              className={`px-5 py-2 rounded-lg text-sm font-bold capitalize transition-all ${tab === t ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-700"}`}>
-              {t === "pelanggan" ? "Database Pelanggan" : "Voucher & Diskon"}
-            </button>
-          ))}
+        {/* Tabs + Add Button */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+            {(["pelanggan", "voucher"] as const).map(t => (
+              <button key={t} onClick={() => setTab(t)}
+                className={`px-4 py-1.5 rounded-lg text-sm font-bold capitalize transition-all ${
+                  tab === t ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-700"
+                }`}>
+                {t === "pelanggan" ? "Pelanggan" : "Voucher"}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => tab === "pelanggan" ? setShowCustModal(true) : setShowVouchModal(true)}
+            className="bg-[#C94F78] hover:bg-[#A83E60] text-white font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 text-sm shadow-md shadow-pink-200 transition-all shrink-0">
+            <Plus className="w-4 h-4" /> {tab === "pelanggan" ? "Tambah" : "Buat Voucher"}
+          </button>
         </div>
       </div>
 
