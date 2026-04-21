@@ -2,32 +2,39 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Search, Edit2, Trash2, X, Loader2, Flower2, Package, Stethoscope, Briefcase, Shirt } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, X, Loader2, Flower2, Package, Stethoscope, Briefcase, Shirt, Sparkles, ChevronDown } from "lucide-react";
 import Image from "next/image";
 
-const TYPES = ["Treatment", "Retail Produk", "Barang Kantor", "Aset Karyawan"] as const;
+const TYPES = ["Treatment Care & Beauty", "Product Care & Beauty", "Barang Kantor", "Aset Karyawan", "Treatment", "Retail Produk"] as const;
 
 const typeConfig: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
-  "Treatment":      { color: "text-purple-600",  bg: "bg-purple-50",  icon: <Stethoscope className="w-4 h-4" /> },
-  "Retail Produk":  { color: "text-pink-600",    bg: "bg-pink-50",    icon: <Package className="w-4 h-4" /> },
-  "Barang Kantor":  { color: "text-blue-600",    bg: "bg-blue-50",    icon: <Briefcase className="w-4 h-4" /> },
-  "Aset Karyawan":  { color: "text-amber-600",   bg: "bg-amber-50",   icon: <Shirt className="w-4 h-4" /> },
+  "Treatment Care & Beauty": { color: "text-purple-600",  bg: "bg-purple-50",  icon: <Sparkles className="w-4 h-4" /> },
+  "Product Care & Beauty":   { color: "text-pink-600",    bg: "bg-pink-50",    icon: <Package className="w-4 h-4" /> },
+  "Treatment":               { color: "text-purple-500",  bg: "bg-gray-50",    icon: <Flower2 className="w-4 h-4" /> },
+  "Retail Produk":           { color: "text-pink-500",    bg: "bg-gray-50",    icon: <Package className="w-4 h-4" /> },
+  "Barang Kantor":           { color: "text-blue-600",    bg: "bg-blue-50",    icon: <Briefcase className="w-4 h-4" /> },
+  "Aset Karyawan":           { color: "text-amber-600",   bg: "bg-amber-50",   icon: <Shirt className="w-4 h-4" /> },
 };
 
 type Product = {
   id: number; product_code: string; name: string; type: string;
   purchase_price: number; selling_price: number; stock: number;
   unit: string; image_url: string | null; is_set: boolean;
+  category_id: number | null;
 };
 
+type Category = { id: number; name: string };
+
 const emptyForm = {
-  product_code: "", name: "", type: "Treatment",
+  product_code: "", name: "", type: "Treatment Care & Beauty",
   purchase_price: "", selling_price: "", stock: "", unit: "Sesi", image_url: "", is_set: false,
+  category_id: "" as string | number,
 };
 
 export default function StokPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [activeTab, setActiveTab] = useState("Treatment");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [activeTab, setActiveTab] = useState("Treatment Care & Beauty");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -38,14 +45,18 @@ export default function StokPage() {
 
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
 
-  const fetchProducts = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from("products").select("*").order("name");
-    setProducts(data || []);
+    const [{ data: pData }, { data: cData }] = await Promise.all([
+      supabase.from("products").select("*").order("name"),
+      supabase.from("categories").select("*").order("name"),
+    ]);
+    setProducts(pData || []);
+    setCategories(cData || []);
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchProducts(); }, [fetchProducts]);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const openAdd = () => {
     setEditItem(null);
@@ -59,6 +70,7 @@ export default function StokPage() {
       product_code: p.product_code, name: p.name, type: p.type,
       purchase_price: String(p.purchase_price), selling_price: String(p.selling_price),
       stock: String(p.stock), unit: p.unit, image_url: p.image_url || "", is_set: p.is_set || false,
+      category_id: p.category_id || "",
     });
     setShowModal(true);
   };
@@ -78,9 +90,10 @@ export default function StokPage() {
         purchase_price: parseFloat(form.purchase_price) || 0,
         selling_price: parseFloat(form.selling_price) || 0,
         stock: parseInt(form.stock) || 0,
-        unit: form.unit.trim() || (form.type === "Treatment" ? "Sesi" : "Pcs"),
+        unit: form.unit.trim() || (form.type.includes("Treatment") ? "Sesi" : "Pcs"),
         image_url: form.image_url?.trim() || null,
         is_set: form.is_set,
+        category_id: form.category_id ? Number(form.category_id) : null,
       };
 
       let result;
@@ -104,7 +117,7 @@ export default function StokPage() {
       showToast(editItem ? "✨ Produk diperbarui!" : "✨ Produk baru ditambahkan!");
       setSaving(false); 
       setShowModal(false); 
-      fetchProducts();
+      fetchData();
     } catch (err: any) {
       console.error("Client Error:", err);
       showToast("Terjadi kesalahan sistem. Coba lagi.");
@@ -115,8 +128,8 @@ export default function StokPage() {
   const handleDelete = async (id: number) => {
     if (!confirm("Hapus produk ini?")) return;
     await supabase.from("products").delete().eq("id", id);
-    showToast("Produk dihapus."); fetchProducts();
-  };
+    showToast("Produk dihapus."); fetchData();
+  }
 
   const filtered = products.filter(p =>
     p.type === activeTab && p.name.toLowerCase().includes(search.toLowerCase())
@@ -241,15 +254,39 @@ export default function StokPage() {
               <div>
                 <label className="label-form">Kategori Produk</label>
                 <div className="grid grid-cols-2 gap-2">
-                  {TYPES.map(t => (
-                    <button key={t} type="button"
-                      onClick={() => setForm(f => ({ ...f, type: t }))}
-                      className={`p-2.5 rounded-xl text-sm font-bold border-2 transition-all text-left flex items-center gap-2 ${form.type === t ? "border-[#C94F78] bg-pink-50 text-[#C94F78]" : "border-gray-100 text-gray-500 hover:border-gray-200"}`}>
-                      <span className={form.type === t ? "text-[#C94F78]" : "text-gray-400"}>{typeConfig[t].icon}</span>{t}
-                    </button>
-                  ))}
+                  {TYPES.map(t => {
+                    const cfg = typeConfig[t];
+                    if (!cfg) return null;
+                    return (
+                      <button key={t} type="button"
+                        onClick={() => setForm(f => ({ ...f, type: t, unit: t.includes("Treatment") ? "Sesi" : "Pcs" }))}
+                        className={`p-2.5 rounded-xl text-[11px] font-bold border-2 transition-all text-left flex items-center gap-2 ${form.type === t ? "border-[#C94F78] bg-pink-50 text-[#C94F78]" : "border-gray-100 text-gray-500 hover:border-gray-200"}`}>
+                        <span className={form.type === t ? "text-[#C94F78]" : "text-gray-400"}>{cfg.icon}</span>{t}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
+
+              {/* Sub Kategori (Kategori di DB) */}
+              {form.type === "Treatment Care & Beauty" && (
+                <div>
+                  <label className="label-form">Sub Kategori (Pilih salah satu)</label>
+                  <div className="relative">
+                    <select 
+                      className="input-form appearance-none" 
+                      value={form.category_id} 
+                      onChange={e => setForm(f => ({ ...f, category_id: e.target.value }))}
+                    >
+                      <option value="">-- Pilih Sub Kategori --</option>
+                      {categories.map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+              )}
 
               {/* Produk Set Toggle */}
               <div className="flex items-center justify-between p-3 bg-pink-50 rounded-xl border border-pink-100">

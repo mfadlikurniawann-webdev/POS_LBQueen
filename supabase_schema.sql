@@ -12,7 +12,7 @@ CREATE TABLE products (
     product_code VARCHAR(50) UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL,
     category_id BIGINT REFERENCES categories(id) ON DELETE SET NULL,
-    type VARCHAR(50) NOT NULL CHECK (type IN ('Treatment', 'Retail Produk', 'Barang Kantor', 'Aset Karyawan')),
+    type VARCHAR(50) NOT NULL CHECK (type IN ('Treatment Care & Beauty', 'Product Care & Beauty', 'Treatment', 'Retail Produk', 'Barang Kantor', 'Aset Karyawan')),
     purchase_price DECIMAL(10,2) NOT NULL,
     selling_price DECIMAL(10,2) NOT NULL,
     stock INT DEFAULT 0,
@@ -119,4 +119,12 @@ VALUES
 -- Update 1.6: Voucher per produk & Produk Set
 ALTER TABLE products ADD COLUMN IF NOT EXISTS is_set BOOLEAN DEFAULT FALSE;
 ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS product_id BIGINT REFERENCES products(id) ON DELETE SET NULL;
+
+-- Update 1.7: New Categories for Treatment Care & Beauty
+INSERT INTO categories (name) VALUES 
+('Beauty facial & body'),
+('Eyelash'),
+('Nail art'),
+('Eyebrow')
+ON CONFLICT DO NOTHING;
 

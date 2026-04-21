@@ -489,7 +489,7 @@ export default function PelangganPage() {
                 <select className="input-form" value={vouchForm.product_id} onChange={e => setVouchForm(f => ({ ...f, product_id: e.target.value }))}>
                   <option value="">— Pilih Produk —</option>
                   {products.map(p => (
-                    <option key={p.id} value={p.id}>{p.name}</p>
+                    <option key={p.id} value={p.id}>{p.name}</option>
                   ))}
                 </select>
               </div>

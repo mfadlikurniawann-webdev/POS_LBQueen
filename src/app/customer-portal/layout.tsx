@@ -1,5 +1,6 @@
 "use client";
-
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { Home, ShoppingBag, Heart, LogOut, User, Search as SearchIcon, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -114,7 +115,5 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
         </div>
       </div>
     </CartProvider>
-  );
-}
   );
 }

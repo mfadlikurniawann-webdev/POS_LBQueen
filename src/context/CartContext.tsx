@@ -37,19 +37,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [cart]);
 
   const addToCart = (product: any, qty: number) => {
-    const isConsultation = qty > 10;
     setCart(prev => {
       const existing = prev.find(i => i.id === product.id);
       if (existing) {
-        return prev.map(i => i.id === product.id ? { ...i, qty: i.qty + qty, is_consultation: (i.qty + qty) > 10 } : i);
+        const newQty = Math.min(10, existing.qty + qty);
+        return prev.map(i => i.id === product.id ? { ...i, qty: newQty } : i);
       }
       return [...prev, {
         id: product.id,
         name: product.name,
         price: product.selling_price,
-        qty: qty,
+        qty: Math.min(10, qty),
         image_url: product.image_url,
-        is_consultation: isConsultation,
+        is_consultation: false,
         voucher_discount: product.voucher_discount || 0,
         is_set: product.is_set || false
       }];
@@ -61,7 +61,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateQty = (id: number, qty: number) => {
-    setCart(prev => prev.map(i => i.id === id ? { ...i, qty, is_consultation: qty > 10 } : i));
+    const cappedQty = Math.min(10, qty);
+    setCart(prev => prev.map(i => i.id === id ? { ...i, qty: cappedQty, is_consultation: false } : i));
   };
 
   const clearCart = () => setCart([]);

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { Search, ShoppingCart, Trash2, Package, CreditCard, Tag, UserCheck, X, Loader2, CheckCircle, Flower2 } from "lucide-react";
+import { Search, ShoppingCart, Trash2, Package, CreditCard, Tag, UserCheck, X, Loader2, CheckCircle, Flower2, Crown, Sparkles } from "lucide-react";
 import Image from "next/image";
 
 type Product = {
@@ -38,7 +38,7 @@ export default function KasirPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     const [{ data: prods }, { data: custs }, { data: vouchs }] = await Promise.all([
-      supabase.from("products").select("*").in("type", ["Treatment", "Retail Produk"]).order("name"),
+      supabase.from("products").select("*").in("type", ["Treatment Care & Beauty", "Product Care & Beauty", "Treatment", "Retail Produk"]).order("name"),
       supabase.from("customers").select("*").order("name"),
       supabase.from("vouchers").select("*").eq("is_active", true),
     ]);
@@ -169,9 +169,9 @@ export default function KasirPage() {
                       </div>
                     )}
                     <div className="absolute top-2 right-2">
-                      <span className={`text-[9px] font-extrabold px-2 py-1 rounded-full uppercase tracking-wider ${
-                        product.type === "Treatment" ? "bg-purple-100 text-purple-600" : "bg-emerald-100 text-emerald-600"
-                      }`}>{product.type}</span>
+                       <span className={`text-[9px] font-extrabold px-2 py-1 rounded-full uppercase tracking-wider ${
+                         product.type.includes("Treatment") ? "bg-purple-100 text-purple-600" : "bg-emerald-100 text-emerald-600"
+                       }`}>{product.type}</span>
                     </div>
                   </div>
                   {/* Info */}
@@ -219,10 +219,14 @@ export default function KasirPage() {
                 <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-sm shrink-0 ${selectedCustomer.is_member ? "bg-gradient-to-br from-amber-400 to-orange-500" : "bg-gray-300"}`}>
                   {selectedCustomer.name.charAt(0)}
                 </div>
-                <div>
-                  <p className="font-bold text-gray-800 text-sm">{selectedCustomer.name}</p>
-                  {selectedCustomer.is_member && <span className="text-[10px] font-extrabold text-amber-600 tracking-wider uppercase">✦ Member Aktif</span>}
-                </div>
+                 <div>
+                   <p className="font-bold text-gray-800 text-sm">{selectedCustomer.name}</p>
+                   {selectedCustomer.is_member && (
+                     <span className="text-[10px] font-extrabold text-amber-600 tracking-wider uppercase flex items-center gap-1">
+                       <Crown className="w-3 h-3 fill-amber-600" /> Member Aktif
+                     </span>
+                   )}
+                 </div>
               </div>
               <button onClick={() => { setSelectedCustomer(null); setSelectedVoucher(null); }} className="text-gray-300 hover:text-red-400 transition-colors mt-0.5">
                 <X className="w-4 h-4" />
@@ -318,7 +322,11 @@ export default function KasirPage() {
                     <p className="font-bold text-gray-800 group-hover:text-[#C94F78]">{c.name}</p>
                     <p className="text-sm text-gray-400">{c.phone}</p>
                   </div>
-                  {c.is_member && <span className="text-[10px] bg-amber-100 text-amber-700 font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">✦ Member</span>}
+                  {c.is_member && (
+                    <span className="text-[10px] bg-amber-100 text-amber-700 font-extrabold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                      <Crown className="w-3 h-3 fill-amber-700" /> Member
+                    </span>
+                  )}
                 </div>
               ))}
               {customers.length === 0 && <p className="text-center text-gray-400 py-6 text-sm">Belum ada data pelanggan.</p>}

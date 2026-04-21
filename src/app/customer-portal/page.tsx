@@ -39,7 +39,7 @@ export default function CustomerPortalPage() {
     setLoading(true);
     // Fetch products AND vouchers to see if any products have discounts
     const [{ data: prods }, { data: vouchs }] = await Promise.all([
-      supabase.from("products").select("*").in("type", ["Treatment", "Retail Produk"]).order("name"),
+      supabase.from("products").select("*").in("type", ["Treatment Care & Beauty", "Product Care & Beauty", "Treatment", "Retail Produk"]).order("name"),
       supabase.from("vouchers").select("product_id, discount_amount").eq("is_active", true)
     ]);
     
@@ -81,14 +81,11 @@ export default function CustomerPortalPage() {
       let message = `Halo LBQueen, saya *${customer.name}*${customer.is_member ? " (Member)" : ""}.\n\nSaya ingin memesan:\n\n`;
       
       let grandTotal = 0;
-      let hasConsultation = false;
-
       cart.forEach((item, idx) => {
         const lineTotal = (item.price - item.voucher_discount) * item.qty;
-        const priceLabel = item.qty > 10 ? "_Harga Konsultasi_" : `Rp ${lineTotal.toLocaleString("id-ID")}`;
+        const priceLabel = `Rp ${lineTotal.toLocaleString("id-ID")}`;
         
-        if (item.qty > 10) hasConsultation = true;
-        grandTotal += item.qty > 10 ? 0 : lineTotal;
+        grandTotal += lineTotal;
 
         message += `${idx + 1}. *${item.name}*\n`;
         message += `   Qty: ${item.qty}\n`;
@@ -98,10 +95,6 @@ export default function CustomerPortalPage() {
         }
         message += `\n`;
       });
-
-      if (hasConsultation) {
-        message += `⚠️ *Catatan:* Terdapat item dengan kuantitas > 10, mohon konfirmasi harga dengan admin.\n`;
-      }
       
       message += `━━━━━━━━━━━━━━━\n`;
       message += `*Total Estimasi:* Rp ${grandTotal.toLocaleString("id-ID")}\n`;
@@ -126,7 +119,6 @@ export default function CustomerPortalPage() {
   );
 
   const cartTotal = cart.reduce((acc, item) => {
-    if (item.qty > 10) return acc;
     return acc + (item.price - item.voucher_discount) * item.qty;
   }, 0);
 
@@ -156,8 +148,8 @@ export default function CustomerPortalPage() {
       <section className="px-5 mb-8">
         <div className="grid grid-cols-4 gap-4">
           {[
-            { label: "Treatment", icon: <Sparkles className="w-5 h-5 text-purple-600" />, color: "bg-purple-100", type: "Treatment" },
-            { label: "Skincare",  icon: <Package className="w-5 h-5 text-pink-600" />,   color: "bg-pink-100",   type: "Retail Produk" },
+            { label: "Treatment", icon: <Sparkles className="w-5 h-5 text-purple-600" />, color: "bg-purple-100", type: "Treatment Care & Beauty" },
+            { label: "Produk",    icon: <Package className="w-5 h-5 text-pink-600" />,   color: "bg-pink-100",   type: "Product Care & Beauty" },
             { label: "Voucher",   icon: <Ticket className="w-5 h-5 text-amber-600" />,    color: "bg-amber-100",  type: null },
             { label: "Bantuan",   icon: <MessageSquare className="w-5 h-5 text-blue-600" />, color: "bg-blue-100",   type: null },
           ].map(item => (
@@ -185,7 +177,10 @@ export default function CustomerPortalPage() {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-gray-400 uppercase">Loyalty Status</p>
-                <p className="text-sm font-extrabold text-gray-800">{customer.is_member ? "Member LBQueen ✦" : "Pelanggan Reguler"}</p>
+                <p className="text-sm font-extrabold text-gray-800 flex items-center gap-1.5">
+                  {customer.is_member ? "Member LBQueen" : "Pelanggan Reguler"}
+                  {customer.is_member && <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />}
+                </p>
               </div>
             </div>
             <div className="text-right">
@@ -230,7 +225,7 @@ export default function CustomerPortalPage() {
                     {product.is_set && (
                        <div className="absolute top-0 left-0 bg-amber-400 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-br-lg shadow-sm">PAKET SET</div>
                     )}
-                    {product.type === "Treatment" && (
+                    {product.type.includes("Treatment") && (
                        <div className="absolute top-0 right-0 p-1">
                           <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
                        </div>
@@ -330,11 +325,7 @@ export default function CustomerPortalPage() {
                       <div className="flex-1">
                          <h4 className="font-bold text-sm text-gray-800 leading-tight">{item.name}</h4>
                          <div className="flex items-center gap-2 mt-1">
-                            {item.is_consultation ? (
-                              <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-1 rounded flex items-center gap-0.5"><AlertCircle className="w-3 h-3"/> Harga Konsultasi (Qty &gt;10)</span>
-                            ) : (
-                              <span className="text-xs font-black text-[#C94F78]">Rp {((item.price - item.voucher_discount) * item.qty).toLocaleString("id-ID")}</span>
-                            )}
+                            <span className="text-xs font-black text-[#C94F78]">Rp {((item.price - item.voucher_discount) * item.qty).toLocaleString("id-ID")}</span>
                          </div>
                          <div className="flex items-center gap-3 mt-2">
                            <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1">
@@ -370,7 +361,6 @@ export default function CustomerPortalPage() {
                     <span className="font-black italic">ESTIMASI TOTAL</span>
                     <span className="text-xl font-black tabular-nums">Rp {cartTotal.toLocaleString("id-ID")}</span>
                  </div>
-                 <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-wide">* Belum termasuk konsultasi item qty &gt;10</p>
               </div>
 
               <button 
