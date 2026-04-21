@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Eye, EyeOff, Loader2, Sparkles } from "lucide-react";
+import { Eye, EyeOff, Loader2, Sparkles, AlertCircle } from "lucide-react";
 import Image from "next/image";
 
 export default function LoginPage() {
@@ -107,54 +107,62 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.06)] border border-gray-100 p-8 lg:p-10">
-            <div className="mb-8">
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Selamat Datang 👋</h2>
-              <p className="text-gray-400 text-sm font-medium">Masuk ke akun Anda untuk mengakses sistem</p>
-            </div>
-
-            {error && (
-              <div className="mb-6 bg-red-50 border border-red-100 text-red-600 rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2">
-                <span className="text-red-400">⚠</span> {error}
-              </div>
-            )}
-
-            <form onSubmit={handleLogin} className="space-y-5">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Username</label>
-                <input type="text" required value={username} onChange={e => setUsername(e.target.value)}
-                  placeholder="Masukkan username..."
-                  className="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-medium focus:bg-white focus:border-[#C94F78] focus:ring-4 focus:ring-[#C94F78]/10 outline-none transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Password</label>
-                <div className="relative">
-                  <input type={showPass ? "text" : "password"} required value={password} onChange={e => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-medium focus:bg-white focus:border-[#C94F78] focus:ring-4 focus:ring-[#C94F78]/10 outline-none transition-all pr-12" />
-                  <button type="button" onClick={() => setShowPass(!showPass)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                    {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
+          <div className="bg-white rounded-[48px] shadow-premium border border-gray-50 p-10 lg:p-12 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-bl-full -z-0 opacity-50" />
+            
+            <div className="relative z-10">
+              <div className="mb-10">
+                <div className="flex items-center gap-2 mb-3">
+                   <div className="w-1.5 h-6 bg-lb-rose rounded-full" />
+                   <h2 className="text-sm font-black text-lb-rose uppercase tracking-[0.2em]">Management Access</h2>
                 </div>
+                <h1 className="text-3xl font-black text-gray-900 leading-tight italic tracking-tighter">Welcome Back</h1>
+                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mt-1">Authorized Personnel Only</p>
               </div>
 
-              <button type="submit" disabled={loading}
-                className="w-full py-4 bg-[#C94F78] hover:bg-[#A83E60] text-white font-extrabold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-[#C94F78]/30 hover:shadow-xl hover:shadow-[#C94F78]/40 disabled:opacity-60 text-base mt-2">
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-                {loading ? "Memverifikasi..." : "Masuk ke Sistem"}
-              </button>
-            </form>
+              {error && (
+                <div className="mb-8 bg-red-50 border border-red-100 text-red-600 rounded-2xl px-5 py-4 text-[11px] font-black uppercase tracking-widest flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+                  <AlertCircle className="w-4 h-4 text-red-400" /> {error}
+                </div>
+              )}
 
-            <div className="mt-8 pt-5 border-t border-gray-100 text-center">
-              <p className="text-sm text-gray-500 font-medium">Customer LBQueen? </p>
-              <a href="/customer-portal/login" className="inline-block mt-2 text-emerald-600 font-bold hover:underline flex items-center justify-center gap-1">
-                Akses Portal Pelanggan →
-              </a>
+              <form onSubmit={handleLogin} className="space-y-6">
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Staff Username</label>
+                  <input type="text" required value={username} onChange={e => setUsername(e.target.value)}
+                    placeholder="Enter username..."
+                    className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent rounded-[20px] text-xs font-bold focus:bg-white focus:border-lb-rose focus:ring-4 focus:ring-rose-50 outline-none transition-all" />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Access Security</label>
+                  <div className="relative">
+                    <input type={showPass ? "text" : "password"} required value={password} onChange={e => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent rounded-[20px] text-xs font-bold focus:bg-white focus:border-lb-rose focus:ring-4 focus:ring-rose-50 outline-none transition-all pr-14" />
+                    <button type="button" onClick={() => setShowPass(!showPass)}
+                      className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-lb-rose transition-colors">
+                      {showPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                </div>
+
+                <button type="submit" disabled={loading}
+                  className="w-full py-5 bg-gray-900 hover:bg-lb-rose text-white font-black rounded-[24px] flex items-center justify-center gap-4 transition-all duration-500 shadow-2xl shadow-gray-200 hover:shadow-rose-100 disabled:opacity-60 text-xs uppercase tracking-[0.2em] mt-2">
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
+                  {loading ? "Authenticating..." : "Authorize Login"}
+                </button>
+              </form>
+
+              <div className="mt-10 pt-8 border-t border-gray-50 text-center">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Customer Portal? </p>
+                <a href="/customer-portal/login" className="inline-flex mt-4 px-6 py-2.5 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-emerald-100 transition-all">
+                  Switch to Customer Area
+                </a>
+              </div>
+
+              <p className="text-center text-[9px] text-gray-300 mt-6 font-black uppercase tracking-[0.3em] italic">System v2.1 • Beauty Boutique Edition</p>
             </div>
-
-            <p className="text-center text-[10px] text-gray-300 mt-4 font-medium uppercase tracking-widest">Demo: admin / adminlbqueen</p>
           </div>
         </div>
       </div>

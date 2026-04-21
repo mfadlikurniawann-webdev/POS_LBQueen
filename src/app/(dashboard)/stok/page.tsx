@@ -114,7 +114,7 @@ export default function StokPage() {
         return;
       }
 
-      showToast(editItem ? "✨ Produk diperbarui!" : "✨ Produk baru ditambahkan!");
+      showToast(editItem ? "Produk diperbarui!" : "Produk baru ditambahkan!");
       setSaving(false); 
       setShowModal(false); 
       fetchData();
@@ -143,101 +143,158 @@ export default function StokPage() {
       {/* Header */}
       {/* (rendered by layout) */}
 
-      {/* Toolbar: Tabs + Add Button */}
-      <div className="bg-white border-b border-gray-100 px-5 flex items-center justify-between gap-4 shrink-0">
-        <div className="flex gap-0 overflow-x-auto">
+      {/* Tabs Layout */}
+      <div className="bg-white border-b border-rose-50 px-5 flex items-center justify-between gap-4 shrink-0 overflow-hidden">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide py-2">
           {TYPES.map(type => {
             const cfg = typeConfig[type];
             const active = activeTab === type;
             return (
               <button key={type} onClick={() => setActiveTab(type)}
-                className={`flex items-center gap-1.5 px-4 py-3.5 text-sm font-bold border-b-2 transition-all whitespace-nowrap ${
-                  active ? "border-[#C94F78] text-[#C94F78]" : "border-transparent text-gray-400 hover:text-gray-600"
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap border-2 ${
+                  active 
+                    ? "bg-lb-rose text-white border-lb-rose shadow-lg shadow-rose-200 scale-[1.03]" 
+                    : "bg-white text-gray-400 border-gray-100 hover:border-gray-200"
                 }`}>
-                <span className={active ? "text-[#C94F78]" : "text-gray-400"}>{cfg.icon}</span>
+                <span className={active ? "text-white" : "text-gray-300"}>{cfg.icon}</span>
                 {type}
               </button>
             );
           })}
         </div>
         <button onClick={openAdd}
-          className="bg-[#C94F78] hover:bg-[#A83E60] text-white font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 text-sm transition-all shadow-md shadow-pink-200 shrink-0">
+          className="bg-gray-900 hover:bg-lb-rose text-white font-black px-5 py-2.5 rounded-2xl flex items-center gap-2 text-[11px] uppercase tracking-widest transition-all shadow-xl shadow-gray-200 shrink-0">
           <Plus className="w-4 h-4" /> Tambah
         </button>
       </div>
 
       {/* Toolbar */}
-      <div className="px-6 py-4 flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input type="text" placeholder={`Cari ${activeTab}...`} value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-pink-100 focus:border-pink-300 outline-none" />
+      {/* Main Search & Stats */}
+      <div className="px-6 py-5 flex items-center justify-between">
+        <div className="relative flex-1 max-w-sm group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-lb-rose transition-colors" />
+          <input type="text" placeholder={`Cari di ${activeTab}...`} value={search} onChange={e => setSearch(e.target.value)}
+            className="w-full pl-11 pr-4 py-2.5 bg-white border-2 border-gray-100 rounded-2xl text-xs font-bold focus:border-lb-rose focus:ring-4 focus:ring-rose-50 outline-none transition-all shadow-sm" />
         </div>
-        <span className="text-sm text-gray-400 font-semibold">{filtered.length} item</span>
+        <div className="flex items-center gap-2">
+           <div className="w-2 h-2 rounded-full bg-lb-rose animate-pulse" />
+           <span className="text-[11px] text-gray-400 font-black uppercase tracking-widest">{filtered.length} Tersedia</span>
+        </div>
       </div>
 
-      {/* Table */}
-      <div className="flex-1 overflow-auto px-6 pb-6">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <table className="w-full text-sm min-w-[600px]">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-100 text-xs font-extrabold text-gray-500 uppercase tracking-wider">
-                <th className="px-6 py-4 text-left">Produk</th>
-                <th className="px-6 py-4 text-left">Harga Modal</th>
-                {(activeTab === "Treatment" || activeTab === "Retail Produk") && <th className="px-6 py-4 text-left">Harga Jual</th>}
-                <th className="px-6 py-4 text-center">Stok / Unit</th>
-                <th className="px-6 py-4 text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {loading ? (
-                <tr><td colSpan={5} className="text-center py-12"><Loader2 className="w-8 h-8 mx-auto text-pink-300 animate-spin" /></td></tr>
-              ) : filtered.map(p => (
-                <tr key={p.id} className="hover:bg-pink-50/30 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-xl overflow-hidden bg-pink-50 border border-pink-100 shrink-0 flex items-center justify-center">
-                        {p.image_url
-                          ? <Image src={p.image_url} alt={p.name} width={44} height={44} className="object-cover w-full h-full" />
-                          : <Flower2 className="w-5 h-5 text-pink-200" />}
+      {/* Responsive Content */}
+      <div className="flex-1 overflow-auto px-6 pb-24 md:pb-6">
+        {loading ? (
+          <div className="h-full flex items-center justify-center">
+            <Loader2 className="w-10 h-10 text-rose-200 animate-spin" />
+          </div>
+        ) : (
+          <>
+            {/* Mobile View (Cards) */}
+            <div className="grid grid-cols-1 gap-4 md:hidden">
+              {filtered.map(p => (
+                <div key={p.id} className="bg-white rounded-3xl border border-gray-100 p-4 shadow-sm relative overflow-hidden">
+                  <div className="flex gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center shrink-0 overflow-hidden">
+                      {p.image_url ? (
+                        <Image src={p.image_url} alt={p.name} width={64} height={64} className="object-cover w-full h-full" />
+                      ) : (
+                        <Flower2 className="w-6 h-6 text-rose-200" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-black text-gray-800 text-sm truncate">{p.name}</h4>
+                        {p.is_set && <span className="bg-emerald-100 text-emerald-600 text-[8px] font-black px-1.5 py-0.5 rounded uppercase">SET</span>}
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="font-bold text-gray-900">{p.name}</p>
-                          {p.is_set && <span className="bg-emerald-100 text-emerald-600 text-[9px] font-extrabold px-1.5 py-0.5 rounded border border-emerald-200">SET</span>}
+                      <p className="text-[10px] text-gray-400 font-mono mb-2 uppercase">{p.product_code}</p>
+                      <div className="flex items-center justify-between mt-auto">
+                        <div className="flex flex-col leading-tight">
+                          <span className="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">Harga Jual</span>
+                          <span className="text-sm font-black text-lb-rose">Rp {p.selling_price.toLocaleString("id-ID")}</span>
                         </div>
-                        <p className="text-xs text-gray-400 font-mono">{p.product_code}</p>
+                        <div className="text-right flex flex-col leading-tight">
+                          <span className="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">Stok</span>
+                          <span className="text-xs font-bold text-gray-700">{p.type === "Treatment" ? "∞ Sesi" : `${p.stock} ${p.unit}`}</span>
+                        </div>
                       </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 text-gray-500 font-medium">Rp {p.purchase_price.toLocaleString("id-ID")}</td>
-                  {(activeTab === "Treatment" || activeTab === "Retail Produk") && (
-                    <td className="px-6 py-4 font-bold text-[#C94F78]">Rp {p.selling_price.toLocaleString("id-ID")}</td>
-                  )}
-                  <td className="px-6 py-4 text-center font-bold text-gray-700">
-                    {p.type === "Treatment" ? <span className="text-purple-400">∞ Sesi</span> : `${p.stock} ${p.unit}`}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => openEdit(p)} className="p-2 text-gray-400 hover:text-[#C94F78] hover:bg-pink-50 rounded-lg transition-all">
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => handleDelete(p.id)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                  </div>
+                  <div className="absolute top-3 right-3 flex gap-1">
+                    <button onClick={() => openEdit(p)} className="p-2 text-gray-300 hover:text-lb-rose bg-gray-50 rounded-xl transition-all">
+                      <Edit2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
               ))}
-              {!loading && filtered.length === 0 && (
-                <tr><td colSpan={5} className="text-center py-12 text-gray-400">
-                  <Package className="w-10 h-10 mx-auto mb-2 opacity-30" />
-                  <p>Belum ada data. Tambahkan sekarang!</p>
-                </td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+            </div>
+
+            {/* Desktop View (Table) */}
+            <div className="hidden md:block bg-white rounded-3xl border border-gray-100 shadow-premium overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50/50 border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    <th className="px-6 py-5 text-left">Informasi Produk</th>
+                    <th className="px-6 py-5 text-left">Modal</th>
+                    {(activeTab === "Treatment" || activeTab === "Retail Produk" || activeTab.includes("Beauty")) && <th className="px-6 py-5 text-left">Harga Jual</th>}
+                    <th className="px-6 py-5 text-center">Status Stok</th>
+                    <th className="px-6 py-5 text-right">Kelola</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {filtered.map(p => (
+                    <tr key={p.id} className="hover:bg-rose-50/20 transition-colors group">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-[18px] overflow-hidden bg-rose-50 border border-rose-100 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform">
+                            {p.image_url
+                              ? <Image src={p.image_url} alt={p.name} width={48} height={48} className="object-cover w-full h-full" />
+                              : <Flower2 className="w-6 h-6 text-rose-200" />}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-black text-gray-800 text-sm">{p.name}</p>
+                              {p.is_set && <span className="bg-emerald-100 text-emerald-600 text-[9px] font-black px-2 py-0.5 rounded-full border border-emerald-200">SET</span>}
+                            </div>
+                            <p className="text-[10px] text-gray-400 font-black tracking-widest uppercase mt-0.5">{p.product_code}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-gray-400 font-bold">Rp {p.purchase_price.toLocaleString("id-ID")}</td>
+                      {(activeTab === "Treatment" || activeTab === "Retail Produk" || activeTab.includes("Beauty")) && (
+                        <td className="px-6 py-4 font-black text-lb-rose italic">Rp {p.selling_price.toLocaleString("id-ID")}</td>
+                      )}
+                      <td className="px-6 py-4 text-center">
+                         <div className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                           p.stock <= 5 && p.type !== "Treatment" ? "bg-amber-100 text-amber-600" : "bg-emerald-100 text-emerald-600"
+                         }`}>
+                           {p.type === "Treatment" ? "∞ Unlimited" : `${p.stock} ${p.unit}`}
+                         </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <button onClick={() => openEdit(p)} className="p-2.5 text-gray-300 hover:text-lb-rose hover:bg-rose-50 rounded-xl transition-all shadow-sm">
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => handleDelete(p.id)} className="p-2.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all shadow-sm">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+        
+        {!loading && filtered.length === 0 && (
+          <div className="py-20 text-center text-gray-300">
+            <Package className="w-16 h-16 mx-auto mb-4 opacity-10" />
+            <p className="font-black uppercase tracking-widest text-sm">Tidak ada data ditemukan</p>
+          </div>
+        )}
       </div>
 
       {/* Modal Form */}

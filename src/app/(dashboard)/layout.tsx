@@ -56,13 +56,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="hidden md:flex w-64 bg-white border-r border-gray-100 flex-col justify-between shadow-sm z-20 shrink-0">
         <div>
           <div className="h-20 flex items-center px-6 border-b border-gray-50">
-            <div className="w-11 h-11 rounded-xl overflow-hidden bg-white border border-pink-100 shrink-0 flex items-center justify-center">
+            <div className="w-11 h-11 rounded-2xl overflow-hidden bg-white border border-rose-100 shrink-0 flex items-center justify-center shadow-sm">
               <Image src="/lbqueen_logo.png" alt="LBQueen" width={44} height={44} priority
                 style={{ width: "100%", height: "100%", objectFit: "contain" }} />
             </div>
             <div className="ml-3">
-              <p className="font-extrabold text-[#C94F78] text-lg leading-tight tracking-tight">LBQueen</p>
-              <p className="text-[11px] text-pink-300 font-semibold tracking-wide">Point of Sale</p>
+              <p className="font-black text-lb-rose text-xl leading-none tracking-tighter italic">LBQueen</p>
+              <p className="text-[10px] text-rose-300 font-bold tracking-widest uppercase mt-1">Care & Beauty</p>
             </div>
           </div>
 
@@ -72,12 +72,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               const active = pathname === href;
               return (
                 <Link key={href} href={href}
-                  className={`flex items-center gap-3 p-3 rounded-2xl transition-all font-medium
+                  className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all font-bold text-sm
                     ${active
-                      ? "bg-gradient-to-r from-[#C94F78] to-[#A83E60] text-white shadow-md shadow-pink-200"
-                      : "text-gray-500 hover:bg-pink-50 hover:text-[#C94F78]"
+                      ? "bg-gradient-to-r from-lb-rose to-lb-rose-dark text-white shadow-lg shadow-rose-200 scale-[1.02]"
+                      : "text-gray-400 hover:bg-rose-50 hover:text-lb-rose"
                     }`}>
-                  <Icon className="w-5 h-5 shrink-0" />
+                  <Icon className={`w-5 h-5 shrink-0 ${active ? "text-white" : "text-gray-300 group-hover:text-lb-rose"}`} />
                   <span>{label}</span>
                 </Link>
               );
@@ -86,21 +86,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* User + Logout */}
-        <div className="p-4 m-4 mt-0 bg-gray-50/60 rounded-3xl border border-gray-100">
+        <div className="p-4 m-4 mt-0 bg-lb-rose-light/30 rounded-[32px] border border-rose-100/50">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-white shadow-sm border border-gray-100
-              flex items-center justify-center text-[#C94F78] font-bold text-lg shrink-0">
+            <div className="w-10 h-10 rounded-full bg-white shadow-sm border border-rose-100
+              flex items-center justify-center text-lb-rose font-black text-lg shrink-0">
               {user.name.charAt(0)}
             </div>
             <div className="overflow-hidden">
-              <p className="text-sm font-bold text-gray-800 truncate">{user.name}</p>
-              <p className="text-xs text-gray-400 capitalize truncate">{user.role?.replace("_", " ")}</p>
+              <p className="text-sm font-black text-gray-800 truncate">{user.name}</p>
+              <p className="text-[10px] text-lb-rose font-bold uppercase tracking-wider truncate">{user.role?.replace("_", " ")}</p>
             </div>
           </div>
           <button onClick={handleLogout}
-            className="flex items-center gap-2 w-full py-2.5 px-3 rounded-xl bg-white border border-red-100
-              text-red-500 hover:bg-red-50 hover:text-red-600 font-semibold text-sm transition-all justify-center shadow-sm">
-            <LogOut className="w-4 h-4" /> Keluar
+            className="flex items-center gap-2 w-full py-3 px-3 rounded-2xl bg-white border border-rose-100
+              text-rose-600 hover:bg-rose-50 hover:text-rose-700 font-bold text-xs transition-all justify-center shadow-sm uppercase tracking-widest">
+            <LogOut className="w-4 h-4" /> Keluar admin
           </button>
         </div>
       </div>
@@ -108,9 +108,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* ── MAIN CONTENT AREA ──────────────────────────────────────── */}
       <div className="flex-1 flex flex-col h-[calc(100vh-70px)] md:h-screen w-full z-10 overflow-hidden">
 
-        {/* ── GRADIENT PAGE HEADER (all viewports) ─── */}
+        {/* ── Page Header (Responsive) ─── */}
         <div className="relative overflow-hidden shrink-0"
-          style={{ background: "linear-gradient(135deg, #D4507E 0%, #C94F78 30%, #A83E60 65%, #8B2E4E 100%)" }}>
+          style={{ background: "linear-gradient(135deg, #E86A92 0%, #C94F78 40%, #A83E60 100%)" }}>
 
           {/* Decorative blobs */}
           <div className="absolute -top-10 -right-10 w-52 h-52 rounded-full"
@@ -136,13 +136,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
 
             {/* Right: User chip (desktop) */}
-            <div className="hidden md:flex items-center gap-2">
-              <div className="bg-white/15 border border-white/20 px-3 py-1.5 rounded-xl">
-                <p className="text-white text-xs font-semibold">{user.name}</p>
-                <p className="text-white/55 text-[10px] capitalize">{user.role?.replace("_", " ")}</p>
+            <div className="hidden md:flex items-center gap-3">
+              <div className="text-right">
+                <p className="text-white text-xs font-black tracking-tight">{user.name}</p>
+                <p className="text-white/60 text-[9px] font-bold uppercase tracking-widest">{user.role?.replace("_", " ")}</p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-white/25 border border-white/30
-                flex items-center justify-center font-extrabold text-white text-sm shadow-inner">
+              <div className="w-10 h-10 rounded-2xl bg-white/20 border border-white/30 backdrop-blur-sm
+                flex items-center justify-center font-black text-white text-sm shadow-lg">
                 {user.name.charAt(0)}
               </div>
             </div>
@@ -171,17 +171,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </main>
       </div>
 
-      {/* ── BOTTOM NAV (Mobile) ────────────────────────────────────── */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 h-[70px] bg-white border-t border-gray-100
-        flex justify-around items-center z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
+      {/* ── Mobile Nav ── */}
+      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] h-16 glass rounded-[24px]
+        flex justify-around items-center z-50 shadow-2xl border border-rose-100/20 px-2 overflow-hidden">
         {navItems.map(({ Icon, label, href }) => {
           const active = pathname === href;
           return (
             <Link key={href} href={href} className="flex flex-col items-center justify-center w-full h-full gap-1">
-              <div className={`p-1.5 rounded-xl transition-all ${active ? "bg-pink-100 text-[#C94F78]" : "text-gray-400"}`}>
-                <Icon className="w-5 h-5" />
+              <div className={`p-2 rounded-xl transition-all duration-300 ${active ? "bg-lb-rose text-white shadow-lg shadow-rose-200" : "text-gray-400"}`}>
+                <Icon className={`${active ? "w-5 h-5" : "w-5 h-5"}`} />
               </div>
-              <span className={`text-[10px] font-semibold ${active ? "text-[#C94F78]" : "text-gray-400"}`}>
+              <span className={`text-[9px] font-black uppercase tracking-tighter ${active ? "text-lb-rose" : "text-gray-300"}`}>
                 {label}
               </span>
             </Link>

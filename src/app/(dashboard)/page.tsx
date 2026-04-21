@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { Search, ShoppingCart, Trash2, Package, CreditCard, Tag, UserCheck, X, Loader2, CheckCircle, Flower2, Crown, Sparkles } from "lucide-react";
+import { Search, ShoppingCart, Trash2, Package, CreditCard, Tag, UserCheck, X, Loader2, CheckCircle, Flower2, Crown, Sparkles, Plus, Minus, ChevronRight, Zap, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 
 type Product = {
@@ -104,7 +104,7 @@ export default function KasirPage() {
 
       setCart([]); setSelectedCustomer(null); setSelectedVoucher(null);
       setPaymentAmount(""); setShowPaymentModal(false);
-      showToast(`✨ Transaksi ${invoiceNumber} berhasil!`);
+      showToast(`Transaksi ${invoiceNumber} berhasil!`);
       fetchData();
     } catch (e: any) {
       showToast("Gagal menyimpan transaksi. Periksa koneksi.");
@@ -128,19 +128,19 @@ export default function KasirPage() {
       {/* PRODUK */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         {/* Toolbar: Search + Kategori */}
-        <div className="px-5 pt-4 pb-3 bg-gray-50 shrink-0 space-y-3">
-          <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input type="text" placeholder="Cari produk atau treatment..." value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium focus:border-pink-300 focus:ring-2 focus:ring-pink-100 outline-none transition-all shadow-sm" />
+        <div className="px-5 pt-5 pb-3 bg-white border-b border-gray-100 shrink-0 space-y-4">
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-lb-rose transition-colors" />
+            <input type="text" placeholder="Cari perawatan atau produk..." value={search} onChange={e => setSearch(e.target.value)}
+              className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold focus:bg-white focus:border-lb-rose focus:ring-4 focus:ring-rose-50 outline-none transition-all" />
           </div>
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
             {["Semua", ...categories].map(cat => (
               <button key={cat} onClick={() => setActiveCategory(cat === "Semua" ? null : cat)}
-                className={`whitespace-nowrap px-4 py-1.5 rounded-xl text-sm font-bold transition-all border ${
+                className={`whitespace-nowrap px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all border ${
                   (cat === "Semua" && !activeCategory) || activeCategory === cat
-                    ? "bg-[#C94F78] text-white border-[#C94F78] shadow-sm shadow-pink-200"
-                    : "bg-white text-gray-500 border-gray-200 hover:border-pink-300 hover:text-[#C94F78]"
+                    ? "bg-lb-rose text-white border-lb-rose shadow-lg shadow-rose-200 scale-105"
+                    : "bg-white text-gray-400 border-gray-100 hover:border-lb-rose hover:text-lb-rose"
                 }`}>
                 {cat}
               </button>
@@ -155,33 +155,36 @@ export default function KasirPage() {
               <Loader2 className="w-10 h-10 text-pink-300 animate-spin" />
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-20 md:pb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 pb-32 md:pb-6">
               {filtered.map(product => (
-                <button key={product.id} onClick={() => addToCart(product)} className="group text-left bg-white rounded-2xl border border-gray-100 hover:border-pink-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col">
+                <button key={product.id} onClick={() => addToCart(product)} 
+                  className="group relative bg-white rounded-3xl border border-gray-100/50 p-2.5 hover:border-lb-rose/30 shadow-premium hover:shadow-rose transition-all duration-300 flex flex-col text-left active:scale-[0.98]">
                   {/* Gambar Produk */}
-                  <div className="relative w-full aspect-[4/3] bg-gradient-to-br from-pink-50 via-rose-50 to-fuchsia-50 overflow-hidden">
+                  <div className="relative w-full aspect-[4/3] rounded-2xl bg-rose-50 overflow-hidden mb-3">
                     {product.image_url ? (
-                      <Image src={product.image_url} alt={product.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <Image src={product.image_url} alt={product.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                        <Flower2 className="w-8 h-8 text-pink-200" />
-                        <p className="text-[10px] text-pink-200 font-semibold tracking-wide uppercase">No Image</p>
+                        <Flower2 className="w-8 h-8 text-rose-200" />
                       </div>
                     )}
-                    <div className="absolute top-2 right-2">
-                       <span className={`text-[9px] font-extrabold px-2 py-1 rounded-full uppercase tracking-wider ${
-                         product.type.includes("Treatment") ? "bg-purple-100 text-purple-600" : "bg-emerald-100 text-emerald-600"
-                       }`}>{product.type}</span>
+                    <div className="absolute top-2 right-2 flex flex-col gap-1">
+                      <span className={`text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-widest shadow-sm ${
+                        product.type.includes("Treatment") ? "bg-purple-100 text-purple-600" : "bg-emerald-100 text-emerald-600"
+                      }`}>{product.type.split(' ')[0]}</span>
                     </div>
                   </div>
                   {/* Info */}
-                  <div className="p-3 flex-1 flex flex-col">
-                    <h3 className="font-bold text-gray-800 text-sm leading-tight mb-1 line-clamp-2">{product.name}</h3>
+                  <div className="px-1.5 pb-1.5 flex flex-col flex-1">
+                    <h3 className="font-black text-gray-800 text-sm leading-tight mb-2 line-clamp-2 h-9">{product.name}</h3>
                     <div className="mt-auto flex items-end justify-between">
-                      <span className="font-extrabold text-[#C94F78] text-sm">Rp {product.selling_price.toLocaleString("id-ID")}</span>
-                      {product.type === "Retail Produk" && (
-                        <span className="text-[10px] text-gray-400 font-semibold">Stok: {product.stock}</span>
-                      )}
+                      <div className="flex flex-col">
+                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Harga</span>
+                        <span className="font-extrabold text-lb-rose text-base leading-none">Rp {product.selling_price.toLocaleString("id-ID")}</span>
+                      </div>
+                      <div className="w-8 h-8 bg-gray-50 group-hover:bg-lb-rose text-gray-300 group-hover:text-white rounded-xl flex items-center justify-center transition-all duration-300">
+                        <Plus className="w-4 h-4" />
+                      </div>
                     </div>
                   </div>
                 </button>
@@ -197,14 +200,19 @@ export default function KasirPage() {
         </div>
       </div>
 
-      {/* CART */}
-      <div className="hidden md:flex w-[360px] lg:w-[400px] flex-col bg-white border-l border-gray-100 h-full shrink-0">
+      {/* CART (Desktop Sidebar) */}
+      <div className="hidden md:flex w-[340px] lg:w-[380px] flex-col bg-white border-l border-gray-100 h-full shrink-0 shadow-2xl relative z-20">
         {/* Cart Header */}
-        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
-          <h2 className="font-bold text-[#C94F78] flex items-center gap-2 text-lg">
-            <ShoppingCart className="w-5 h-5" /> Keranjang
-          </h2>
-          <span className="bg-pink-50 text-[#C94F78] text-xs font-bold px-3 py-1 rounded-full border border-pink-100">{cart.length} Item</span>
+        <div className="px-6 py-5 border-b border-gray-50 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-lb-rose-light text-lb-rose rounded-2xl flex items-center justify-center shadow-inner">
+               <ShoppingCart className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="font-black text-gray-900 text-base leading-none">Keranjang</h2>
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">{cart.length} Produk dipilih</p>
+            </div>
+          </div>
         </div>
 
         {/* Pilih Pelanggan */}
@@ -219,14 +227,14 @@ export default function KasirPage() {
                 <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-sm shrink-0 ${selectedCustomer.is_member ? "bg-gradient-to-br from-amber-400 to-orange-500" : "bg-gray-300"}`}>
                   {selectedCustomer.name.charAt(0)}
                 </div>
-                 <div>
-                   <p className="font-bold text-gray-800 text-sm">{selectedCustomer.name}</p>
-                   {selectedCustomer.is_member && (
-                     <span className="text-[10px] font-extrabold text-amber-600 tracking-wider uppercase flex items-center gap-1">
-                       <Crown className="w-3 h-3 fill-amber-600" /> Member Aktif
-                     </span>
-                   )}
-                 </div>
+                  <div>
+                    <p className="font-black text-gray-800 text-sm tracking-tight">{selectedCustomer.name}</p>
+                    {selectedCustomer.is_member && (
+                      <span className="text-[10px] font-black text-lb-gold tracking-widest uppercase flex items-center gap-1.5 mt-0.5">
+                        <div className="w-1 h-1 bg-lb-gold rounded-full" /> Member Aktif
+                      </span>
+                    )}
+                  </div>
               </div>
               <button onClick={() => { setSelectedCustomer(null); setSelectedVoucher(null); }} className="text-gray-300 hover:text-red-400 transition-colors mt-0.5">
                 <X className="w-4 h-4" />
@@ -285,25 +293,45 @@ export default function KasirPage() {
         </div>
 
         {/* Total & Checkout */}
-        <div className="p-4 border-t border-gray-100 bg-white">
-          <div className="space-y-1.5 mb-4 text-sm">
-            <div className="flex justify-between text-gray-500"><span>Subtotal</span><span>Rp {subtotal.toLocaleString("id-ID")}</span></div>
+        <div className="p-4 border-t border-gray-100 bg-white shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
+          <div className="space-y-1.5 mb-5 text-sm">
+            <div className="flex justify-between text-gray-400 font-bold px-1"><span>Subtotal</span><span>Rp {subtotal.toLocaleString("id-ID")}</span></div>
             {discount > 0 && (
-              <div className="flex justify-between text-emerald-600 font-semibold bg-emerald-50 px-2 py-1 rounded-lg -mx-2">
-                <span className="flex items-center gap-1"><Tag className="w-3 h-3"/> Diskon {selectedVoucher?.code}</span>
+              <div className="flex justify-between text-lb-rose font-black bg-rose-50 px-3 py-2 rounded-xl">
+                <span className="flex items-center gap-2"><Tag className="w-3.5 h-3.5"/> Promo {selectedVoucher?.code}</span>
                 <span>− Rp {discount.toLocaleString("id-ID")}</span>
               </div>
             )}
-            <div className="flex justify-between font-extrabold text-gray-900 text-base pt-2 border-t border-gray-100">
-              <span>Total</span>
-              <span className="text-[#C94F78] text-xl">Rp {total.toLocaleString("id-ID")}</span>
+            <div className="flex justify-between font-black text-gray-900 text-lg pt-4 border-t border-gray-100 px-1">
+              <span className="italic tracking-tighter">TOTAL</span>
+              <span className="text-lb-rose text-2xl tracking-tighter">Rp {total.toLocaleString("id-ID")}</span>
             </div>
           </div>
           <button onClick={() => setShowPaymentModal(true)} disabled={cart.length === 0}
-            className="w-full py-3.5 bg-gray-900 hover:bg-[#C94F78] text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
-            <CreditCard className="w-5 h-5" /> Proses Pembayaran
+            className="w-full py-4.5 bg-gray-900 hover:bg-lb-rose text-white font-black rounded-[24px] flex items-center justify-center gap-3 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl shadow-gray-200 uppercase tracking-widest text-[11px]">
+            <CreditCard className="w-5 h-5 text-rose-300" /> Proses Pembayaran
           </button>
         </div>
+      </div>
+
+      {/* MOBILE FLOATING CART BUTTON */}
+      <div className="md:hidden fixed bottom-24 right-6 left-6 z-40">
+        <button onClick={() => setShowPaymentModal(true)} disabled={cart.length === 0}
+          className="w-full h-16 bg-lb-rose text-white rounded-[28px] shadow-2xl flex items-center justify-between px-6 active:scale-95 transition-all disabled:opacity-50">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <ShoppingCart className="w-6 h-6" />
+              <span className="absolute -top-2 -right-2 bg-white text-lb-rose text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full shadow-lg">
+                {cart.length}
+              </span>
+            </div>
+            <div className="text-left leading-none">
+              <p className="text-[10px] font-bold text-rose-200 uppercase tracking-widest">Total Bayar</p>
+              <p className="text-sm font-black mt-1">Rp {total.toLocaleString("id-ID")}</p>
+            </div>
+          </div>
+          <ChevronRight className="w-6 h-6" />
+        </button>
       </div>
 
       {/* Modal Pilih Pelanggan */}

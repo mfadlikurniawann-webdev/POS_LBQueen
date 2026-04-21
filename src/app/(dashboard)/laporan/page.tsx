@@ -93,103 +93,120 @@ export default function LaporanPage() {
 
       {/* Header rendered by layout */}
 
-      {/* Compact Toolbar: date filter + export buttons */}
-      <div className="bg-white border-b border-gray-100 px-5 py-3 flex flex-wrap items-center gap-3 shrink-0">
-        <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 flex-1 min-w-0">
-          <CalendarDays className="w-4 h-4 text-gray-400 shrink-0" />
-          <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
-            className="bg-transparent text-sm font-bold text-gray-700 outline-none w-full" />
-          <span className="text-gray-400 font-bold shrink-0">—</span>
-          <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)}
-            className="bg-transparent text-sm font-bold text-gray-700 outline-none w-full" />
+      {/* Toolbar: Filter + Export */}
+      <div className="bg-white border-b border-rose-50 px-6 py-3 flex flex-wrap items-center justify-between gap-4 shrink-0">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-gray-50 border-2 border-gray-100 rounded-2xl px-4 py-2 group focus-within:border-lb-rose transition-all">
+            <CalendarDays className="w-4 h-4 text-gray-300 group-focus-within:text-lb-rose" />
+            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
+              className="bg-transparent text-[11px] font-black text-gray-700 outline-none uppercase tracking-widest" />
+            <span className="text-gray-300 font-bold px-1">—</span>
+            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)}
+              className="bg-transparent text-[11px] font-black text-gray-700 outline-none uppercase tracking-widest" />
+          </div>
+          <button onClick={fetchData}
+            className="px-6 py-2.5 bg-lb-rose text-white font-black rounded-2xl text-[10px] uppercase tracking-[0.2em] hover:bg-lb-rose-dark transition-all shadow-xl shadow-rose-100">
+            Apply
+          </button>
         </div>
-        <button onClick={fetchData}
-          className="px-4 py-2 bg-[#C94F78] text-white font-bold rounded-xl text-sm hover:bg-[#A83E60] transition-all shrink-0">
-          Tampilkan
-        </button>
-        <div className="flex gap-2 shrink-0">
+        
+        <div className="flex gap-2">
           <button onClick={exportPDF}
-            className="flex items-center gap-1.5 px-3 py-2 bg-red-50 text-red-600 font-bold rounded-xl text-sm hover:bg-red-100 transition-all border border-red-100">
-            <FileDown className="w-3.5 h-3.5" /> PDF
+            className="flex items-center gap-2 px-5 py-2.5 bg-white text-gray-400 font-black rounded-2xl text-[10px] uppercase tracking-widest hover:text-red-500 hover:border-red-100 transition-all border-2 border-gray-100">
+            <FileDown className="w-4 h-4" /> PDF
           </button>
           <button onClick={exportExcel}
-            className="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 text-emerald-600 font-bold rounded-xl text-sm hover:bg-emerald-100 transition-all border border-emerald-100">
-            <DownloadCloud className="w-3.5 h-3.5" /> Excel
+            className="flex items-center gap-2 px-5 py-2.5 bg-white text-gray-400 font-black rounded-2xl text-[10px] uppercase tracking-widest hover:text-emerald-500 hover:border-emerald-100 transition-all border-2 border-gray-100">
+            <DownloadCloud className="w-4 h-4" /> Excel
           </button>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="px-6 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 shrink-0">
+      {/* Stats Board */}
+      <div className="px-6 py-5 grid grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
         {[
-          { label: "Total Omzet", value: `Rp ${(totalOmzet / 1000000).toFixed(1)}jt`, sub: totalOmzet.toLocaleString("id-ID"), icon: <TrendingUp className="w-5 h-5" />, color: "from-[#C94F78] to-[#A83E60]" },
-          { label: "Total Transaksi", value: transactions.length, sub: "nota berhasil", icon: <ShoppingBag className="w-5 h-5" />, color: "from-indigo-500 to-indigo-700" },
-          { label: "Pelanggan Terlayani", value: memberTxns, sub: "memakai akun member", icon: <Users className="w-5 h-5" />, color: "from-amber-400 to-orange-500" },
-          { label: "Total Diskon", value: `Rp ${(totalDiskon).toLocaleString("id-ID")}`, sub: "diberikan ke member", icon: <Tag className="w-5 h-5" />, color: "from-emerald-400 to-emerald-600" },
+          { label: "Total Omzet", value: totalOmzet.toLocaleString("id-ID"), sub: `${(totalOmzet / 1000000).toFixed(1)}jt Total`, icon: <TrendingUp className="w-5 h-5" />, color: "from-lb-rose to-lb-rose-dark" },
+          { label: "Transaksi", value: transactions.length, sub: "nota berhasil", icon: <ShoppingBag className="w-5 h-5" />, color: "from-gray-800 to-black" },
+          { label: "Member Terlayani", value: memberTxns, sub: "dengan loyalty account", icon: <Users className="w-5 h-5" />, color: "from-amber-400 to-orange-500" },
+          { label: "Potongan Diskon", value: totalDiskon.toLocaleString("id-ID"), sub: "reward member", icon: <Tag className="w-5 h-5" />, color: "from-emerald-400 to-emerald-600" },
         ].map(s => (
-          <div key={s.label} className={`bg-gradient-to-br ${s.color} text-white p-4 rounded-2xl shadow-lg`}>
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-white/80 text-xs font-bold uppercase tracking-wider">{s.label}</p>
-              <div className="bg-white/20 p-1.5 rounded-lg">{s.icon}</div>
+          <div key={s.label} className={`bg-gradient-to-br ${s.color} text-white p-5 rounded-[32px] shadow-premium relative overflow-hidden group transition-transform hover:scale-[1.02]`}>
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full transition-transform group-hover:scale-110" />
+            <div className="relative z-10">
+              <div className="flex items-start justify-between mb-4">
+                <p className="text-white/60 text-[9px] font-black uppercase tracking-[0.2em]">{s.label}</p>
+                <div className="bg-white/20 p-2 rounded-2xl backdrop-blur-sm">{s.icon}</div>
+              </div>
+              <p className="text-xl font-black mb-1">Rp {s.value}</p>
+              <p className="text-white/40 text-[9px] font-bold uppercase tracking-wider">{s.sub}</p>
             </div>
-            <p className="text-2xl font-extrabold mt-1">{s.value}</p>
-            <p className="text-white/60 text-xs mt-1">{s.sub}</p>
           </div>
         ))}
       </div>
 
-      {/* Tabel Transaksi */}
-      <div className="flex-1 overflow-auto px-6 pb-6">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-            <h3 className="font-extrabold text-gray-800">Detail Transaksi</h3>
-            {loading && <Loader2 className="w-4 h-4 text-pink-400 animate-spin" />}
+      {/* Transaction Table */}
+      <div className="flex-1 overflow-auto px-6 pb-24 md:pb-6">
+        <div className="bg-white rounded-[32px] border border-gray-100 shadow-premium overflow-hidden">
+          <div className="px-8 py-5 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+            <h3 className="font-black text-gray-800 uppercase tracking-widest text-xs">Jurnal Penjualan</h3>
+            {loading ? <Loader2 className="w-5 h-5 text-lb-rose animate-spin" /> : (
+               <div className="px-3 py-1 bg-rose-50 text-lb-rose text-[9px] font-black rounded-full uppercase tracking-widest border border-rose-100">
+                  {transactions.length} Records
+               </div>
+            )}
           </div>
           <div className="overflow-auto">
-            <table className="w-full text-sm min-w-[650px]">
+            <table className="w-full text-sm">
               <thead>
-                <tr className="text-xs font-extrabold text-gray-500 uppercase tracking-wider border-b border-gray-100">
-                  <th className="px-6 py-4 text-left">Invoice</th>
-                  <th className="px-6 py-4 text-left">Waktu</th>
-                  <th className="px-6 py-4 text-left">Pelanggan</th>
-                  <th className="px-6 py-4 text-left">Voucher</th>
-                  <th className="px-6 py-4 text-right">Diskon</th>
-                  <th className="px-6 py-4 text-right">Total Bayar</th>
+                <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50 bg-gray-50/30">
+                  <th className="px-8 py-5 text-left">Invoice</th>
+                  <th className="px-8 py-5 text-left">Waktu</th>
+                  <th className="px-8 py-5 text-left">Pelanggan</th>
+                  <th className="px-8 py-5 text-left">Voucher</th>
+                  <th className="px-8 py-5 text-right">Potongan</th>
+                  <th className="px-8 py-5 text-right">Settlement</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {!loading && transactions.map(t => (
-                  <tr key={t.id} className="hover:bg-pink-50/30 transition-colors">
-                    <td className="px-6 py-4 font-bold text-[#C94F78] font-mono text-xs">{t.invoice_number}</td>
-                    <td className="px-6 py-4 text-gray-500 text-xs font-medium">{format(new Date(t.created_at), "dd MMM yyyy, HH:mm")}</td>
-                    <td className="px-6 py-4">
-                      {t.customers ? (
-                        <span className="flex items-center gap-1.5 font-semibold text-gray-800">
-                          <span className="w-5 h-5 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-[10px] font-extrabold">{t.customers.name.charAt(0)}</span>
-                          {t.customers.name}
-                        </span>
-                      ) : <span className="text-gray-400">Umum</span>}
+                  <tr key={t.id} className="hover:bg-rose-50/20 transition-colors group">
+                    <td className="px-8 py-4">
+                       <span className="font-black text-lb-rose text-xs tracking-tight group-hover:underline cursor-pointer">{t.invoice_number}</span>
                     </td>
-                    <td className="px-6 py-4">
-                      {t.vouchers ? <span className="bg-pink-50 text-[#C94F78] text-[10px] font-extrabold px-2 py-0.5 rounded-md">{t.vouchers.code}</span> : <span className="text-gray-300">-</span>}
+                    <td className="px-8 py-4">
+                       <div className="flex flex-col">
+                          <span className="text-[11px] font-black text-gray-800">{format(new Date(t.created_at), "dd MMM yyyy")}</span>
+                          <span className="text-[9px] font-bold text-gray-400 uppercase">{format(new Date(t.created_at), "HH:mm")}</span>
+                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right text-emerald-600 font-bold text-sm">
-                      {t.discount_applied > 0 ? `- Rp ${t.discount_applied.toLocaleString("id-ID")}` : "-"}
+                    <td className="px-8 py-4 text-[11px] font-black text-gray-700 italic">
+                       {t.customers ? t.customers.name : <span className="text-gray-300 uppercase not-italic font-bold">Public / Walk-in</span>}
                     </td>
-                    <td className="px-6 py-4 text-right font-extrabold text-gray-900">Rp {t.total_amount.toLocaleString("id-ID")}</td>
+                    <td className="px-8 py-4">
+                      {t.vouchers ? (
+                         <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-900 text-white text-[9px] font-black rounded-lg uppercase tracking-widest">
+                            <Tag className="w-3 h-3 text-rose-300" /> {t.vouchers.code}
+                         </div>
+                      ) : <span className="text-gray-200">None</span>}
+                    </td>
+                    <td className="px-8 py-4 text-right">
+                       <span className={`text-[11px] font-black ${t.discount_applied > 0 ? "text-lb-rose" : "text-gray-300"}`}>
+                          {t.discount_applied > 0 ? `- Rp ${t.discount_applied.toLocaleString("id-ID")}` : "0"}
+                       </span>
+                    </td>
+                    <td className="px-8 py-4 text-right">
+                       <span className="text-sm font-black text-gray-900">Rp {t.total_amount.toLocaleString("id-ID")}</span>
+                    </td>
                   </tr>
                 ))}
-                {!loading && transactions.length === 0 && (
-                  <tr><td colSpan={6} className="text-center py-14 text-gray-400">
-                    <TrendingUp className="w-10 h-10 mx-auto mb-2 opacity-20" />
-                    <p>Tidak ada transaksi pada periode ini.</p>
-                  </td></tr>
-                )}
-                {loading && (
-                  <tr><td colSpan={6} className="text-center py-12"><Loader2 className="w-8 h-8 mx-auto text-pink-300 animate-spin" /></td></tr>
-                )}
               </tbody>
             </table>
+            {!loading && transactions.length === 0 && (
+              <div className="py-24 text-center text-gray-200">
+                 <TrendingUp className="w-16 h-16 mx-auto mb-6 opacity-10" />
+                 <p className="font-black uppercase tracking-[0.2em] text-xs">No data available for this period</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
