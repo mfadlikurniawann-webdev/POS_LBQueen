@@ -17,6 +17,7 @@ CREATE TABLE products (
     selling_price DECIMAL(10,2) NOT NULL,
     stock INT DEFAULT 0,
     unit VARCHAR(50), -- e.g., Pcs, Botol, Sesi
+    image_url TEXT NULL, -- Link ke foto produk/treatment
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
