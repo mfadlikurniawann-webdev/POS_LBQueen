@@ -2,59 +2,66 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #1a1a1a;
-  --lb-rose: #C94F78;
-  --lb-rose-dark: #A83E60;
-  --lb-rose-light: #FFF0F5;
-  --lb-gold: #D4AF37;
-  --lb-gold-soft: #FAF3E0;
+  --foreground: #1e293b;
+  --lb-pink: #C94F78;
+  --lb-pink-dark: #A83E60;
+  --lb-pink-light: #FFD1E3;
 }
 
 @theme default {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-lb-rose: var(--lb-rose);
-  --color-lb-rose-dark: var(--lb-rose-dark);
-  --color-lb-rose-light: var(--lb-rose-light);
-  --color-lb-gold: var(--lb-gold);
-  --color-lb-gold-soft: var(--lb-gold-soft);
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui;
+  --color-lb-pink: var(--lb-pink);
+  --color-lb-pink-dark: var(--lb-pink-dark);
+  --color-lb-pink-light: var(--lb-pink-light);
+  --font-sans: var(--font-inter);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff; /* User specifically asked for WHITE bg, keeping it light even in dark mode for this POS */
+    --foreground: #1e293b;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-white/80 backdrop-blur-lg border border-white/30;
+  .shadow-premium { box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 4px 10px -5px rgba(0, 0, 0, 0.02); }
+  .shadow-luxury-pink { box-shadow: 0 10px 25px -5px rgba(201, 79, 120, 0.15), 0 8px 10px -6px rgba(201, 79, 120, 0.05); }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  
+  /* Original Form Styles softened for Luxury theme */
+  .label-form { 
+    display: block; 
+    font-size: 11px; 
+    font-weight: 600; 
+    color: #94a3b8; 
+    text-transform: uppercase; 
+    letter-spacing: 0.1em; 
+    margin-bottom: 8px; 
   }
-  .shadow-premium {
-    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  .input-form { 
+    width: 100%; 
+    padding: 12px 16px; 
+    border: 1.5px solid #f1f5f9; 
+    border-radius: 16px; 
+    font-size: 14px; 
+    font-weight: 500; 
+    color: #334155; 
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+    outline: none; 
+    background: white;
   }
-  .shadow-rose {
-    box-shadow: 0 10px 25px -5px rgba(201, 79, 120, 0.15);
-  }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  .label-form {
-    @apply block text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.1em] mb-2 ml-1;
-  }
-  .input-form {
-    @apply w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-[18px] text-[13px] font-semibold text-gray-800 transition-all outline-none focus:border-lb-rose-dark focus:bg-white focus:ring-4 focus:ring-pink-50/50;
+  .input-form:focus { 
+    border-color: #C94F78; 
+    box-shadow: 0 0 0 4px rgba(201,79,120,0.08); 
+    background: white;
   }
 }

@@ -89,122 +89,117 @@ export default function LaporanPage() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-gray-50 overflow-hidden">
+    <div className="h-full flex flex-col bg-white overflow-hidden font-sans">
 
-      {/* Header rendered by layout */}
-
-      {/* Toolbar: Filter + Export */}
-      <div className="bg-white border-b border-rose-50 px-6 py-3 flex flex-wrap items-center justify-between gap-4 shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 bg-gray-50 border-2 border-gray-100 rounded-2xl px-4 py-2 group focus-within:border-lb-rose transition-all">
-            <CalendarDays className="w-4 h-4 text-gray-300 group-focus-within:text-lb-rose" />
+      {/* Toolbar: Filter + Export (Ref Image 1 style) */}
+      <div className="bg-white border-b border-slate-50 px-8 py-5 flex flex-wrap items-center justify-between gap-5 shrink-0 z-10 font-sans">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-full px-6 py-3 shadow-inner">
+            <CalendarDays className="w-4 h-4 text-slate-400" />
             <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
-              className="bg-transparent text-[11px] font-black text-gray-700 outline-none uppercase tracking-widest" />
-            <span className="text-gray-300 font-bold px-1">—</span>
+              className="bg-transparent text-[11px] font-bold text-slate-700 outline-none uppercase tracking-[0.1em]" />
+            <span className="text-slate-300 font-bold px-1">—</span>
             <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)}
-              className="bg-transparent text-[11px] font-black text-gray-700 outline-none uppercase tracking-widest" />
+              className="bg-transparent text-[11px] font-bold text-slate-700 outline-none uppercase tracking-[0.1em]" />
           </div>
-          <button onClick={fetchData}
-            className="px-6 py-2.5 bg-lb-rose text-white font-black rounded-2xl text-[10px] uppercase tracking-[0.2em] hover:bg-lb-rose-dark transition-all shadow-xl shadow-rose-100">
-            Apply
-          </button>
+          <div className="w-11 h-11 rounded-full bg-rose-50/50 flex items-center justify-center cursor-pointer hover:bg-rose-100/50 transition-colors border border-rose-50 shadow-sm">
+             <TrendingUp className="w-4 h-4 text-[#A83E60]" />
+          </div>
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <button onClick={exportPDF}
-            className="flex items-center gap-2 px-5 py-2.5 bg-white text-gray-400 font-black rounded-2xl text-[10px] uppercase tracking-widest hover:text-red-500 hover:border-red-100 transition-all border-2 border-gray-100">
+            className="flex items-center gap-3 px-7 py-3 bg-white text-slate-400 font-bold rounded-full text-[10px] uppercase tracking-[0.15em] hover:text-[#A83E60] hover:border-rose-100 transition-all border border-slate-100 shadow-sm">
             <FileDown className="w-4 h-4" /> PDF
           </button>
           <button onClick={exportExcel}
-            className="flex items-center gap-2 px-5 py-2.5 bg-white text-gray-400 font-black rounded-2xl text-[10px] uppercase tracking-widest hover:text-emerald-500 hover:border-emerald-100 transition-all border-2 border-gray-100">
+            className="flex items-center gap-3 px-7 py-3 bg-white text-slate-400 font-bold rounded-full text-[10px] uppercase tracking-[0.15em] hover:text-emerald-500 hover:border-emerald-100 transition-all border border-slate-100 shadow-sm">
             <DownloadCloud className="w-4 h-4" /> Excel
           </button>
         </div>
       </div>
 
-      {/* Stats Board */}
-      <div className="px-6 py-5 grid grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
+      {/* Stats Board (Ref Image Luxury theme) */}
+      <div className="px-8 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 shrink-0 bg-white">
         {[
-          { label: "Total Omzet", value: totalOmzet.toLocaleString("id-ID"), sub: `${(totalOmzet / 1000000).toFixed(1)}jt Total`, icon: <TrendingUp className="w-5 h-5" />, color: "from-lb-rose to-lb-rose-dark" },
-          { label: "Transaksi", value: transactions.length, sub: "nota berhasil", icon: <ShoppingBag className="w-5 h-5" />, color: "from-gray-800 to-black" },
-          { label: "Member Terlayani", value: memberTxns, sub: "dengan loyalty account", icon: <Users className="w-5 h-5" />, color: "from-amber-400 to-orange-500" },
-          { label: "Potongan Diskon", value: totalDiskon.toLocaleString("id-ID"), sub: "reward member", icon: <Tag className="w-5 h-5" />, color: "from-emerald-400 to-emerald-600" },
-        ].map(s => (
-          <div key={s.label} className={`bg-gradient-to-br ${s.color} text-white p-5 rounded-[32px] shadow-premium relative overflow-hidden group transition-transform hover:scale-[1.02]`}>
-            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full transition-transform group-hover:scale-110" />
+          { label: "Total Omzet", value: totalOmzet.toLocaleString("id-ID"), sub: `${(totalOmzet / 1000000).toFixed(1)}jt Total`, icon: <TrendingUp className="w-5 h-5" />, color: "bg-white text-[#A83E60] shadow-luxury-pink border border-rose-50" },
+          { label: "Transaksi", value: transactions.length, sub: "nota berhasil", icon: <ShoppingBag className="w-5 h-5" />, color: "bg-slate-900 text-white shadow-xl shadow-slate-100" },
+          { label: "Member Terlayani", value: memberTxns, sub: "dengan loyalty account", icon: <Users className="w-5 h-5" />, color: "bg-orange-500 text-white shadow-xl shadow-orange-100" },
+          { label: "Potongan Diskon", value: totalDiskon.toLocaleString("id-ID"), sub: "reward member", icon: <Tag className="w-5 h-5" />, color: "bg-emerald-500 text-white shadow-xl shadow-emerald-100" },
+        ].map((s, i) => (
+          <div key={s.label} className={`${s.color} p-7 rounded-[32px] relative overflow-hidden group transition-all duration-500 hover:scale-[1.02]`}>
+            {/* Visual element on card */}
+            <div className={`absolute top-0 right-0 w-28 h-28 rounded-bl-full transition-all duration-700 group-hover:scale-110 ${i === 0 ? "bg-rose-50/30" : "bg-white/10"}`} />
+            
             <div className="relative z-10">
-              <div className="flex items-start justify-between mb-4">
-                <p className="text-white/60 text-[9px] font-black uppercase tracking-[0.2em]">{s.label}</p>
-                <div className="bg-white/20 p-2 rounded-2xl backdrop-blur-sm">{s.icon}</div>
+              <div className="flex items-start justify-between mb-8">
+                <p className={`${i === 0 ? "text-slate-400" : "text-white/60"} text-[10px] font-bold uppercase tracking-[0.2em]`}>{s.label}</p>
+                <div className={`${i === 0 ? "bg-rose-50 text-[#C94F78]" : "bg-white/20 text-white"} p-3 rounded-2xl backdrop-blur-sm border border-transparent ${i === 0 ? "group-hover:border-rose-100" : ""}`}>{s.icon}</div>
               </div>
-              <p className="text-xl font-black mb-1">Rp {s.value}</p>
-              <p className="text-white/40 text-[9px] font-bold uppercase tracking-wider">{s.sub}</p>
+              <div className="flex items-baseline gap-2 mb-1.5">
+                 <span className="text-xl font-bold">Rp</span>
+                 <p className="text-3xl font-bold tracking-tight">{s.value}</p>
+              </div>
+              <p className={`${i === 0 ? "text-rose-300" : "text-white/40"} text-[10px] font-semibold uppercase tracking-wider`}>{s.sub}</p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Transaction Table */}
-      <div className="flex-1 overflow-auto px-6 pb-24 md:pb-6">
-        <div className="bg-white rounded-[32px] border border-gray-100 shadow-premium overflow-hidden">
-          <div className="px-8 py-5 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
-            <h3 className="font-black text-gray-800 uppercase tracking-widest text-xs">Jurnal Penjualan</h3>
-            {loading ? <Loader2 className="w-5 h-5 text-lb-rose animate-spin" /> : (
-               <div className="px-3 py-1 bg-rose-50 text-lb-rose text-[9px] font-black rounded-full uppercase tracking-widest border border-rose-100">
-                  {transactions.length} Records
-               </div>
+      {/* Transaction Table (Luxury styling) */}
+      <div className="flex-1 overflow-auto px-8 pb-32 md:pb-12 bg-white">
+        <div className="bg-white rounded-[40px] border border-slate-100 shadow-premium overflow-hidden relative">
+          <div className="px-12 py-8 border-b border-slate-50 flex items-center justify-between">
+            <h3 className="font-bold text-slate-800 uppercase tracking-widest text-xs">Jurnal Penjualan</h3>
+            {loading ? <Loader2 className="w-5 h-5 text-[#C94F78] animate-spin" /> : (
+               <div className="w-8 h-8 rounded-full border-2 border-slate-100 border-t-rose-200" />
             )}
           </div>
-          <div className="overflow-auto">
+          <div className="overflow-auto scrollbar-hide">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50 bg-gray-50/30">
-                  <th className="px-8 py-5 text-left">Invoice</th>
-                  <th className="px-8 py-5 text-left">Waktu</th>
-                  <th className="px-8 py-5 text-left">Pelanggan</th>
-                  <th className="px-8 py-5 text-left">Voucher</th>
-                  <th className="px-8 py-5 text-right">Potongan</th>
-                  <th className="px-8 py-5 text-right">Settlement</th>
+                <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] bg-slate-50/50">
+                  <th className="px-12 py-6 text-left">Invoice</th>
+                  <th className="px-12 py-6 text-left">Waktu</th>
+                  <th className="px-12 py-6 text-left">Pelanggan</th>
+                  <th className="px-12 py-6 text-left">Voucher</th>
+                  <th className="px-12 py-6 text-right">Potongan</th>
+                  <th className="px-12 py-6 text-right">Settlement</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
-                {!loading && transactions.map(t => (
-                  <tr key={t.id} className="hover:bg-rose-50/20 transition-colors group">
-                    <td className="px-8 py-4">
-                       <span className="font-black text-lb-rose text-xs tracking-tight group-hover:underline cursor-pointer">{t.invoice_number}</span>
+              <tbody className="divide-y divide-slate-50 font-medium">
+                {transactions.map(t => (
+                  <tr key={t.id} className="hover:bg-rose-50/20 transition-all duration-300 group">
+                    <td className="px-12 py-5">
+                       <span className="font-bold text-[#C94F78] text-xs underline decoration-rose-100 underline-offset-4 cursor-pointer">{t.invoice_number}</span>
                     </td>
-                    <td className="px-8 py-4">
-                       <div className="flex flex-col">
-                          <span className="text-[11px] font-black text-gray-800">{format(new Date(t.created_at), "dd MMM yyyy")}</span>
-                          <span className="text-[9px] font-bold text-gray-400 uppercase">{format(new Date(t.created_at), "HH:mm")}</span>
-                       </div>
+                    <td className="px-12 py-5 text-[11px] text-slate-400 font-bold uppercase tracking-tight">
+                       {format(new Date(t.created_at), "dd/MM/yyyy")}
                     </td>
-                    <td className="px-8 py-4 text-[11px] font-black text-gray-700 italic">
-                       {t.customers ? t.customers.name : <span className="text-gray-300 uppercase not-italic font-bold">Public / Walk-in</span>}
+                    <td className="px-12 py-5 text-[11px] font-bold text-slate-600 uppercase tracking-tight">
+                       {t.customers ? t.customers.name : <span className="text-slate-300">Walk-in Customer</span>}
                     </td>
-                    <td className="px-8 py-4">
+                    <td className="px-12 py-5">
                       {t.vouchers ? (
-                         <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-900 text-white text-[9px] font-black rounded-lg uppercase tracking-widest">
-                            <Tag className="w-3 h-3 text-rose-300" /> {t.vouchers.code}
-                         </div>
-                      ) : <span className="text-gray-200">None</span>}
+                         <span className="text-[10px] font-bold text-slate-700 border border-slate-100 px-3 py-1.5 rounded-lg bg-slate-50 uppercase tracking-widest">{t.vouchers.code}</span>
+                      ) : <span className="text-slate-200">—</span>}
                     </td>
-                    <td className="px-8 py-4 text-right">
-                       <span className={`text-[11px] font-black ${t.discount_applied > 0 ? "text-lb-rose" : "text-gray-300"}`}>
-                          {t.discount_applied > 0 ? `- Rp ${t.discount_applied.toLocaleString("id-ID")}` : "0"}
-                       </span>
+                    <td className="px-12 py-5 text-right font-bold text-slate-300">
+                       {t.discount_applied > 0 ? (
+                         <span className="text-[#C94F78] font-bold">- Rp {t.discount_applied.toLocaleString("id-ID")}</span>
+                       ) : "0"}
                     </td>
-                    <td className="px-8 py-4 text-right">
-                       <span className="text-sm font-black text-gray-900">Rp {t.total_amount.toLocaleString("id-ID")}</span>
+                    <td className="px-12 py-5 text-right font-bold text-slate-800 text-[16px] tracking-tight">
+                       Rp {t.total_amount.toLocaleString("id-ID")}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
             {!loading && transactions.length === 0 && (
-              <div className="py-24 text-center text-gray-200">
-                 <TrendingUp className="w-16 h-16 mx-auto mb-6 opacity-10" />
-                 <p className="font-black uppercase tracking-[0.2em] text-xs">No data available for this period</p>
+              <div className="py-32 text-center">
+                 <ShoppingBag className="w-20 h-20 mx-auto mb-6 text-slate-100 opacity-50" />
+                 <p className="text-slate-300 text-xs font-bold uppercase tracking-[0.25em]">Belum ada data transaksi</p>
               </div>
             )}
           </div>
