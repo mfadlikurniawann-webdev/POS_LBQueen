@@ -108,7 +108,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* ── Header Background (Magenta Pattern) ── */}
         <div className="h-48 bg-[#A83E60] relative shrink-0 overflow-hidden">
-          {/* Waves / Decorative Blobs as in HRIS image */}
+          {/* Waves / Decorative Blobs */}
           <div className="absolute inset-0 opacity-10">
              <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <path d="M0,50 C20,20 40,80 60,50 C80,20 100,50 100,50 L100,100 L0,100 Z" fill="white" />
@@ -132,24 +132,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Bell className="w-4 h-4 text-white hover:text-pink-200 transition-colors cursor-pointer" />
                 <div className="w-[1px] h-4 bg-white/10 mx-1" />
                 <div className="w-8 h-8 rounded-lg bg-[#A83E60] border border-white/20 flex items-center justify-center text-[10px] font-black text-white">
-                   {user.name.charAt(0)}
+                   {user.name?.charAt(0)}
                 </div>
              </div>
           </div>
         </div>
 
-        {/* ── Floating Greeting Card (The HRIS Style) ── */}
+        {/* ── Floating Greeting Card ── */}
         <div className="relative z-20 px-8 -mt-20 shrink-0">
           <div className="bg-white rounded-[32px] p-6 shadow-xl border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-5">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-50 to-pink-100/50 flex items-center justify-center text-[#A83E60] font-black text-xl shadow-inner border border-white">
-                {user.name.charAt(0)}
+                {user.name?.charAt(0)}
               </div>
               <div>
                 <h2 className="text-xl font-black text-gray-900 tracking-tight leading-none">Hai, {user.name}!</h2>
                 <div className="mt-2 flex items-center gap-2">
                    <span className="bg-amber-100 text-amber-600 text-[9px] font-black px-2 py-1 rounded-full border border-amber-200 uppercase tracking-widest">Active Access</span>
-                   <span className="text-gray-400 text-[10px] font-medium">&bull; Selamat datang di sistem LBQueen</span>
+                   <span className="text-gray-400 text-[10px] font-medium">• Selamat datang di sistem LBQueen</span>
                 </div>
               </div>
             </div>
@@ -190,13 +190,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             );
          })}
       </div>
-
-      <style jsx global>{`
-        .shadow-premium { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02); }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
     </div>
   );
 }
+
 

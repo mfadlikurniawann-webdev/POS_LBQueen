@@ -354,14 +354,6 @@ export default function StokPage() {
           </div>
         </div>
       )}
-
-      <style jsx global>{`
-        .label-form { display: block; font-size: 10px; font-weight: 800; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; margin-left: 4px; }
-        .input-form { width: 100%; padding: 14px 20px; border: 1px solid #F3F4F6; border-radius: 18px; font-size: 13px; font-weight: 600; color: #1F2937; transition: all 0.2s; outline: none; background: #F9FAFB; }
-        .input-form:focus { border-color: #A83E60; background: white; box-shadow: 0 0 0 4px rgba(168,62,96,0.05); }
-        .shadow-premium { box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02); }
-      `}</style>
     </div>
   );
 }
-

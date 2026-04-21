@@ -44,4 +44,17 @@ body {
   .shadow-rose {
     box-shadow: 0 10px 25px -5px rgba(201, 79, 120, 0.15);
   }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .label-form {
+    @apply block text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.1em] mb-2 ml-1;
+  }
+  .input-form {
+    @apply w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-[18px] text-[13px] font-semibold text-gray-800 transition-all outline-none focus:border-lb-rose-dark focus:bg-white focus:ring-4 focus:ring-pink-50/50;
+  }
 }
