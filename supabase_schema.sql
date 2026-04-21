@@ -116,15 +116,7 @@ VALUES
 ('owner', 'ownerlbq', 'Owner', 'owner'),
 ('ops', 'opslbqueen', 'Tim Digital Ops', 'digital_ops');
 
--- Kolom baru di tabel customers
-ALTER TABLE customers ADD COLUMN username TEXT UNIQUE;
-ALTER TABLE customers ADD COLUMN password TEXT;
+-- Update 1.6: Voucher per produk & Produk Set
+ALTER TABLE products ADD COLUMN IF NOT EXISTS is_set BOOLEAN DEFAULT FALSE;
+ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS product_id BIGINT REFERENCES products(id) ON DELETE SET NULL;
 
--- Tabel log pesanan WA
-CREATE TABLE customer_orders (
-  id BIGSERIAL PRIMARY KEY,
-  customer_id BIGINT REFERENCES customers(id),
-  product_name TEXT NOT NULL,
-  ordered_at TIMESTAMPTZ DEFAULT NOW(),
-  status TEXT DEFAULT 'pending'
-);

@@ -13,7 +13,8 @@ type Customer = {
 };
 type Voucher = {
   id: number; code: string; name: string; discount_amount: number;
-  min_purchase: number; is_active: boolean;
+  min_purchase: number; is_active: boolean; product_id: number | null;
+  products?: { name: string } | null;
 };
 type CustomerOrder = {
   id: number; customer_name: string; product_name: string;
@@ -22,7 +23,7 @@ type CustomerOrder = {
 };
 
 const emptyCustomer = { name: "", phone: "", is_member: false };
-const emptyVoucher  = { code: "", name: "", discount_amount: "", min_purchase: "" };
+const emptyVoucher  = { code: "", name: "", discount_amount: "", min_purchase: "", product_id: "" };
 
 /** Buat inisial dari nama: "Sri Wahyuni" → "SW" */
 function getInitials(name: string): string {
@@ -63,6 +64,7 @@ export default function PelangganPage() {
   const [showVouchModal, setShowVouchModal] = useState(false);
   const [custForm, setCustForm]     = useState(emptyCustomer);
   const [vouchForm, setVouchForm]   = useState(emptyVoucher);
+  const [products, setProducts]       = useState<any[]>([]);
   const [saving, setSaving]         = useState(false);
   const [toast, setToast]           = useState("");
 
@@ -70,14 +72,16 @@ export default function PelangganPage() {
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
-    const [{ data: custs }, { data: vouchs }, { data: ords }] = await Promise.all([
+    const [{ data: custs }, { data: vouchs }, { data: ords }, { data: prods }] = await Promise.all([
       supabase.from("customers").select("*").order("name"),
-      supabase.from("vouchers").select("*").order("created_at", { ascending: false }),
+      supabase.from("vouchers").select("*, products(name)").order("created_at", { ascending: false }),
       supabase.from("customer_orders").select("*, customers(name)").order("ordered_at", { ascending: false }).limit(100),
+      supabase.from("products").select("id, name").in("type", ["Treatment", "Retail Produk"]).order("name"),
     ]);
     setCustomers(custs || []);
     setVouchers(vouchs || []);
     setOrders((ords as CustomerOrder[]) || []);
+    setProducts(prods || []);
     setLoading(false);
   }, []);
 
@@ -122,12 +126,17 @@ export default function PelangganPage() {
   };
 
   const saveVoucher = async () => {
-    if (!vouchForm.code || !vouchForm.name) { showToast("Kode dan nama voucher wajib diisi!"); return; }
+    if (!vouchForm.code || !vouchForm.name || !vouchForm.product_id) { 
+      showToast("Kode, nama, dan produk wajib diisi!"); 
+      return; 
+    }
     setSaving(true);
     const { error } = await supabase.from("vouchers").insert({
-      code: vouchForm.code, name: vouchForm.name,
+      code: vouchForm.code, 
+      name: vouchForm.name,
       discount_amount: parseFloat(vouchForm.discount_amount) || 0,
       min_purchase: parseFloat(vouchForm.min_purchase) || 0,
+      product_id: parseInt(vouchForm.product_id)
     });
     if (error) { showToast("Kode voucher sudah ada!"); setSaving(false); return; }
     showToast("Voucher baru berhasil dibuat! 🎟️");
@@ -292,8 +301,17 @@ export default function PelangganPage() {
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-pink-50 to-transparent -z-0 rounded-bl-full" />
                 <Star className={`absolute top-4 right-4 w-4 h-4 ${v.is_active ? "text-amber-300" : "text-gray-200"}`} />
                 <div className="relative z-10">
-                  <p className="text-xs font-extrabold text-gray-400 tracking-widest uppercase mb-1">Kode Voucher</p>
-                  <h3 className="font-extrabold text-2xl text-gray-900 tracking-tight">{v.code}</h3>
+                  <div className="flex justify-between items-start mb-1">
+                    <div>
+                      <p className="text-[10px] font-extrabold text-gray-400 tracking-widest uppercase mb-1">Kode Voucher</p>
+                      <h3 className="font-extrabold text-2xl text-gray-900 tracking-tight">{v.code}</h3>
+                    </div>
+                    {v.products?.name && (
+                      <div className="bg-pink-100 text-[#C94F78] px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-tighter">
+                        Khusus: {v.products.name}
+                      </div>
+                    )}
+                  </div>
                   <p className="text-sm text-gray-500 mt-1">{v.name}</p>
                   <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-end">
                     <div>
@@ -467,8 +485,17 @@ export default function PelangganPage() {
                 <input className="input-form uppercase" placeholder="e.g. MEMBER100" value={vouchForm.code} onChange={e => setVouchForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} />
               </div>
               <div>
+                <label className="label-form">Gunakan Untuk Produk *</label>
+                <select className="input-form" value={vouchForm.product_id} onChange={e => setVouchForm(f => ({ ...f, product_id: e.target.value }))}>
+                  <option value="">— Pilih Produk —</option>
+                  {products.map(p => (
+                    <option key={p.id} value={p.id}>{p.name}</p>
+                  ))}
+                </select>
+              </div>
+              <div>
                 <label className="label-form">Nama / Deskripsi</label>
-                <input className="input-form" placeholder="Diskon spesial member" value={vouchForm.name} onChange={e => setVouchForm(f => ({ ...f, name: e.target.value }))} />
+                <input className="input-form" placeholder="Diskon spesial produk SKU-xxx" value={vouchForm.name} onChange={e => setVouchForm(f => ({ ...f, name: e.target.value }))} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>

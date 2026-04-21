@@ -17,12 +17,12 @@ const typeConfig: Record<string, { color: string; bg: string; icon: React.ReactN
 type Product = {
   id: number; product_code: string; name: string; type: string;
   purchase_price: number; selling_price: number; stock: number;
-  unit: string; image_url: string | null;
+  unit: string; image_url: string | null; is_set: boolean;
 };
 
 const emptyForm = {
   product_code: "", name: "", type: "Treatment",
-  purchase_price: "", selling_price: "", stock: "", unit: "Sesi", image_url: "",
+  purchase_price: "", selling_price: "", stock: "", unit: "Sesi", image_url: "", is_set: false,
 };
 
 export default function StokPage() {
@@ -58,7 +58,7 @@ export default function StokPage() {
     setForm({
       product_code: p.product_code, name: p.name, type: p.type,
       purchase_price: String(p.purchase_price), selling_price: String(p.selling_price),
-      stock: String(p.stock), unit: p.unit, image_url: p.image_url || "",
+      stock: String(p.stock), unit: p.unit, image_url: p.image_url || "", is_set: p.is_set || false,
     });
     setShowModal(true);
   };
@@ -80,6 +80,7 @@ export default function StokPage() {
         stock: parseInt(form.stock) || 0,
         unit: form.unit.trim() || (form.type === "Treatment" ? "Sesi" : "Pcs"),
         image_url: form.image_url?.trim() || null,
+        is_set: form.is_set,
       };
 
       let result;
@@ -188,7 +189,10 @@ export default function StokPage() {
                           : <Flower2 className="w-5 h-5 text-pink-200" />}
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900">{p.name}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-bold text-gray-900">{p.name}</p>
+                          {p.is_set && <span className="bg-emerald-100 text-emerald-600 text-[9px] font-extrabold px-1.5 py-0.5 rounded border border-emerald-200">SET</span>}
+                        </div>
                         <p className="text-xs text-gray-400 font-mono">{p.product_code}</p>
                       </div>
                     </div>
@@ -245,6 +249,18 @@ export default function StokPage() {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Produk Set Toggle */}
+              <div className="flex items-center justify-between p-3 bg-pink-50 rounded-xl border border-pink-100">
+                <div>
+                  <p className="text-sm font-bold text-gray-800">Produk Set / Bundle?</p>
+                  <p className="text-[10px] text-gray-500 font-medium">Tampilan khusus untuk paket hemat</p>
+                </div>
+                <button type="button" onClick={() => setForm(f => ({ ...f, is_set: !f.is_set }))}
+                  className={`w-10 h-5 rounded-full transition-all relative ${form.is_set ? "bg-[#C94F78]" : "bg-gray-200"}`}>
+                  <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${form.is_set ? "left-5" : "left-0.5"}`} />
+                </button>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
