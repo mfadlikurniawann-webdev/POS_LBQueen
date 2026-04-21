@@ -147,7 +147,14 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <p className="text-center text-xs text-gray-300 mt-6 font-medium">Demo: admin / adminlbqueen</p>
+            <div className="mt-8 pt-5 border-t border-gray-100 text-center">
+              <p className="text-sm text-gray-500 font-medium">Customer LBQueen? </p>
+              <a href="/customer-portal/login" className="inline-block mt-2 text-emerald-600 font-bold hover:underline flex items-center justify-center gap-1">
+                Akses Portal Pelanggan →
+              </a>
+            </div>
+
+            <p className="text-center text-[10px] text-gray-300 mt-4 font-medium uppercase tracking-widest">Demo: admin / adminlbqueen</p>
           </div>
         </div>
       </div>

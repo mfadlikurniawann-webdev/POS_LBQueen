@@ -2,39 +2,82 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Search, X, Loader2, Users, Tag, Crown, Phone, Star } from "lucide-react";
+import {
+  Plus, Search, X, Loader2, Users, Tag, Crown, Phone, Star,
+  Key, MessageCircle, Clock, CheckCircle2, XCircle
+} from "lucide-react";
 
-type Customer = { id: number; name: string; phone: string; is_member: boolean; join_date: string };
-type Voucher = { id: number; code: string; name: string; discount_amount: number; min_purchase: number; is_active: boolean };
+type Customer = {
+  id: number; name: string; phone: string; is_member: boolean; join_date: string;
+  username: string | null; password_plain: string | null;
+};
+type Voucher = {
+  id: number; code: string; name: string; discount_amount: number;
+  min_purchase: number; is_active: boolean;
+};
+type CustomerOrder = {
+  id: number; customer_name: string; product_name: string;
+  ordered_at: string; status: string;
+  customers: { name: string } | null;
+};
 
 const emptyCustomer = { name: "", phone: "", is_member: false };
-const emptyVoucher = { code: "", name: "", discount_amount: "", min_purchase: "" };
+const emptyVoucher  = { code: "", name: "", discount_amount: "", min_purchase: "" };
+
+/** Buat inisial dari nama: "Sri Wahyuni" → "SW" */
+function getInitials(name: string): string {
+  return name.trim().split(/\s+/).map(w => w[0]?.toUpperCase() ?? "").join("");
+}
+
+/** Generate password plain: inisial + status (M/R) + id → "SW-M-5" */
+function generatePasswordPlain(name: string, isMember: boolean, id: number): string {
+  return `${getInitials(name)}-${isMember ? "M" : "R"}-${id}`;
+}
+
+/** Generate username: lowercase nama tanpa spasi → "sriwahyuni" */
+function generateUsername(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, "");
+}
+
+/** Hash password: base64 dari plain text (simple hash untuk demo) */
+function hashPassword(plain: string): string {
+  if (typeof window !== "undefined") return btoa(plain);
+  return Buffer.from(plain).toString("base64");
+}
+
+const STATUS_CONFIG: Record<string, { label: string; color: string; Icon: React.ElementType }> = {
+  pending:   { label: "Menunggu",    color: "bg-yellow-100 text-yellow-700", Icon: Clock          },
+  confirmed: { label: "Dikonfirmasi",color: "bg-green-100 text-green-700",  Icon: CheckCircle2   },
+  cancelled: { label: "Dibatalkan",  color: "bg-red-100 text-red-600",      Icon: XCircle        },
+};
 
 export default function PelangganPage() {
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [vouchers, setVouchers] = useState<Voucher[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [tab, setTab] = useState<"pelanggan" | "voucher">("pelanggan");
+  const [customers, setCustomers]   = useState<Customer[]>([]);
+  const [vouchers, setVouchers]     = useState<Voucher[]>([]);
+  const [orders, setOrders]         = useState<CustomerOrder[]>([]);
+  const [loading, setLoading]       = useState(true);
+  const [search, setSearch]         = useState("");
+  const [tab, setTab]               = useState<"pelanggan" | "voucher" | "pesanan">("pelanggan");
 
-  // Modal States
   const [showCustModal, setShowCustModal] = useState(false);
   const [showVouchModal, setShowVouchModal] = useState(false);
-  const [custForm, setCustForm] = useState(emptyCustomer);
-  const [vouchForm, setVouchForm] = useState(emptyVoucher);
-  const [saving, setSaving] = useState(false);
-  const [toast, setToast] = useState("");
+  const [custForm, setCustForm]     = useState(emptyCustomer);
+  const [vouchForm, setVouchForm]   = useState(emptyVoucher);
+  const [saving, setSaving]         = useState(false);
+  const [toast, setToast]           = useState("");
 
-  const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
+  const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 3500); };
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
-    const [{ data: custs }, { data: vouchs }] = await Promise.all([
+    const [{ data: custs }, { data: vouchs }, { data: ords }] = await Promise.all([
       supabase.from("customers").select("*").order("name"),
       supabase.from("vouchers").select("*").order("created_at", { ascending: false }),
+      supabase.from("customer_orders").select("*, customers(name)").order("ordered_at", { ascending: false }).limit(100),
     ]);
     setCustomers(custs || []);
     setVouchers(vouchs || []);
+    setOrders((ords as CustomerOrder[]) || []);
     setLoading(false);
   }, []);
 
@@ -43,14 +86,38 @@ export default function PelangganPage() {
   const saveCust = async () => {
     if (!custForm.name) { showToast("Nama wajib diisi!"); return; }
     setSaving(true);
-    await supabase.from("customers").insert({ ...custForm });
+
+    // Insert dulu untuk dapat ID
+    const { data: inserted, error } = await supabase
+      .from("customers")
+      .insert({ name: custForm.name, phone: custForm.phone, is_member: custForm.is_member })
+      .select()
+      .single();
+
+    if (error || !inserted) {
+      showToast("Gagal menyimpan pelanggan!"); setSaving(false); return;
+    }
+
+    // Generate username & password berdasarkan ID yang baru didapat
+    const username      = generateUsername(custForm.name);
+    const passwordPlain = generatePasswordPlain(custForm.name, custForm.is_member, inserted.id);
+    const passwordHash  = hashPassword(passwordPlain);
+
+    await supabase.from("customers").update({ username, password_plain: passwordPlain, password_hash: passwordHash }).eq("id", inserted.id);
+
     showToast("Pelanggan baru ditambahkan! 🎉");
     setSaving(false); setShowCustModal(false); setCustForm(emptyCustomer); fetchAll();
   };
 
-  const toggleMember = async (id: number, current: boolean) => {
-    await supabase.from("customers").update({ is_member: !current }).eq("id", id);
-    showToast(!current ? "Status Member diaktifkan ✦" : "Status Member dinonaktifkan");
+  const toggleMember = async (c: Customer) => {
+    const newMember = !c.is_member;
+    // Update status member
+    await supabase.from("customers").update({ is_member: newMember }).eq("id", c.id);
+    // Regenerate password karena status berubah (M/R berubah)
+    const newPlain = generatePasswordPlain(c.name, newMember, c.id);
+    const newHash  = hashPassword(newPlain);
+    await supabase.from("customers").update({ password_plain: newPlain, password_hash: newHash }).eq("id", c.id);
+    showToast(newMember ? "Status Member diaktifkan ✦ (Password diperbarui)" : "Status Member dinonaktifkan (Password diperbarui)");
     fetchAll();
   };
 
@@ -73,23 +140,32 @@ export default function PelangganPage() {
     fetchAll();
   };
 
-  const filteredCusts = customers.filter(c => c.name.toLowerCase().includes(search.toLowerCase()) || c.phone?.includes(search));
+  const updateOrderStatus = async (id: number, status: string) => {
+    await supabase.from("customer_orders").update({ status }).eq("id", id);
+    showToast(status === "confirmed" ? "Pesanan dikonfirmasi ✓" : "Pesanan dibatalkan");
+    fetchAll();
+  };
+
+  const filteredCusts = customers.filter(c =>
+    c.name.toLowerCase().includes(search.toLowerCase()) || c.phone?.includes(search)
+  );
 
   return (
     <div className="h-full flex flex-col bg-gray-50">
       {toast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[999] bg-gray-900 text-white px-6 py-3 rounded-2xl text-sm font-semibold shadow-2xl">{toast}</div>
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[999] bg-gray-900 text-white px-6 py-3 rounded-2xl text-sm font-semibold shadow-2xl animate-bounce-once">
+          {toast}
+        </div>
       )}
-
-      {/* Header rendered by layout */}
 
       {/* Stats + Action Toolbar */}
       <div className="bg-white border-b border-gray-100 px-5 py-4 shrink-0">
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-4 gap-3 mb-4">
           {[
-            { label: "Total Pelanggan", value: customers.length, icon: <Users className="w-5 h-5" />, color: "text-blue-500 bg-blue-50" },
-            { label: "Member Aktif",    value: customers.filter(c => c.is_member).length, icon: <Crown className="w-5 h-5" />, color: "text-amber-500 bg-amber-50" },
-            { label: "Voucher Aktif",   value: vouchers.filter(v => v.is_active).length,  icon: <Tag className="w-5 h-5" />,   color: "text-[#C94F78] bg-pink-50" },
+            { label: "Total Pelanggan", value: customers.length,                                  icon: <Users className="w-5 h-5" />,         color: "text-blue-500 bg-blue-50"    },
+            { label: "Member Aktif",    value: customers.filter(c => c.is_member).length,         icon: <Crown className="w-5 h-5" />,         color: "text-amber-500 bg-amber-50"  },
+            { label: "Voucher Aktif",   value: vouchers.filter(v => v.is_active).length,          icon: <Tag className="w-5 h-5" />,           color: "text-[#C94F78] bg-pink-50"   },
+            { label: "Pesanan Masuk",   value: orders.filter(o => o.status === "pending").length, icon: <MessageCircle className="w-5 h-5" />, color: "text-emerald-600 bg-emerald-50" },
           ].map(s => (
             <div key={s.label} className="bg-gray-50 border border-gray-100 rounded-2xl p-3 flex items-center gap-2.5">
               <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${s.color}`}>{s.icon}</div>
@@ -104,26 +180,34 @@ export default function PelangganPage() {
         {/* Tabs + Add Button */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
-            {(["pelanggan", "voucher"] as const).map(t => (
-              <button key={t} onClick={() => setTab(t)}
-                className={`px-4 py-1.5 rounded-lg text-sm font-bold capitalize transition-all ${
-                  tab === t ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-700"
+            {([
+              { key: "pelanggan", label: "Pelanggan" },
+              { key: "voucher",   label: "Voucher"   },
+              { key: "pesanan",   label: `Pesanan${orders.filter(o=>o.status==="pending").length > 0 ? ` (${orders.filter(o=>o.status==="pending").length})` : ""}` },
+            ] as const).map(t => (
+              <button key={t.key} onClick={() => setTab(t.key)}
+                className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${
+                  tab === t.key ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-700"
                 }`}>
-                {t === "pelanggan" ? "Pelanggan" : "Voucher"}
+                {t.label}
               </button>
             ))}
           </div>
-          <button
-            onClick={() => tab === "pelanggan" ? setShowCustModal(true) : setShowVouchModal(true)}
-            className="bg-[#C94F78] hover:bg-[#A83E60] text-white font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 text-sm shadow-md shadow-pink-200 transition-all shrink-0">
-            <Plus className="w-4 h-4" /> {tab === "pelanggan" ? "Tambah" : "Buat Voucher"}
-          </button>
+          {tab !== "pesanan" && (
+            <button
+              onClick={() => tab === "pelanggan" ? setShowCustModal(true) : setShowVouchModal(true)}
+              className="bg-[#C94F78] hover:bg-[#A83E60] text-white font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 text-sm shadow-md shadow-pink-200 transition-all shrink-0">
+              <Plus className="w-4 h-4" /> {tab === "pelanggan" ? "Tambah" : "Buat Voucher"}
+            </button>
+          )}
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto p-6">
-        {tab === "pelanggan" ? (
+      <div className="flex-1 overflow-auto p-5">
+
+        {/* ── TAB PELANGGAN ── */}
+        {tab === "pelanggan" && (
           <>
             <div className="relative mb-4 max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -135,19 +219,22 @@ export default function PelangganPage() {
               <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 text-pink-300 animate-spin" /></div>
             ) : (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <table className="w-full text-sm min-w-[500px]">
+                <table className="w-full text-sm min-w-[700px]">
                   <thead className="bg-gray-50 border-b border-gray-100">
                     <tr className="text-xs font-extrabold text-gray-500 uppercase tracking-wider">
-                      <th className="px-6 py-4 text-left">Nama</th>
-                      <th className="px-6 py-4 text-left">No. HP</th>
-                      <th className="px-6 py-4 text-center">Status</th>
-                      <th className="px-6 py-4 text-right">Aksi</th>
+                      <th className="px-5 py-4 text-left">Nama</th>
+                      <th className="px-5 py-4 text-left">No. HP</th>
+                      <th className="px-5 py-4 text-center">Status</th>
+                      <th className="px-5 py-4 text-left">
+                        <span className="flex items-center gap-1"><Key className="w-3.5 h-3.5" /> Akun Portal</span>
+                      </th>
+                      <th className="px-5 py-4 text-right">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
                     {filteredCusts.map(c => (
                       <tr key={c.id} className="hover:bg-pink-50/30 transition-colors">
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
                             <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-sm shrink-0 ${c.is_member ? "bg-gradient-to-br from-amber-400 to-orange-500" : "bg-gradient-to-br from-gray-300 to-gray-400"}`}>
                               {c.name.charAt(0)}
@@ -155,15 +242,32 @@ export default function PelangganPage() {
                             <span className="font-bold text-gray-800">{c.name}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-gray-500 flex items-center gap-2"><Phone className="w-3.5 h-3.5 text-gray-300" />{c.phone || "-"}</td>
-                        <td className="px-6 py-4 text-center">
+                        <td className="px-5 py-4 text-gray-500">
+                          <span className="flex items-center gap-2"><Phone className="w-3.5 h-3.5 text-gray-300" />{c.phone || "—"}</span>
+                        </td>
+                        <td className="px-5 py-4 text-center">
                           {c.is_member
                             ? <span className="bg-amber-100 text-amber-700 text-xs font-extrabold px-3 py-1 rounded-full inline-flex items-center gap-1"><Crown className="w-3 h-3"/>Member</span>
                             : <span className="bg-gray-100 text-gray-500 text-xs font-bold px-3 py-1 rounded-full">Reguler</span>
                           }
                         </td>
-                        <td className="px-6 py-4 text-right">
-                          <button onClick={() => toggleMember(c.id, c.is_member)}
+                        <td className="px-5 py-4">
+                          {c.username ? (
+                            <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 inline-block">
+                              <p className="text-xs text-gray-500">
+                                <span className="font-semibold text-gray-700">User:</span> {c.username}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-0.5">
+                                <span className="font-semibold text-gray-700">Pass:</span>{" "}
+                                <span className="font-mono text-[#C94F78] font-bold">{c.password_plain}</span>
+                              </p>
+                            </div>
+                          ) : (
+                            <span className="text-gray-300 text-xs italic">Belum terdaftar</span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <button onClick={() => toggleMember(c)}
                             className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-all ${c.is_member ? "bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-500" : "bg-amber-50 text-amber-600 hover:bg-amber-100"}`}>
                             {c.is_member ? "Cabut Member" : "Jadikan Member"}
                           </button>
@@ -171,26 +275,26 @@ export default function PelangganPage() {
                       </tr>
                     ))}
                     {filteredCusts.length === 0 && !loading && (
-                      <tr><td colSpan={4} className="text-center py-10 text-gray-400">Belum ada pelanggan terdaftar.</td></tr>
+                      <tr><td colSpan={5} className="text-center py-10 text-gray-400">Belum ada pelanggan terdaftar.</td></tr>
                     )}
                   </tbody>
                 </table>
               </div>
             )}
           </>
-        ) : (
+        )}
+
+        {/* ── TAB VOUCHER ── */}
+        {tab === "voucher" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {vouchers.map(v => (
               <div key={v.id} className={`bg-white border rounded-2xl p-5 shadow-sm relative overflow-hidden transition-all ${v.is_active ? "border-pink-100" : "border-gray-100 opacity-60"}`}>
-                {/* Rose dekorasi sudut */}
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-pink-50 to-transparent -z-0 rounded-bl-full" />
                 <Star className={`absolute top-4 right-4 w-4 h-4 ${v.is_active ? "text-amber-300" : "text-gray-200"}`} />
-
                 <div className="relative z-10">
                   <p className="text-xs font-extrabold text-gray-400 tracking-widest uppercase mb-1">Kode Voucher</p>
                   <h3 className="font-extrabold text-2xl text-gray-900 tracking-tight">{v.code}</h3>
                   <p className="text-sm text-gray-500 mt-1">{v.name}</p>
-
                   <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-end">
                     <div>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Potongan</p>
@@ -201,7 +305,6 @@ export default function PelangganPage() {
                       <p className="font-bold text-gray-700 text-sm">Rp {v.min_purchase.toLocaleString("id-ID")}</p>
                     </div>
                   </div>
-
                   <button onClick={() => toggleVoucher(v.id, v.is_active)}
                     className={`w-full mt-4 py-2 rounded-xl text-xs font-bold transition-all ${v.is_active ? "bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-500" : "bg-pink-50 text-[#C94F78] hover:bg-pink-100"}`}>
                     {v.is_active ? "Nonaktifkan" : "Aktifkan Kembali"}
@@ -217,9 +320,87 @@ export default function PelangganPage() {
             )}
           </div>
         )}
+
+        {/* ── TAB PESANAN WA ── */}
+        {tab === "pesanan" && (
+          <>
+            <div className="flex items-center gap-2 mb-4">
+              <MessageCircle className="w-5 h-5 text-emerald-500" />
+              <h2 className="font-extrabold text-gray-800">Log Pesanan via WhatsApp</h2>
+              <span className="text-xs text-gray-400 ml-1">(real-time dari portal pelanggan)</span>
+            </div>
+            {loading ? (
+              <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 text-pink-300 animate-spin" /></div>
+            ) : orders.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-gray-300">
+                <MessageCircle className="w-16 h-16 mb-4 opacity-20" />
+                <p className="font-semibold">Belum ada pesanan masuk</p>
+                <p className="text-sm mt-1 text-gray-300">Pesanan akan muncul ketika pelanggan menekan tombol "Pesan via WhatsApp"</p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <table className="w-full text-sm min-w-[600px]">
+                  <thead className="bg-gray-50 border-b border-gray-100">
+                    <tr className="text-xs font-extrabold text-gray-500 uppercase tracking-wider">
+                      <th className="px-5 py-4 text-left">Pelanggan</th>
+                      <th className="px-5 py-4 text-left">Produk / Treatment</th>
+                      <th className="px-5 py-4 text-center">Waktu</th>
+                      <th className="px-5 py-4 text-center">Status</th>
+                      <th className="px-5 py-4 text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {orders.map(o => {
+                      const cfg = STATUS_CONFIG[o.status] ?? STATUS_CONFIG.pending;
+                      const Icon = cfg.Icon;
+                      return (
+                        <tr key={o.id} className="hover:bg-pink-50/20 transition-colors">
+                          <td className="px-5 py-4">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-xs shrink-0">
+                                {o.customer_name?.charAt(0) ?? "?"}
+                              </div>
+                              <span className="font-bold text-gray-800">{o.customer_name}</span>
+                            </div>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className="font-semibold text-gray-700">{o.product_name}</span>
+                          </td>
+                          <td className="px-5 py-4 text-center text-xs text-gray-400">
+                            {new Date(o.ordered_at).toLocaleString("id-ID", { day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit" })}
+                          </td>
+                          <td className="px-5 py-4 text-center">
+                            <span className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full ${cfg.color}`}>
+                              <Icon className="w-3.5 h-3.5" />{cfg.label}
+                            </span>
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            {o.status === "pending" && (
+                              <div className="flex gap-2 justify-end">
+                                <button onClick={() => updateOrderStatus(o.id, "confirmed")}
+                                  className="text-xs font-bold px-3 py-1.5 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-all">
+                                  Konfirmasi
+                                </button>
+                                <button onClick={() => updateOrderStatus(o.id, "cancelled")}
+                                  className="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-all">
+                                  Batalkan
+                                </button>
+                              </div>
+                            )}
+                            {o.status !== "pending" && <span className="text-gray-300 text-xs">—</span>}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
-      {/* Modal Pelanggan */}
+      {/* ── Modal Tambah Pelanggan ── */}
       {showCustModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => !saving && setShowCustModal(false)}>
           <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
@@ -249,6 +430,18 @@ export default function PelangganPage() {
                   <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${custForm.is_member ? "left-5" : "left-0.5"}`} />
                 </button>
               </div>
+
+              {/* Preview akun portal */}
+              {custForm.name && (
+                <div className="bg-pink-50 border border-pink-100 rounded-xl p-3">
+                  <p className="text-xs font-extrabold text-[#C94F78] mb-2 uppercase tracking-wider flex items-center gap-1">
+                    <Key className="w-3 h-3" /> Preview Akun Portal
+                  </p>
+                  <p className="text-xs text-gray-600">Username: <strong>{generateUsername(custForm.name)}</strong></p>
+                  <p className="text-xs text-gray-600 mt-0.5">Password: <strong className="font-mono text-[#C94F78]">{getInitials(custForm.name)}-{custForm.is_member ? "M" : "R"}-[ID]</strong></p>
+                  <p className="text-[10px] text-gray-400 mt-1.5 italic">ID akan otomatis digenerate saat disimpan</p>
+                </div>
+              )}
             </div>
             <div className="flex gap-3 mt-6">
               <button onClick={() => setShowCustModal(false)} className="flex-1 py-3 border-2 border-gray-200 rounded-xl font-bold text-gray-600">Batal</button>
@@ -260,7 +453,7 @@ export default function PelangganPage() {
         </div>
       )}
 
-      {/* Modal Voucher */}
+      {/* ── Modal Voucher ── */}
       {showVouchModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => !saving && setShowVouchModal(false)}>
           <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
