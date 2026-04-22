@@ -6,21 +6,19 @@ import { ShoppingCart, Package, Users, FileText, LogOut } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
-type PageMeta = { title: string; subtitle: string; Icon: React.ElementType };
-
-const PAGE_META: Record<string, PageMeta> = {
-  "/":          { title: "Kasir",      subtitle: "Terminal transaksi",       Icon: ShoppingCart },
-  "/stok":      { title: "Inventori",  subtitle: "Stok & layanan klinik",    Icon: Package },
-  "/pelanggan": { title: "Pelanggan",  subtitle: "Member & loyalitas",       Icon: Users },
-  "/laporan":   { title: "Laporan",    subtitle: "Rekap keuangan & omzet",   Icon: FileText },
-};
-
 const navItems = [
   { Icon: ShoppingCart, label: "Kasir",     href: "/" },
   { Icon: Package,      label: "Inventori", href: "/stok" },
   { Icon: Users,        label: "Pelanggan", href: "/pelanggan" },
   { Icon: FileText,     label: "Laporan",   href: "/laporan" },
 ];
+
+const PAGE_TITLE: Record<string, string> = {
+  "/":          "Terminal Kasir",
+  "/stok":      "Inventori Produk",
+  "/pelanggan": "Pelanggan & Member",
+  "/laporan":   "Laporan Keuangan",
+};
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router   = useRouter();
@@ -38,121 +36,104 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.push("/login");
   };
 
-  const meta = PAGE_META[pathname] ?? PAGE_META["/"];
-
   if (!user) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fdfcfc]">
-      <div className="flex items-center gap-3 text-[#d4c8cc]">
-        <div className="w-4 h-4 rounded-full border-2 border-[#e8719a] border-t-transparent animate-spin" />
-        <span className="text-xs tracking-widest uppercase font-medium">Memuat...</span>
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="flex items-center gap-2 text-slate-300">
+        <div className="w-4 h-4 rounded-full border-2 border-[#C94F78] border-t-transparent animate-spin" />
+        <span className="text-xs tracking-widest uppercase">Memuat...</span>
       </div>
     </div>
   );
 
+  const pageTitle = PAGE_TITLE[pathname] ?? "Dashboard";
+
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-[#fdfcfc] overflow-hidden" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
 
-      {/* ── SIDEBAR (Desktop) ──────────────────────────── */}
-      <aside className="hidden md:flex w-60 bg-white border-r border-[#f0ecec] flex-col justify-between shrink-0 z-20">
+      {/* ── SIDEBAR ── */}
+      <aside className="hidden md:flex w-56 bg-white border-r border-slate-100 flex-col shrink-0">
 
-        {/* Logo */}
-        <div className="px-5 pt-7 pb-4">
-          <div className="flex items-center gap-3 mb-8 px-1">
-            <div className="w-9 h-9 rounded-xl bg-[#fff0f5] border border-[#ffd6e7] flex items-center justify-center">
-              <Image src="/lbqueen_logo.png" alt="LBQueen" width={22} height={22} className="object-contain" />
+        {/* Brand */}
+        <div className="px-5 pt-6 pb-2">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-8 h-8 rounded-lg bg-rose-50 border border-rose-100 flex items-center justify-center overflow-hidden">
+              <Image src="/lbqueen_logo.png" alt="LBQueen" width={20} height={20} className="object-contain" />
             </div>
             <div>
-              <p className="font-semibold text-[#b83b72] text-[15px] leading-none tracking-tight">LBQueen</p>
-              <p className="text-[10px] text-[#e8b4c8] font-normal mt-1 tracking-[0.12em] uppercase">Care Beauty</p>
+              <p className="text-sm font-semibold text-[#C94F78] leading-none">LBQueen</p>
+              <p className="text-[10px] text-rose-300 mt-0.5 tracking-wider">POS System</p>
             </div>
           </div>
 
-          {/* Nav */}
-          <p className="text-[10px] text-[#ccc8c8] uppercase tracking-[0.18em] font-medium px-2 mb-3">Menu</p>
-          <nav className="space-y-1">
+          {/* Nav Links */}
+          <nav className="space-y-0.5">
             {navItems.map(({ Icon, label, href }) => {
               const active = pathname === href;
               return (
                 <Link key={href} href={href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] transition-all ${
                     active
-                      ? "bg-[#fff0f5] text-[#d4508a] font-medium"
-                      : "text-[#a8a4a4] hover:text-[#d4508a] hover:bg-[#fff8fb] font-normal"
+                      ? "bg-[#C94F78] text-white font-medium"
+                      : "text-slate-500 hover:bg-rose-50 hover:text-[#C94F78]"
                   }`}>
-                  <Icon className={`w-4 h-4 shrink-0 ${active ? "text-[#d4508a]" : "text-[#d4c8cc]"}`} />
-                  <span>{label}</span>
-                  {active && <div className="ml-auto w-1 h-4 rounded-full bg-[#d4508a] opacity-60" />}
+                  <Icon className={`w-4 h-4 shrink-0 ${active ? "text-white" : "text-slate-300"}`} />
+                  {label}
                 </Link>
               );
             })}
           </nav>
         </div>
 
-        {/* User */}
-        <div className="p-4 border-t border-[#f5f2f2]">
-          <div className="flex items-center gap-3 px-2 mb-3">
-            <div className="w-8 h-8 rounded-full bg-[#fff0f5] border border-[#ffd6e7] flex items-center justify-center text-[#d4508a] text-sm font-medium shrink-0">
+        {/* User section */}
+        <div className="mt-auto p-4 border-t border-slate-100">
+          <div className="flex items-center gap-2.5 px-1 mb-3">
+            <div className="w-7 h-7 rounded-full bg-rose-100 flex items-center justify-center text-[#C94F78] text-xs font-semibold shrink-0">
               {user.name.charAt(0)}
             </div>
             <div className="min-w-0">
-              <p className="text-[13px] text-[#3d3939] font-medium truncate leading-tight">{user.name}</p>
-              <p className="text-[10px] text-[#a8a4a4] capitalize mt-0.5">{user.role || "Admin"}</p>
+              <p className="text-[12px] font-medium text-slate-700 truncate">{user.name}</p>
+              <p className="text-[10px] text-slate-400 capitalize">{user.role}</p>
             </div>
           </div>
           <button onClick={handleLogout}
-            className="w-full py-2 rounded-xl flex items-center justify-center gap-2 text-[#a8a4a4] text-[11px] font-medium hover:text-[#b83b72] hover:bg-[#fff0f5] transition-all">
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-[11px] text-slate-400 hover:text-[#C94F78] hover:bg-rose-50 transition-all">
             <LogOut className="w-3.5 h-3.5" /> Keluar
           </button>
         </div>
       </aside>
 
-      {/* ── MAIN CONTENT ───────────────────────────────── */}
-      <div className="flex-1 flex flex-col h-[calc(100vh-64px)] md:h-screen w-full overflow-hidden">
-
-        {/* Page Header — minimal pink strip */}
-        <header className="shrink-0 flex items-center justify-between px-6 border-b border-[#f0ecec] bg-white"
-          style={{ height: 56 }}>
-          <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-[#fff0f5] flex items-center justify-center">
-              <meta.Icon className="w-3.5 h-3.5 text-[#d4508a]" />
-            </div>
-            <div>
-              <h1 className="text-[14px] font-semibold text-[#2d2820] leading-none">{meta.title}</h1>
-              <p className="text-[10px] text-[#c4b8bb] mt-0.5">{meta.subtitle}</p>
-            </div>
-          </div>
-
-          {/* Right: user chip */}
-          <div className="hidden md:flex items-center gap-2">
-            <p className="text-[12px] text-[#a8a4a4]">{user.name}</p>
-            <div className="w-7 h-7 rounded-full bg-[#fff0f5] border border-[#ffd6e7] flex items-center justify-center text-[#d4508a] text-[11px] font-medium">
+      {/* ── MAIN ── */}
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        {/* Top bar */}
+        <header className="bg-white border-b border-slate-100 px-6 h-14 flex items-center justify-between shrink-0">
+          <h1 className="text-[14px] font-semibold text-slate-800">{pageTitle}</h1>
+          <div className="hidden md:flex items-center gap-3">
+            <span className="text-[11px] text-slate-400">{user.name}</span>
+            <div className="w-7 h-7 rounded-full bg-rose-100 border border-rose-200 flex items-center justify-center text-[#C94F78] text-xs font-semibold">
               {user.name.charAt(0)}
             </div>
           </div>
         </header>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-hidden bg-[#fdfcfc]">
+        {/* Content */}
+        <main className="flex-1 overflow-hidden bg-slate-50">
           <div className="h-full overflow-auto scrollbar-hide">
             {children}
           </div>
         </main>
       </div>
 
-      {/* ── BOTTOM NAV (Mobile) ─────────────────────────── */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-[#f0ecec]
-        flex items-center z-50">
+      {/* ── MOBILE BOTTOM NAV ── */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-100 flex z-50">
         {navItems.map(({ Icon, label, href }) => {
           const active = pathname === href;
           return (
             <Link key={href} href={href}
-              className="flex-1 flex flex-col items-center justify-center gap-1 h-full">
-              <div className={`p-1.5 rounded-lg transition-all ${active ? "bg-[#fff0f5]" : ""}`}>
-                <Icon className={`w-5 h-5 ${active ? "text-[#d4508a]" : "text-[#ccc8c8]"}`} />
+              className="flex-1 flex flex-col items-center justify-center gap-1">
+              <div className={`p-1.5 rounded-lg ${active ? "bg-[#C94F78]" : ""}`}>
+                <Icon className={`w-5 h-5 ${active ? "text-white" : "text-slate-300"}`} />
               </div>
-              <span className={`text-[9px] tracking-wide ${active ? "text-[#d4508a] font-medium" : "text-[#ccc8c8]"}`}>
-                {label}
-              </span>
+              <span className={`text-[9px] ${active ? "text-[#C94F78] font-medium" : "text-slate-300"}`}>{label}</span>
             </Link>
           );
         })}

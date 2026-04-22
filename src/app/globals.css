@@ -1,104 +1,71 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #fdfcfc;
-  --foreground: #2d2d2d;
-
-  /* LBQueen Pink palette — soft & refined */
-  --pink-50:  #fff0f5;
-  --pink-100: #ffd6e7;
-  --pink-200: #ffb3ce;
-  --pink-300: #ff85b0;
-  --pink-400: #e8719a;
-  --pink-500: #d4508a;   /* primary CTA */
-  --pink-600: #b83b72;   /* hover */
-  --pink-700: #922d59;
-
-  /* Neutrals */
-  --neutral-50:  #fafafa;
-  --neutral-100: #f5f4f4;
-  --neutral-200: #ece9e9;
-  --neutral-300: #d4d0d0;
-  --neutral-400: #a8a4a4;
-  --neutral-500: #7a7676;
-  --neutral-700: #3d3939;
-  --neutral-900: #201e1e;
+  --background: #ffffff;
+  --foreground: #1e293b;
+  --lb-pink:       #C94F78;
+  --lb-pink-dark:  #A83E60;
+  --lb-pink-light: #FCE7EF;
+  --lb-pink-soft:  #FDF2F6;
 }
 
 @theme default {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --color-lb-pink:      var(--lb-pink);
+  --color-lb-pink-dark: var(--lb-pink-dark);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
-
-* { box-sizing: border-box; }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: "kern" 1, "liga" 1;
 }
 
 @layer utilities {
+  /* Shadows */
+  .shadow-card        { box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04); }
+  .shadow-premium     { box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04); }
+  .shadow-luxury-pink { box-shadow: 0 4px 20px rgba(201,79,120,0.15); }
+  .shadow-pink-sm     { box-shadow: 0 2px 12px rgba(201,79,120,0.2); }
 
-  /* ─── Shadows ─────────────────────────────────────────── */
-  .shadow-card   { box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04); }
-  .shadow-card-hover { box-shadow: 0 4px 24px rgba(212, 80, 138, 0.12), 0 1px 6px rgba(0,0,0,0.05); }
-  .shadow-pink   { box-shadow: 0 8px 24px -4px rgba(212, 80, 138, 0.18); }
-  .shadow-soft   { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-
-  /* Luxury aliases (backward compat) */
-  .shadow-premium     { box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04); }
-  .shadow-luxury-pink { box-shadow: 0 4px 24px rgba(212, 80, 138, 0.12); }
-
-  /* ─── Scrollbar ───────────────────────────────────────── */
+  /* Scrollbar */
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-  /* ─── Forms ───────────────────────────────────────────── */
+  /* Admin Form Styles */
   .label-form {
     display: block;
     font-size: 11px;
     font-weight: 500;
-    color: var(--neutral-400);
+    color: #94a3b8;
     letter-spacing: 0.06em;
-    margin-bottom: 7px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
   }
   .input-form {
     width: 100%;
     padding: 10px 14px;
-    border: 1px solid var(--neutral-200);
-    border-radius: 10px;
-    font-size: 14px;
+    border: 1.5px solid #f1f5f9;
+    border-radius: 12px;
+    font-size: 13px;
     font-weight: 400;
-    color: var(--neutral-700);
-    background: #fff;
+    color: #334155;
+    background: #ffffff;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: 'Inter', system-ui, sans-serif;
   }
   .input-form:focus {
-    border-color: var(--pink-400);
-    box-shadow: 0 0 0 3px rgba(212, 80, 138, 0.08);
+    border-color: #C94F78;
+    box-shadow: 0 0 0 3px rgba(201,79,120,0.08);
   }
   .input-form:disabled {
-    background: var(--neutral-50);
+    background: #f8fafc;
     opacity: 0.5;
     cursor: not-allowed;
-  }
-
-  /* ─── Badges ──────────────────────────────────────────── */
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    padding: 3px 8px;
-    border-radius: 6px;
   }
 }
