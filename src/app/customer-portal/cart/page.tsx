@@ -66,9 +66,9 @@ export default function CartPage() {
         <div className="w-24 h-24 bg-rose-50 rounded-full flex items-center justify-center mb-6">
           <ShoppingBag className="w-10 h-10 text-[#C94F78]" />
         </div>
-        <h2 className="text-xl font-black text-gray-900 mb-2">Keranjang Kosong</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">Keranjang Kosong</h2>
         <p className="text-sm text-gray-400 mb-8 max-w-[240px]">Sepertinya Anda belum memilih perawatan premium hari ini.</p>
-        <Link href="/customer-portal" className="bg-[#C94F78] text-white px-8 py-3 rounded-full font-black text-sm tracking-widest shadow-lg shadow-rose-100 uppercase transition-all active:scale-95">
+        <Link href="/customer-portal" className="bg-[#C94F78] text-white px-8 py-3 rounded-full font-semibold text-sm tracking-widest shadow-lg shadow-rose-100 uppercase transition-all active:scale-95">
           Mulai Belanja
         </Link>
       </div>
@@ -83,8 +83,8 @@ export default function CartPage() {
           <ChevronLeft className="w-6 h-6" />
         </Link>
         <div>
-          <h1 className="text-lg font-black text-gray-900 leading-tight">Keranjang Saya</h1>
-          <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{totalItems} Item • Checkout via WhatsApp</p>
+          <h1 className="text-lg font-semibold text-gray-900 leading-tight">Keranjang Saya</h1>
+          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">{totalItems} Item • Checkout via WhatsApp</p>
         </div>
       </div>
 
@@ -97,19 +97,19 @@ export default function CartPage() {
                 {item.image_url ? (
                   <Image src={item.image_url} alt={item.name} fill className="object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[#C94F78] text-xs font-black opacity-20 italic">LB</div>
+                  <div className="w-full h-full flex items-center justify-center text-[#C94F78] text-xs font-semibold opacity-20 italic">LB</div>
                 )}
               </div>
               
               <div className="flex-1 flex flex-col justify-between py-1">
                 <div>
-                  <h3 className="text-[14px] font-black text-gray-800 line-clamp-1 leading-tight mb-1">{item.name}</h3>
+                  <h3 className="text-[14px] font-semibold text-gray-800 line-clamp-1 leading-tight mb-1">{item.name}</h3>
                   {item.variant_name && (
-                    <span className="inline-block px-2 py-0.5 bg-rose-50 text-[#C94F78] text-[9px] font-black rounded-lg mb-2">
+                    <span className="inline-block px-2 py-0.5 bg-rose-50 text-[#C94F78] text-[9px] font-semibold rounded-lg mb-2">
                        {item.variant_name}
                     </span>
                   )}
-                  <p className="text-[14px] font-black text-[#C94F78]">Rp {((item.price - (item.voucher_discount || 0))).toLocaleString("id-ID")}</p>
+                  <p className="text-[14px] font-semibold text-[#C94F78]">Rp {((item.price - (item.voucher_discount || 0))).toLocaleString("id-ID")}</p>
                 </div>
                 
                 <div className="flex items-center justify-between mt-3">
@@ -120,7 +120,7 @@ export default function CartPage() {
                       >
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="text-sm font-black text-gray-800 w-4 text-center">{item.qty}</span>
+                      <span className="text-sm font-semibold text-gray-800 w-4 text-center">{item.qty}</span>
                       <button 
                         onClick={() => updateQty(item.id, item.qty + 1, item.variant_id)}
                         className="text-gray-400 active:scale-125 transition-transform"
@@ -145,27 +145,27 @@ export default function CartPage() {
                 <Ticket className="w-5 h-5" />
               </div>
               <div>
-                 <p className="text-[13px] font-black">Voucher LBQueen</p>
-                 <p className="text-[11px] font-bold text-gray-400">Hemat hingga Rp 50rb</p>
+                 <p className="text-[13px] font-semibold">Voucher LBQueen</p>
+                 <p className="text-[11px] font-semibold text-gray-400">Hemat hingga Rp 50rb</p>
               </div>
            </div>
-           <button className="text-[12px] font-black text-[#C94F78] px-3 py-1.5 rounded-lg border border-[#C94F78]/20 bg-rose-50">Gunakan</button>
+           <button className="text-[12px] font-semibold text-[#C94F78] px-3 py-1.5 rounded-lg border border-[#C94F78]/20 bg-rose-50">Gunakan</button>
         </div>
 
         {/* Totals Section */}
         <div className="bg-white rounded-[32px] p-6 border border-gray-100 shadow-sm space-y-4">
-           <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-4">Ringkasan Pesanan</h3>
-           <div className="flex justify-between items-center text-sm font-bold text-gray-400">
+           <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-widest mb-4">Ringkasan Pesanan</h3>
+           <div className="flex justify-between items-center text-sm font-semibold text-gray-400">
               <span>Subtotal</span>
               <span>Rp {cartTotal.toLocaleString("id-ID")}</span>
            </div>
-           <div className="flex justify-between items-center text-sm font-bold text-gray-400">
+           <div className="flex justify-between items-center text-sm font-semibold text-gray-400">
               <span>Promo Diskon</span>
               <span className="text-emerald-500">- Rp 0</span>
            </div>
            <div className="pt-4 border-t border-dashed border-gray-200 flex justify-between items-center">
-              <span className="text-base font-black text-gray-900">Total Pembayaran</span>
-              <span className="text-xl font-black text-[#C94F78]">Rp {cartTotal.toLocaleString("id-ID")}</span>
+              <span className="text-base font-semibold text-gray-900">Total Pembayaran</span>
+              <span className="text-xl font-semibold text-[#C94F78]">Rp {cartTotal.toLocaleString("id-ID")}</span>
            </div>
         </div>
       </div>
@@ -175,7 +175,7 @@ export default function CartPage() {
          <button 
            onClick={handleWAOrder}
            disabled={processing}
-           className="w-full bg-[#C94F78] h-[72px] rounded-3xl text-white font-black text-[14px] tracking-widest shadow-2xl shadow-rose-200 flex items-center justify-between px-8 active:scale-[0.98] transition-all disabled:opacity-50"
+           className="w-full bg-[#C94F78] h-[72px] rounded-3xl text-white font-semibold text-[14px] tracking-widest shadow-2xl shadow-rose-200 flex items-center justify-between px-8 active:scale-[0.98] transition-all disabled:opacity-50"
          >
            <div className="flex items-center gap-3">
               {processing ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShoppingBag className="w-5 h-5" />}

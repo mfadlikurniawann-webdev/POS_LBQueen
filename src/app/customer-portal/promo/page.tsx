@@ -76,18 +76,18 @@ export default function PromoPage() {
            <Link href="/customer-portal" className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-all">
              <ChevronLeft className="w-6 h-6" />
            </Link>
-           <h1 className="text-xl font-black leading-tight flex items-center gap-2">
+           <h1 className="text-xl font-semibold leading-tight flex items-center gap-2">
              <Ticket className="w-6 h-6" /> Promo Spesial
            </h1>
         </div>
-        <p className="text-[11px] font-bold opacity-80 uppercase tracking-widest pl-14">Penawaran Eksklusif LBQueen</p>
+        <p className="text-[11px] font-semibold opacity-80 uppercase tracking-widest pl-14">Penawaran Eksklusif LBQueen</p>
       </div>
 
       <div className="p-5">
         {loading ? (
           <div className="py-20 flex flex-col items-center gap-4">
              <Loader2 className="w-8 h-8 text-[#C94F78] animate-spin" />
-             <p className="text-xs font-bold text-gray-300 uppercase tracking-widest">Mencari Diskon Terbaik...</p>
+             <p className="text-xs font-semibold text-gray-300 uppercase tracking-widest">Mencari Diskon Terbaik...</p>
           </div>
         ) : products.length === 0 ? (
           <div className="py-20 text-center flex flex-col items-center gap-6">
@@ -95,9 +95,9 @@ export default function PromoPage() {
                 <Ticket className="w-12 h-12" />
              </div>
              <div>
-                <p className="text-base font-black text-gray-900 mb-1">Belum Ada Promo</p>
+                <p className="text-base font-semibold text-gray-900 mb-1">Belum Ada Promo</p>
                 <p className="text-sm text-gray-400 mb-8 max-w-[240px] mx-auto">Nantikan promo menarik lainnya di media sosial kami.</p>
-                <Link href="/customer-portal" className="bg-[#C94F78] text-white px-8 py-3 rounded-full font-black text-sm tracking-widest uppercase shadow-lg">
+                <Link href="/customer-portal" className="bg-[#C94F78] text-white px-8 py-3 rounded-full font-semibold text-sm tracking-widest uppercase shadow-lg">
                    Eksplor Layanan
                 </Link>
              </div>
@@ -116,12 +116,12 @@ export default function PromoPage() {
                       {product.image_url ? (
                         <Image src={product.image_url} alt={product.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                       ) : (
-                        <div className="w-full h-full bg-rose-50 flex items-center justify-center text-[#C94F78] italic font-black text-4xl opacity-20">LB</div>
+                        <div className="w-full h-full bg-rose-50 flex items-center justify-center text-[#C94F78] italic font-semibold text-4xl opacity-20">LB</div>
                       )}
-                      <div className="absolute top-4 left-4 bg-[#C94F78] text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
+                      <div className="absolute top-4 left-4 bg-[#C94F78] text-white px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-widest shadow-lg flex items-center gap-2">
                          <Flame className="w-3 h-3" /> BEST DEAL
                       </div>
-                      <div className="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1.5 rounded-xl font-black text-[12px] shadow-lg">
+                      <div className="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1.5 rounded-xl font-semibold text-[12px] shadow-lg">
                          -{discountPercent}%
                       </div>
                    </div>
@@ -129,21 +129,21 @@ export default function PromoPage() {
                    <div className="p-6">
                       <div className="flex justify-between items-start mb-4">
                          <div>
-                            <h3 className="text-base font-black text-gray-900 mb-1 line-clamp-1">{product.name}</h3>
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{product.type}</p>
+                            <h3 className="text-base font-semibold text-gray-900 mb-1 line-clamp-1">{product.name}</h3>
+                            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{product.type}</p>
                          </div>
                          <div className="flex items-center gap-1 text-amber-400">
                             <Star className="w-4 h-4 fill-amber-400" />
-                            <span className="text-xs font-black text-gray-900">4.9</span>
+                            <span className="text-xs font-semibold text-gray-900">4.9</span>
                          </div>
                       </div>
 
                       <div className="flex items-end justify-between">
                          <div>
-                            <p className="text-xs font-bold text-gray-300 line-through mb-0.5">Rp {originalPrice.toLocaleString("id-ID")}</p>
-                            <p className="text-xl font-black text-[#C94F78]">Rp {finalPrice.toLocaleString("id-ID")}</p>
+                            <p className="text-xs font-semibold text-gray-300 line-through mb-0.5">Rp {originalPrice.toLocaleString("id-ID")}</p>
+                            <p className="text-xl font-semibold text-[#C94F78]">Rp {finalPrice.toLocaleString("id-ID")}</p>
                          </div>
-                         <Link href={`/customer-portal`} className="h-12 px-6 bg-[#C94F78] text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-rose-100">
+                         <Link href={`/customer-portal`} className="h-12 px-6 bg-[#C94F78] text-white rounded-2xl font-semibold text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-rose-100">
                             Pesan Sekarang <ArrowRight className="w-4 h-4" />
                          </Link>
                       </div>

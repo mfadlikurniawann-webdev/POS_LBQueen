@@ -186,8 +186,8 @@ export default function PelangganPage() {
             <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-bl-full transition-transform group-hover:scale-110" />
             <div className="relative z-10 flex items-start justify-between">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-white/70 mb-1">{s.label}</p>
-                <p className="text-2xl font-bold">{s.value}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-white/70 mb-1">{s.label}</p>
+                <p className="text-2xl font-semibold">{s.value}</p>
               </div>
               <div className="bg-white/20 p-2 rounded-2xl backdrop-blur-sm">{s.icon}</div>
             </div>
@@ -204,7 +204,7 @@ export default function PelangganPage() {
             { key: "pesanan", label: `Pesanan${orders.filter(o => o.status === "pending").length > 0 ? ` (${orders.filter(o => o.status === "pending").length})` : ""}` },
           ] as const).map(t => (
             <button key={t.key} onClick={() => setTab(t.key)}
-              className={`px-6 py-2 rounded-2xl text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap border-2 ${
+              className={`px-6 py-2 rounded-2xl text-[11px] font-semibold uppercase tracking-widest transition-all whitespace-nowrap border-2 ${
                 tab === t.key 
                   ? "bg-lb-pink text-white border-lb-pink shadow-luxury-pink scale-[1.03]" 
                   : "bg-white text-slate-400 border-slate-100 hover:bg-lb-pink hover:border-lb-pink hover:text-white hover:shadow-luxury-pink"
@@ -216,7 +216,7 @@ export default function PelangganPage() {
         {tab !== "pesanan" && (
           <button
             onClick={() => tab === "pelanggan" ? setShowCustModal(true) : setShowVouchModal(true)}
-            className="bg-[#C94F78] hover:bg-lb-rose-dark text-white font-bold px-6 py-2.5 rounded-2xl flex items-center gap-2 text-[11px] uppercase tracking-widest transition-all shadow-luxury-pink shrink-0">
+            className="bg-[#C94F78] hover:bg-lb-rose-dark text-white font-semibold px-6 py-2.5 rounded-2xl flex items-center gap-2 text-[11px] uppercase tracking-widest transition-all shadow-luxury-pink shrink-0">
             <Plus className="w-4 h-4 text-rose-100" /> {tab === "pelanggan" ? "Tambah" : "Buat Voucher"}
           </button>
         )}
@@ -231,7 +231,7 @@ export default function PelangganPage() {
             <div className="relative mb-5 max-w-sm group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-lb-pink transition-colors" />
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari nama atau nomor HP..."
-                className="w-full pl-11 pr-4 py-2.5 bg-white border-2 border-slate-50 rounded-2xl text-[11px] font-bold uppercase tracking-widest focus:border-lb-pink focus:ring-4 focus:ring-rose-50 outline-none transition-all shadow-sm" />
+                className="w-full pl-11 pr-4 py-2.5 bg-white border-2 border-slate-50 rounded-2xl text-[11px] font-semibold uppercase tracking-widest focus:border-lb-pink focus:ring-4 focus:ring-rose-50 outline-none transition-all shadow-sm" />
             </div>
 
             {loading ? (
@@ -243,14 +243,14 @@ export default function PelangganPage() {
                   {filteredCusts.map(c => (
                     <div key={c.id} className="bg-white rounded-3xl border border-gray-100 p-4 shadow-sm relative overflow-hidden">
                       <div className="flex items-center gap-4 mb-3">
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white text-base shrink-0 shadow-lg ${c.is_member ? "bg-gradient-to-br from-amber-400 to-orange-500" : "bg-gray-300"}`}>
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-semibold text-white text-base shrink-0 shadow-lg ${c.is_member ? "bg-gradient-to-br from-amber-400 to-orange-500" : "bg-gray-300"}`}>
                           {c.name.charAt(0)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-black text-gray-800 text-sm truncate">{c.name}</h4>
+                          <h4 className="font-semibold text-gray-800 text-sm truncate">{c.name}</h4>
                           <div className="flex items-center gap-2 mt-0.5">
                             <Phone className="w-3 h-3 text-gray-300" />
-                            <span className="text-[10px] text-gray-400 font-bold">{c.phone || "—"}</span>
+                            <span className="text-[10px] text-gray-400 font-semibold">{c.phone || "—"}</span>
                           </div>
                           {c.nik && (
                              <p className="text-[9px] text-gray-400 mt-1 font-mono">NIK: {c.nik}</p>
@@ -260,25 +260,25 @@ export default function PelangganPage() {
                           )}
                         </div>
                         <div className="text-right">
-                          {c.is_member && <span className="bg-amber-100 text-amber-600 text-[8px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">Gold Member</span>}
+                          {c.is_member && <span className="bg-amber-100 text-amber-600 text-[8px] font-semibold px-2 py-1 rounded-full uppercase tracking-tighter">Gold Member</span>}
                         </div>
                       </div>
                       
                       {c.username && (
                         <div className="bg-rose-50/50 rounded-2xl p-3 border border-rose-100/50 mb-3">
                            <div className="flex justify-between text-[9px] mb-1">
-                              <span className="text-gray-400 font-bold uppercase">Portal Username</span>
-                              <span className="text-gray-800 font-bold">{c.username}</span>
+                              <span className="text-gray-400 font-semibold uppercase">Portal Username</span>
+                              <span className="text-gray-800 font-semibold">{c.username}</span>
                            </div>
                            <div className="flex justify-between text-[9px]">
-                              <span className="text-gray-400 font-bold uppercase">Portal Password</span>
-                              <span className="text-lb-pink font-bold font-mono">{c.password_plain}</span>
+                              <span className="text-gray-400 font-semibold uppercase">Portal Password</span>
+                              <span className="text-lb-pink font-semibold font-mono">{c.password_plain}</span>
                            </div>
                         </div>
                       )}
                       
                       <button onClick={() => toggleMember(c)}
-                        className={`w-full py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${c.is_member ? "bg-slate-50 text-slate-400" : "bg-amber-50 text-amber-600 border border-amber-100"}`}>
+                        className={`w-full py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-widest transition-all ${c.is_member ? "bg-slate-50 text-slate-400" : "bg-amber-50 text-amber-600 border border-amber-100"}`}>
                         {c.is_member ? "Nonaktifkan Member" : "Aktivasi Member"}
                       </button>
                     </div>
@@ -289,7 +289,7 @@ export default function PelangganPage() {
                 <div className="hidden md:block bg-white rounded-[32px] border border-gray-100 shadow-premium overflow-hidden">
                   <table className="w-full text-sm">
                     <thead className="bg-gray-50/50 border-b border-gray-100">
-                      <tr className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      <tr className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
                         <th className="px-6 py-5 text-left">Pelanggan</th>
                         <th className="px-6 py-5 text-left">Kontak</th>
                         <th className="px-6 py-5 text-center">Status</th>
@@ -302,15 +302,15 @@ export default function PelangganPage() {
                         <tr key={c.id} className="hover:bg-rose-50/20 transition-colors group">
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-4">
-                              <div className={`w-10 h-10 rounded-[14px] flex items-center justify-center font-bold text-white text-sm shrink-0 shadow-sm transition-transform group-hover:scale-110 ${c.is_member ? "bg-gradient-to-br from-amber-400 to-orange-500 shadow-amber-200" : "bg-gray-100 text-gray-400"}`}>
+                              <div className={`w-10 h-10 rounded-[14px] flex items-center justify-center font-semibold text-white text-sm shrink-0 shadow-sm transition-transform group-hover:scale-110 ${c.is_member ? "bg-gradient-to-br from-amber-400 to-orange-500 shadow-amber-200" : "bg-gray-100 text-gray-400"}`}>
                                 {c.name.charAt(0)}
                               </div>
-                              <span className="font-bold text-gray-800 italic">{c.name}</span>
+                              <span className="font-semibold text-gray-800 italic">{c.name}</span>
                             </div>
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex flex-col gap-1">
-                               <span className="flex items-center gap-2 text-[11px] font-bold text-gray-400">
+                               <span className="flex items-center gap-2 text-[11px] font-semibold text-gray-400">
                                   <div className="p-1.5 bg-gray-50 rounded-lg"><Phone className="w-3 h-3" /></div>
                                   {c.phone || "—"}
                                </span>
@@ -320,20 +320,20 @@ export default function PelangganPage() {
                           </td>
                           <td className="px-6 py-4 text-center">
                             {c.is_member
-                              ? <span className="bg-amber-100 text-amber-700 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-amber-200">Gold Member</span>
-                              : <span className="text-slate-300 text-[9px] font-bold uppercase tracking-widest">Reguler</span>
+                              ? <span className="bg-amber-100 text-amber-700 text-[9px] font-semibold px-3 py-1 rounded-full uppercase tracking-widest border border-amber-200">Gold Member</span>
+                              : <span className="text-slate-300 text-[9px] font-semibold uppercase tracking-widest">Reguler</span>
                             }
                           </td>
                           <td className="px-6 py-4">
                             {c.username ? (
                               <div className="flex gap-3">
                                 <div className="flex flex-col">
-                                   <span className="text-[8px] text-gray-300 font-bold uppercase tracking-tighter">User</span>
-                                   <span className="text-[11px] font-bold text-gray-700">{c.username}</span>
+                                   <span className="text-[8px] text-gray-300 font-semibold uppercase tracking-tighter">User</span>
+                                   <span className="text-[11px] font-semibold text-gray-700">{c.username}</span>
                                 </div>
                                 <div className="flex flex-col">
-                                   <span className="text-[8px] text-gray-300 font-bold uppercase tracking-tighter">Pass</span>
-                                   <span className="text-[11px] font-bold text-lb-pink font-mono">{c.password_plain}</span>
+                                   <span className="text-[8px] text-gray-300 font-semibold uppercase tracking-tighter">Pass</span>
+                                   <span className="text-[11px] font-semibold text-lb-pink font-mono">{c.password_plain}</span>
                                 </div>
                               </div>
                             ) : (
@@ -342,7 +342,7 @@ export default function PelangganPage() {
                           </td>
                           <td className="px-6 py-4 text-right">
                             <button onClick={() => toggleMember(c)}
-                              className={`text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-xl transition-all border ${c.is_member ? "bg-white text-rose-400 border-rose-100 hover:bg-rose-50" : "bg-white text-amber-600 border-amber-100 hover:bg-amber-50"}`}>
+                              className={`text-[10px] font-semibold uppercase tracking-widest px-4 py-2 rounded-xl transition-all border ${c.is_member ? "bg-white text-rose-400 border-rose-100 hover:bg-rose-50" : "bg-white text-amber-600 border-amber-100 hover:bg-amber-50"}`}>
                               {c.is_member ? "Revoke Gold" : "Upgrade Gold"}
                             </button>
                           </td>
@@ -365,32 +365,32 @@ export default function PelangganPage() {
                 
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-4">
-                    <div className="bg-gray-900 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-xl">
+                    <div className="bg-gray-900 text-white px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-widest shadow-xl">
                       {v.code}
                     </div>
                     {v.products?.name && (
-                      <div className="bg-rose-50 text-lb-pink px-2.5 py-1 rounded-xl text-[9px] font-bold uppercase tracking-tighter border border-rose-100">
+                      <div className="bg-rose-50 text-lb-pink px-2.5 py-1 rounded-xl text-[9px] font-semibold uppercase tracking-tighter border border-rose-100">
                         {v.products.name}
                       </div>
                     )}
                   </div>
                   
-                  <h3 className="font-bold text-lg text-gray-800 leading-tight mb-1">{v.name}</h3>
-                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Voucher Member</p>
+                  <h3 className="font-semibold text-lg text-gray-800 leading-tight mb-1">{v.name}</h3>
+                  <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Voucher Member</p>
                   
                   <div className="mt-6 pt-6 border-t border-gray-50 flex justify-between items-end">
                     <div>
-                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Potongan</p>
-                      <p className="font-bold text-lb-pink text-2xl tracking-tighter italic">Rp {v.discount_amount.toLocaleString("id-ID")}</p>
+                      <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Potongan</p>
+                      <p className="font-semibold text-lb-pink text-2xl tracking-tighter italic">Rp {v.discount_amount.toLocaleString("id-ID")}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Min. Belanja</p>
-                      <p className="font-bold text-gray-900 text-sm tracking-tight text-right">Rp {v.min_purchase.toLocaleString("id-ID")}</p>
+                      <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Min. Belanja</p>
+                      <p className="font-semibold text-gray-900 text-sm tracking-tight text-right">Rp {v.min_purchase.toLocaleString("id-ID")}</p>
                     </div>
                   </div>
                   
                   <button onClick={() => toggleVoucher(v.id, v.is_active)}
-                    className={`w-full mt-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all ${v.is_active ? "bg-rose-50 text-lb-pink hover:bg-lb-pink hover:text-white" : "bg-slate-100 text-slate-400 hover:bg-slate-200"}`}>
+                    className={`w-full mt-6 py-3 rounded-2xl text-[10px] font-semibold uppercase tracking-widest transition-all ${v.is_active ? "bg-rose-50 text-lb-pink hover:bg-lb-pink hover:text-white" : "bg-slate-100 text-slate-400 hover:bg-slate-200"}`}>
                     {v.is_active ? "Nonaktifkan Promo" : "Aktifkan Kembali"}
                   </button>
                 </div>
@@ -399,7 +399,7 @@ export default function PelangganPage() {
             {!loading && vouchers.length === 0 && (
               <div className="col-span-full py-20 text-center text-gray-300">
                 <Tag className="w-16 h-16 mx-auto mb-4 opacity-10" />
-                <p className="font-bold uppercase tracking-widest text-sm">Belum ada promo tersedia</p>
+                <p className="font-semibold uppercase tracking-widest text-sm">Belum ada promo tersedia</p>
               </div>
             )}
           </div>
@@ -414,13 +414,13 @@ export default function PelangganPage() {
                     <MessageCircle className="w-5 h-5" />
                  </div>
                  <div>
-                    <h2 className="font-bold text-slate-800 tracking-tight uppercase text-sm">Pesanan via Portal</h2>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Real-time Dashboard</p>
+                    <h2 className="font-semibold text-slate-800 tracking-tight uppercase text-sm">Pesanan via Portal</h2>
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">Real-time Dashboard</p>
                  </div>
               </div>
               <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                 <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Live Updates</span>
+                 <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-widest">Live Updates</span>
               </div>
             </div>
 
@@ -431,7 +431,7 @@ export default function PelangganPage() {
                 <div className="w-20 h-20 bg-gray-50 rounded-[40px] flex items-center justify-center mb-6">
                    <MessageCircle className="w-10 h-10 opacity-20" />
                 </div>
-                <p className="font-bold uppercase tracking-widest text-xs">Belum ada pesanan masuk</p>
+                <p className="font-semibold uppercase tracking-widest text-xs">Belum ada pesanan masuk</p>
               </div>
             ) : (
               <>
@@ -442,22 +442,22 @@ export default function PelangganPage() {
                     return (
                       <div key={o.id} className="bg-white rounded-[32px] p-5 shadow-sm border border-gray-100 relative">
                         <div className="flex items-center justify-between mb-4">
-                           <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${cfg.color}`}>
+                           <div className={`px-3 py-1 rounded-full text-[9px] font-semibold uppercase tracking-widest ${cfg.color}`}>
                              {cfg.label}
                            </div>
-                           <span className="text-[10px] text-gray-400 font-bold">
+                           <span className="text-[10px] text-gray-400 font-semibold">
                              {new Date(o.ordered_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
                            </span>
                         </div>
-                        <h4 className="font-black text-gray-800 text-sm mb-1">{o.product_name}</h4>
+                        <h4 className="font-semibold text-gray-800 text-sm mb-1">{o.product_name}</h4>
                         <div className="flex items-center gap-2 mb-5">
-                           <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400">{o.customer_name?.charAt(0)}</div>
-                           <p className="text-[11px] text-gray-500 font-bold">{o.customer_name}</p>
+                           <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-semibold text-gray-400">{o.customer_name?.charAt(0)}</div>
+                           <p className="text-[11px] text-gray-500 font-semibold">{o.customer_name}</p>
                         </div>
                         {o.status === "pending" && (
                           <div className="flex gap-2">
-                             <button onClick={() => updateOrderStatus(o.id, "confirmed")} className="flex-1 py-2.5 rounded-2xl bg-emerald-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100">Diterima</button>
-                             <button onClick={() => updateOrderStatus(o.id, "cancelled")} className="flex-1 py-2.5 rounded-2xl bg-gray-50 text-gray-400 font-black text-[10px] uppercase tracking-widest">Tolak</button>
+                             <button onClick={() => updateOrderStatus(o.id, "confirmed")} className="flex-1 py-2.5 rounded-2xl bg-emerald-500 text-white font-semibold text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100">Diterima</button>
+                             <button onClick={() => updateOrderStatus(o.id, "cancelled")} className="flex-1 py-2.5 rounded-2xl bg-gray-50 text-gray-400 font-semibold text-[10px] uppercase tracking-widest">Tolak</button>
                           </div>
                         )}
                       </div>
@@ -469,7 +469,7 @@ export default function PelangganPage() {
                 <div className="hidden md:block bg-white rounded-[32px] border border-gray-100 shadow-premium overflow-hidden">
                   <table className="w-full text-sm">
                     <thead className="bg-gray-50/50 border-b border-gray-100">
-                      <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      <tr className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
                         <th className="px-6 py-5 text-left">Pelanggan</th>
                         <th className="px-6 py-5 text-left">Produk / Layanan</th>
                         <th className="px-6 py-5 text-center">Waktu Pesan</th>
@@ -485,23 +485,23 @@ export default function PelangganPage() {
                           <tr key={o.id} className="hover:bg-rose-50/10 transition-colors group">
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-[12px] bg-emerald-500 flex items-center justify-center text-white font-black text-xs shadow-lg shadow-emerald-100">
+                                <div className="w-9 h-9 rounded-[12px] bg-emerald-500 flex items-center justify-center text-white font-semibold text-xs shadow-lg shadow-emerald-100">
                                   {o.customer_name?.charAt(0) ?? "?"}
                                 </div>
-                                <span className="font-black text-gray-800 text-sm italic">{o.customer_name}</span>
+                                <span className="font-semibold text-gray-800 text-sm italic">{o.customer_name}</span>
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                               <p className="font-black text-gray-700 text-sm tracking-tight">{o.product_name}</p>
+                               <p className="font-semibold text-gray-700 text-sm tracking-tight">{o.product_name}</p>
                             </td>
                             <td className="px-6 py-4 text-center">
                                <div className="flex flex-col items-center">
-                                  <span className="text-[11px] font-black text-gray-800">{new Date(o.ordered_at).toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}</span>
-                                  <span className="text-[9px] font-bold text-gray-400 uppercase">{new Date(o.ordered_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</span>
+                                  <span className="text-[11px] font-semibold text-gray-800">{new Date(o.ordered_at).toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}</span>
+                                  <span className="text-[9px] font-semibold text-gray-400 uppercase">{new Date(o.ordered_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</span>
                                </div>
                             </td>
                             <td className="px-6 py-4 text-center">
-                              <span className={`inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${cfg.color}`}>
+                              <span className={`inline-flex items-center gap-2 text-[9px] font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full ${cfg.color}`}>
                                 <Icon className="w-3.5 h-3.5" />{cfg.label}
                               </span>
                             </td>
@@ -509,11 +509,11 @@ export default function PelangganPage() {
                               {o.status === "pending" && (
                                 <div className="flex gap-2 justify-end">
                                   <button onClick={() => updateOrderStatus(o.id, "confirmed")}
-                                    className="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-emerald-500 text-white shadow-lg shadow-emerald-100 hover:scale-105 transition-all">
+                                    className="px-4 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-widest bg-emerald-500 text-white shadow-lg shadow-emerald-100 hover:scale-105 transition-all">
                                     Konfirmasi
                                   </button>
                                   <button onClick={() => updateOrderStatus(o.id, "cancelled")}
-                                    className="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white border border-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all">
+                                    className="px-4 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-widest bg-white border border-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all">
                                     Tolak
                                   </button>
                                 </div>
@@ -536,7 +536,7 @@ export default function PelangganPage() {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => !saving && setShowCustModal(false)}>
           <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-5">
-              <h3 className="text-xl font-extrabold">Tambah Pelanggan</h3>
+              <h3 className="text-xl font-semibold">Tambah Pelanggan</h3>
               <button onClick={() => setShowCustModal(false)}><X className="text-gray-400" /></button>
             </div>
             <div className="space-y-4">
@@ -562,7 +562,7 @@ export default function PelangganPage() {
                 <div className="flex items-center gap-2">
                   <Crown className="w-5 h-5 text-amber-500" />
                   <div>
-                    <p className="font-bold text-sm text-gray-800">Daftarkan sebagai Member?</p>
+                    <p className="font-semibold text-sm text-gray-800">Daftarkan sebagai Member?</p>
                     <p className="text-xs text-gray-400">Member mendapat akses voucher eksklusif</p>
                   </div>
                 </div>
@@ -575,7 +575,7 @@ export default function PelangganPage() {
               {/* Preview akun portal */}
               {custForm.name && (
                 <div className="bg-pink-50 border border-pink-100 rounded-xl p-3">
-                  <p className="text-xs font-extrabold text-[#C94F78] mb-2 uppercase tracking-wider flex items-center gap-1">
+                  <p className="text-xs font-semibold text-[#C94F78] mb-2 uppercase tracking-wider flex items-center gap-1">
                     <Key className="w-3 h-3" /> Preview Akun Portal
                   </p>
                   <p className="text-xs text-gray-600">Username: <strong>{generateUsername(custForm.name)}</strong></p>
@@ -585,8 +585,8 @@ export default function PelangganPage() {
               )}
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowCustModal(false)} className="flex-1 py-3 border-2 border-gray-200 rounded-xl font-bold text-gray-600">Batal</button>
-              <button onClick={saveCust} disabled={saving} className="flex-1 py-3 bg-[#C94F78] text-white font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 hover:bg-[#A83E60] transition-all">
+              <button onClick={() => setShowCustModal(false)} className="flex-1 py-3 border-2 border-gray-200 rounded-xl font-semibold text-gray-600">Batal</button>
+              <button onClick={saveCust} disabled={saving} className="flex-1 py-3 bg-[#C94F78] text-white font-semibold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 hover:bg-[#A83E60] transition-all">
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null} {saving ? "Menyimpan..." : "Simpan"}
               </button>
             </div>
@@ -599,7 +599,7 @@ export default function PelangganPage() {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => !saving && setShowVouchModal(false)}>
           <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-5">
-              <h3 className="text-xl font-extrabold">Buat Voucher Baru</h3>
+              <h3 className="text-xl font-semibold">Buat Voucher Baru</h3>
               <button onClick={() => setShowVouchModal(false)}><X className="text-gray-400" /></button>
             </div>
             <div className="space-y-4">
@@ -635,8 +635,8 @@ export default function PelangganPage() {
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowVouchModal(false)} className="flex-1 py-3 border-2 border-gray-200 rounded-xl font-bold text-gray-600">Batal</button>
-              <button onClick={saveVoucher} disabled={saving} className="flex-1 py-3 bg-[#C94F78] text-white font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 hover:bg-[#A83E60] transition-all">
+              <button onClick={() => setShowVouchModal(false)} className="flex-1 py-3 border-2 border-gray-200 rounded-xl font-semibold text-gray-600">Batal</button>
+              <button onClick={saveVoucher} disabled={saving} className="flex-1 py-3 bg-[#C94F78] text-white font-semibold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 hover:bg-[#A83E60] transition-all">
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null} {saving ? "Menyimpan..." : "Buat Voucher"}
               </button>
             </div>

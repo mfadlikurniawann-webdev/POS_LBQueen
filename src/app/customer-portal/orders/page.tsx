@@ -77,7 +77,7 @@ export default function OrdersPage() {
            <Link href="/customer-portal" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 active:scale-90 transition-all">
              <ChevronLeft className="w-6 h-6" />
            </Link>
-           <h1 className="text-lg font-black text-gray-900 leading-tight">Order Saya</h1>
+           <h1 className="text-lg font-semibold text-gray-900 leading-tight">Order Saya</h1>
         </div>
         <button onClick={() => window.open(`https://wa.me/${WA_NUMBER}`, "_blank")} className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-[#C94F78]">
            <HelpCircle className="w-5 h-5" />
@@ -90,7 +90,7 @@ export default function OrdersPage() {
            <button 
              key={tab}
              onClick={() => setActiveTab(tab)}
-             className={`flex-1 min-w-[100px] py-4 text-[12px] font-black uppercase tracking-widest transition-all relative ${
+             className={`flex-1 min-w-[100px] py-4 text-[12px] font-semibold uppercase tracking-widest transition-all relative ${
                activeTab === tab ? "text-[#C94F78]" : "text-gray-400"
              }`}
            >
@@ -104,7 +104,7 @@ export default function OrdersPage() {
         {loading ? (
           <div className="py-20 flex flex-col items-center gap-4">
              <Loader2 className="w-8 h-8 text-[#C94F78] animate-spin" />
-             <p className="text-xs font-bold text-gray-300 uppercase tracking-widest">Menyiapkan History...</p>
+             <p className="text-xs font-semibold text-gray-300 uppercase tracking-widest">Menyiapkan History...</p>
           </div>
         ) : filteredOrders.length === 0 ? (
           <div className="py-20 text-center flex flex-col items-center gap-6">
@@ -112,9 +112,9 @@ export default function OrdersPage() {
                 <ShoppingBag className="w-10 h-10 text-gray-200" />
              </div>
              <div>
-                <p className="text-base font-black text-gray-900 mb-1">Belum Ada Pesanan</p>
+                <p className="text-base font-semibold text-gray-900 mb-1">Belum Ada Pesanan</p>
                 <p className="text-sm text-gray-400 mb-8 max-w-[240px] mx-auto">Temukan perawatan premium favorit Anda sekarang.</p>
-                <Link href="/customer-portal" className="bg-[#C94F78] text-white px-8 py-3 rounded-full font-black text-sm tracking-widest shadow-lg shadow-rose-100 uppercase transition-all active:scale-95">
+                <Link href="/customer-portal" className="bg-[#C94F78] text-white px-8 py-3 rounded-full font-semibold text-sm tracking-widest shadow-lg shadow-rose-100 uppercase transition-all active:scale-95">
                   Eksplor Sekarang
                 </Link>
              </div>
@@ -130,33 +130,33 @@ export default function OrdersPage() {
                          <div className={`p-1.5 rounded-lg ${status.bg} ${status.color}`}>
                             {status.icon}
                          </div>
-                         <span className={`text-[10px] font-black uppercase tracking-widest ${status.color}`}>
+                         <span className={`text-[10px] font-semibold uppercase tracking-widest ${status.color}`}>
                            {status.label}
                          </span>
                       </div>
-                      <span className="text-[10px] font-bold text-gray-400 tracking-widest">
+                      <span className="text-[10px] font-semibold text-gray-400 tracking-widest">
                         {new Date(order.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' })}
                       </span>
                    </div>
                    
                    <div className="flex gap-4">
-                      <div className="w-16 h-16 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center text-[#C94F78] italic font-black text-xl opacity-20">
+                      <div className="w-16 h-16 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center text-[#C94F78] italic font-semibold text-xl opacity-20">
                          LB
                       </div>
                       <div className="flex-1 min-w-0">
-                         <h3 className="text-sm font-black text-gray-800 truncate mb-1">{order.product_name}</h3>
-                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ritual Belanja Premium</p>
+                         <h3 className="text-sm font-semibold text-gray-800 truncate mb-1">{order.product_name}</h3>
+                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Ritual Belanja Premium</p>
                       </div>
                    </div>
 
                    <div className="pt-4 border-t border-dashed border-gray-100 flex justify-between items-center">
                       <button 
                         onClick={() => window.open(`https://wa.me/${WA_NUMBER}?text=Halo LBQueen, saya ingin menanyakan status pesanan saya: ${order.product_name}`, "_blank")}
-                        className="text-[11px] font-black text-[#C94F78] flex items-center gap-2"
+                        className="text-[11px] font-semibold text-[#C94F78] flex items-center gap-2"
                       >
                          <MessageCircle className="w-4 h-4" /> Hubungi Admin
                       </button>
-                      <button className="text-[11px] font-black text-gray-400 uppercase border border-gray-100 px-4 py-2 rounded-xl">
+                      <button className="text-[11px] font-semibold text-gray-400 uppercase border border-gray-100 px-4 py-2 rounded-xl">
                          Detail
                       </button>
                    </div>

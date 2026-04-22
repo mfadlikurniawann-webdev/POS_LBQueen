@@ -44,7 +44,7 @@ function InnerLayout({ children, customer, handleLogout, pathname }: {
           <div className={`p-1 rounded-lg relative ${pathname === "/customer-portal/orders" ? "bg-rose-50" : ""}`}>
             <ShoppingBag className="w-6 h-6" />
             {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 bg-[#C94F78] text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full font-bold border-2 border-white">
+              <span className="absolute -top-1 -right-1 bg-[#C94F78] text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full font-semibold border-2 border-white">
                 {totalItems}
               </span>
             )}

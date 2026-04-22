@@ -342,7 +342,7 @@ export default function KasirPage() {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-[11px] text-slate-400 uppercase tracking-wider">Total</span>
-            <span className="text-lg font-bold text-[#C94F78]">Rp {total.toLocaleString("id-ID")}</span>
+            <span className="text-lg font-semibold text-[#C94F78]">Rp {total.toLocaleString("id-ID")}</span>
           </div>
           <button onClick={() => setShowPaymentModal(true)} disabled={!cart.length}
             className={`w-full py-3 rounded-xl text-[12px] font-semibold flex items-center justify-center gap-2 transition-all ${
@@ -442,7 +442,7 @@ export default function KasirPage() {
             </div>
             <div className="bg-rose-50 border border-rose-100 rounded-xl p-4 mb-4">
               <p className="text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Total Tagihan</p>
-              <p className="text-2xl font-bold text-[#C94F78]">Rp {total.toLocaleString("id-ID")}</p>
+              <p className="text-2xl font-semibold text-[#C94F78]">Rp {total.toLocaleString("id-ID")}</p>
             </div>
             <div className="mb-4">
               <label className="label-form">Jumlah Bayar (Rp)</label>
@@ -474,7 +474,7 @@ export default function KasirPage() {
             <div className="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <h2 className="text-xl font-bold text-slate-800 mb-2">Transaksi Berhasil!</h2>
+            <h2 className="text-xl font-semibold text-slate-800 mb-2">Transaksi Berhasil!</h2>
             <p className="text-sm text-slate-500 mb-8">Pembayaran telah diterima dan stok sudah diperbarui.</p>
             
             <div className="w-full flex flex-col gap-3">
@@ -497,19 +497,19 @@ export default function KasirPage() {
       )}
 
       {/* ── FLOATING CART (MOBILE) ── */}
-      {cart.length > 0 && !showCartModal && !showVariantModal && !showCustomerModal && !showPaymentModal && (
+      {!showCartModal && !showVariantModal && !showCustomerModal && !showPaymentModal && (
         <button onClick={() => setShowCartModal(true)}
           className="md:hidden fixed bottom-20 left-4 right-4 z-40 bg-[#C94F78] text-white rounded-2xl p-4 flex items-center justify-between shadow-lg animate-in slide-in-from-bottom-4 active:scale-95 transition-transform">
           <div className="flex items-center gap-3">
             <div className="relative">
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1.5 -right-1.5 bg-white text-[#C94F78] text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+              <span className="absolute -top-1.5 -right-1.5 bg-white text-[#C94F78] text-[9px] font-semibold w-4 h-4 flex items-center justify-center rounded-full">
                 {cart.length}
               </span>
             </div>
             <div className="text-left">
               <p className="text-[10px] opacity-90">Total</p>
-              <p className="text-[13px] font-bold">Rp {total.toLocaleString("id-ID")}</p>
+              <p className="text-[13px] font-semibold">Rp {total.toLocaleString("id-ID")}</p>
             </div>
           </div>
           <span className="text-[12px] font-semibold flex items-center gap-1">
@@ -579,7 +579,7 @@ export default function KasirPage() {
                             <Tag className="w-2.5 h-2.5" /> {item.variant_name}
                           </p>
                         )}
-                        <p className="text-[13px] font-bold text-[#C94F78] mt-1">Rp {item.selling_price.toLocaleString("id-ID")}</p>
+                        <p className="text-[13px] font-semibold text-[#C94F78] mt-1">Rp {item.selling_price.toLocaleString("id-ID")}</p>
                       </div>
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center gap-2 border border-slate-100 rounded-lg px-2 py-1 bg-slate-50">
@@ -598,7 +598,7 @@ export default function KasirPage() {
             <div className="p-5 border-t border-slate-100 bg-white">
               <div className="flex justify-between items-end mb-4">
                 <span className="text-[12px] font-medium text-slate-500">Total Pembayaran</span>
-                <span className="text-xl font-bold text-[#C94F78]">Rp {total.toLocaleString("id-ID")}</span>
+                <span className="text-xl font-semibold text-[#C94F78]">Rp {total.toLocaleString("id-ID")}</span>
               </div>
               <button onClick={() => { setShowCartModal(false); setShowPaymentModal(true); }}
                 className="w-full py-3.5 bg-[#C94F78] text-white rounded-xl text-[14px] font-semibold flex items-center justify-center gap-2 hover:bg-[#A83E60] transition-colors shadow-pink-sm">

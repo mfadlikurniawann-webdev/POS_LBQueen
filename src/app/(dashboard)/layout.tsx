@@ -119,12 +119,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 const IconComponent = navItem?.Icon || ShoppingCart;
                 return <IconComponent className="w-[18px] h-[18px] md:w-5 md:h-5 text-white" strokeWidth={2.5} />;
               })()}
-              <h1 className="text-[15px] md:text-[17px] font-bold text-white tracking-wide">{pageTitle}</h1>
+              <h1 className="text-[15px] md:text-[17px] font-semibold text-white tracking-wide">{pageTitle}</h1>
             </div>
 
             <div className="hidden md:flex items-center gap-3 absolute right-6 z-10">
               <span className="text-[11px] text-white/90 font-medium">{user.name}</span>
-              <div className="w-8 h-8 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-white text-xs font-bold backdrop-blur-sm shadow-sm">
+              <div className="w-8 h-8 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-white text-xs font-semibold backdrop-blur-sm shadow-sm">
                 {user.name.charAt(0)}
               </div>
             </div>
@@ -133,7 +133,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Content */}
         <main className="flex-1 overflow-hidden bg-transparent">
-          <div className="h-full overflow-auto scrollbar-hide">
+          <div className="h-full overflow-auto scrollbar-hide pb-24 md:pb-0">
             {children}
           </div>
         </main>
