@@ -73,3 +73,22 @@ body {
     cursor: not-allowed;
   }
 }
+
+@media print {
+  @page {
+    margin: 0;
+  }
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .no-print {
+    display: none !important;
+  }
+  /* Mengizinkan kertas untuk seukuran konten */
+  html, body {
+    width: auto;
+    height: auto;
+    background: transparent !important;
+  }
+}

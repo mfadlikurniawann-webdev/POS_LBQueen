@@ -158,34 +158,40 @@ export default function CustomerPortalPage() {
   return (
     <div className="min-h-screen bg-transparent font-sans pb-32">
 
-      {/* ── HEADER ── */}
-      <header className="bg-white/80 backdrop-blur-md px-5 pt-12 pb-6 sticky top-0 z-50 border-b border-gray-50 flex flex-col gap-4">
-        <div className="flex items-center justify-between">
+      {/* ── HEADER (Pink Wave Gradient) ── */}
+      <header className="relative bg-gradient-to-r from-[#D95F87] via-[#C94F78] to-[#A83E60] px-5 pt-12 pb-6 sticky top-0 z-50 rounded-b-[32px] shadow-lg shadow-rose-200/50 flex flex-col gap-4 overflow-hidden">
+        {/* Wave Decoration */}
+        <svg className="absolute bottom-0 left-0 w-full h-auto opacity-20 pointer-events-none" viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#ffffff" d="M0,96L48,112C96,128,192,160,288,154.7C384,149,480,107,576,96C672,85,768,107,864,122.7C960,139,1056,149,1152,144C1248,139,1344,117,1392,106.7L1440,96L1440,200L1392,200C1344,200,1248,200,1152,200C1056,200,960,200,864,200C768,200,672,200,576,200C480,200,384,200,288,200C192,200,96,200,48,200L0,200Z"></path>
+        </svg>
+        <div className="absolute -bottom-8 -left-10 w-40 h-24 bg-white/10 rounded-[100%] blur-xl pointer-events-none" />
+
+        <div className="relative z-10 flex items-center justify-between">
            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center overflow-hidden shrink-0">
+              <div className="w-10 h-10 rounded-full bg-white/20 border border-white/30 backdrop-blur-sm flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
                  {customer?.name ? (
-                   <span className="text-[#C94F78] font-black text-sm">{customer.name.charAt(0)}</span>
-                 ) : <User className="w-5 h-5 text-gray-300" />}
+                   <span className="text-white font-black text-sm">{customer.name.charAt(0)}</span>
+                 ) : <User className="w-5 h-5 text-white/70" />}
               </div>
               <div>
-                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Ritual Kecantikan,</p>
-                 <h2 className="text-[15px] font-black text-gray-900 leading-tight">{customer?.name || "Pelanggan Setia"}</h2>
+                 <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest leading-none mb-1">Ritual Kecantikan,</p>
+                 <h2 className="text-[15px] font-black text-white leading-tight">{customer?.name || "Pelanggan Setia"}</h2>
               </div>
            </div>
            <div className="flex items-center gap-2">
-              <button onClick={() => window.open(`https://wa.me/${WA_NUMBER}`, "_blank")} className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-[#C94F78] active:scale-90 transition-all">
+              <button onClick={() => window.open(`https://wa.me/${WA_NUMBER}`, "_blank")} className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-all border border-white/30 shadow-sm">
                  <MessageCircle className="w-5 h-5" />
               </button>
            </div>
         </div>
 
         {/* Search Bar */}
-        <div className="bg-gray-50 rounded-2xl px-4 py-3 flex items-center gap-3 border border-gray-100 focus-within:border-rose-200 transition-all">
-           <SearchIcon className="w-4 h-4 text-gray-400" />
+        <div className="relative z-10 bg-white/20 backdrop-blur-md rounded-2xl px-4 py-3 flex items-center gap-3 border border-white/30 focus-within:bg-white transition-all group">
+           <SearchIcon className="w-4 h-4 text-white group-focus-within:text-[#C94F78]" />
            <input 
              type="text" 
              placeholder="Cari perawatan premium..." 
-             className="bg-transparent border-none outline-none text-sm text-gray-800 placeholder:text-gray-400 w-full font-medium"
+             className="bg-transparent border-none outline-none text-sm text-white placeholder:text-white/70 group-focus-within:text-slate-800 group-focus-within:placeholder:text-slate-400 w-full font-medium"
              value={searchQuery}
              onChange={(e) => setSearchQuery(e.target.value)}
            />

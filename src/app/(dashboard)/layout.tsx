@@ -104,16 +104,32 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* ── MAIN ── */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-        {/* Top bar */}
-        <header className="bg-white border-b border-slate-100 px-6 h-14 flex items-center justify-between shrink-0">
-          <h1 className="text-[14px] font-semibold text-slate-800">{pageTitle}</h1>
-          <div className="hidden md:flex items-center gap-3">
-            <span className="text-[11px] text-slate-400">{user.name}</span>
-            <div className="w-7 h-7 rounded-full bg-rose-100 border border-rose-200 flex items-center justify-center text-[#C94F78] text-xs font-semibold">
-              {user.name.charAt(0)}
+        {/* Top bar (Pink Gradient Header) */}
+        <div className="px-0 md:px-4 pt-0 md:pt-4 shrink-0 bg-white">
+          <header className="relative bg-gradient-to-r from-[#D95F87] via-[#C94F78] to-[#A83E60] h-16 md:h-[72px] flex items-center justify-center rounded-b-[24px] md:rounded-[24px] shadow-lg shadow-rose-200/50 overflow-hidden">
+            {/* Wave Decoration */}
+            <svg className="absolute bottom-0 left-0 w-full h-auto opacity-20 pointer-events-none" viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#ffffff" d="M0,96L48,112C96,128,192,160,288,154.7C384,149,480,107,576,96C672,85,768,107,864,122.7C960,139,1056,149,1152,144C1248,139,1344,117,1392,106.7L1440,96L1440,200L1392,200C1344,200,1248,200,1152,200C1056,200,960,200,864,200C768,200,672,200,576,200C480,200,384,200,288,200C192,200,96,200,48,200L0,200Z"></path>
+            </svg>
+            <div className="absolute -bottom-8 -left-10 w-40 h-24 bg-white/10 rounded-[100%] blur-xl pointer-events-none" />
+
+            <div className="relative z-10 flex items-center gap-2">
+              {(() => {
+                const navItem = navItems.find(n => n.href === pathname);
+                const IconComponent = navItem?.Icon || ShoppingCart;
+                return <IconComponent className="w-[18px] h-[18px] md:w-5 md:h-5 text-white" strokeWidth={2.5} />;
+              })()}
+              <h1 className="text-[15px] md:text-[17px] font-bold text-white tracking-wide">{pageTitle}</h1>
             </div>
-          </div>
-        </header>
+
+            <div className="hidden md:flex items-center gap-3 absolute right-6 z-10">
+              <span className="text-[11px] text-white/90 font-medium">{user.name}</span>
+              <div className="w-8 h-8 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-white text-xs font-bold backdrop-blur-sm shadow-sm">
+                {user.name.charAt(0)}
+              </div>
+            </div>
+          </header>
+        </div>
 
         {/* Content */}
         <main className="flex-1 overflow-hidden bg-transparent">

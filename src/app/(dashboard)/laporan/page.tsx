@@ -171,7 +171,9 @@ export default function LaporanPage() {
                 {transactions.map(t => (
                   <tr key={t.id} className="hover:bg-rose-50/20 transition-all duration-300 group">
                     <td className="px-4 md:px-12 py-4 md:py-5 whitespace-nowrap">
-                       <span className="font-bold text-[#C94F78] text-xs underline decoration-rose-100 underline-offset-4 cursor-pointer">{t.invoice_number}</span>
+                       <a href={`/invoice/${t.id}`} target="_blank" rel="noreferrer" className="font-bold text-[#C94F78] text-xs underline decoration-rose-100 underline-offset-4 hover:text-[#A83E60] cursor-pointer" title="Cetak Ulang Invoice">
+                         {t.invoice_number}
+                       </a>
                     </td>
                     <td className="px-4 md:px-12 py-4 md:py-5 text-[11px] text-slate-400 font-bold uppercase tracking-tight whitespace-nowrap">
                        {format(new Date(t.created_at), "dd/MM/yyyy")}

@@ -56,6 +56,7 @@ export default function KasirPage() {
   const [loading,    setLoading]    = useState(true);
   const [processing, setProcessing] = useState(false);
   const [toastMsg,   setToastMsg]   = useState("");
+  const [successTxnId, setSuccessTxnId] = useState<number | null>(null);
 
   const showToast = (msg: string) => { setToastMsg(msg); setTimeout(() => setToastMsg(""), 3000); };
 
@@ -140,7 +141,7 @@ export default function KasirPage() {
 
       setCart([]); setSelectedCustomer(null); setPaymentAmount("");
       setShowPaymentModal(false);
-      showToast(`Transaksi ${inv} berhasil`);
+      setSuccessTxnId(txn.id);
       fetchData();
     } catch { showToast("Gagal menyimpan transaksi."); }
     finally { setProcessing(false); }
@@ -462,6 +463,35 @@ export default function KasirPage() {
                 hover:bg-[#A83E60] transition-colors disabled:opacity-40 shadow-pink-sm">
               {processing ? "Memproses..." : "Konfirmasi Transaksi"}
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── SUCCESS TXN MODAL ── */}
+      {successTxnId && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[80] flex items-center justify-center p-4">
+          <div className="bg-white rounded-[32px] w-full max-w-sm shadow-2xl p-8 flex flex-col items-center text-center animate-in zoom-in-95">
+            <div className="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
+              <CheckCircle2 className="w-10 h-10" />
+            </div>
+            <h2 className="text-xl font-bold text-slate-800 mb-2">Transaksi Berhasil!</h2>
+            <p className="text-sm text-slate-500 mb-8">Pembayaran telah diterima dan stok sudah diperbarui.</p>
+            
+            <div className="w-full flex flex-col gap-3">
+              <button onClick={() => {
+                  window.open(`/invoice/${successTxnId}`, "_blank");
+                  setSuccessTxnId(null);
+                }}
+                className="w-full py-3.5 bg-[#C94F78] hover:bg-[#A83E60] text-white rounded-xl text-[14px] font-semibold flex items-center justify-center gap-2 transition-all shadow-pink-sm"
+              >
+                Cetak Invoice Thermal
+              </button>
+              <button onClick={() => setSuccessTxnId(null)}
+                className="w-full py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-[14px] font-semibold transition-all"
+              >
+                Tutup & Transaksi Baru
+              </button>
+            </div>
           </div>
         </div>
       )}
