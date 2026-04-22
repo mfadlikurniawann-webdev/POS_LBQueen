@@ -50,6 +50,7 @@ export default function KasirPage() {
   const [showCustomerModal,  setShowCustomerModal]  = useState(false);
   const [showPaymentModal,   setShowPaymentModal]   = useState(false);
   const [showVariantModal,   setShowVariantModal]   = useState(false);
+  const [showCartModal,      setShowCartModal]      = useState(false);
   const [variantTarget,      setVariantTarget]      = useState<Product | null>(null);
   const [paymentAmount,    setPaymentAmount]    = useState("");
   const [loading,    setLoading]    = useState(true);
@@ -461,6 +462,119 @@ export default function KasirPage() {
                 hover:bg-[#A83E60] transition-colors disabled:opacity-40 shadow-pink-sm">
               {processing ? "Memproses..." : "Konfirmasi Transaksi"}
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── FLOATING CART (MOBILE) ── */}
+      {cart.length > 0 && !showCartModal && !showVariantModal && !showCustomerModal && !showPaymentModal && (
+        <button onClick={() => setShowCartModal(true)}
+          className="md:hidden fixed bottom-20 left-4 right-4 z-40 bg-[#C94F78] text-white rounded-2xl p-4 flex items-center justify-between shadow-lg animate-in slide-in-from-bottom-4 active:scale-95 transition-transform">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <ShoppingCart className="w-5 h-5" />
+              <span className="absolute -top-1.5 -right-1.5 bg-white text-[#C94F78] text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                {cart.length}
+              </span>
+            </div>
+            <div className="text-left">
+              <p className="text-[10px] opacity-90">Total</p>
+              <p className="text-[13px] font-bold">Rp {total.toLocaleString("id-ID")}</p>
+            </div>
+          </div>
+          <span className="text-[12px] font-semibold flex items-center gap-1">
+            Lihat Keranjang
+          </span>
+        </button>
+      )}
+
+      {/* ── MOBILE CART MODAL ── */}
+      {showCartModal && (
+        <div className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-end">
+          <div className="bg-white w-full rounded-t-3xl max-h-[85vh] flex flex-col animate-in slide-in-from-bottom shadow-2xl">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center">
+                  <ShoppingCart className="w-4 h-4 text-[#C94F78]" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800 text-[14px]">Keranjang</p>
+                  <p className="text-[10px] text-slate-400">{cart.length} item</p>
+                </div>
+              </div>
+              <button onClick={() => setShowCartModal(false)} className="text-slate-400 hover:text-slate-600 p-1 bg-slate-50 rounded-full">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-auto p-5 space-y-4">
+              {!selectedCustomer ? (
+                <button onClick={() => { setShowCartModal(false); setShowCustomerModal(true); }}
+                  className="w-full flex items-center gap-2 py-3 px-4 rounded-xl border border-dashed border-rose-200
+                    text-[#C94F78] text-[13px] hover:bg-rose-50 transition-colors font-medium">
+                  <UserCheck className="w-4 h-4" /> Pilih Pelanggan
+                </button>
+              ) : (
+                <div className="flex items-center gap-3 p-3 bg-rose-50 rounded-xl border border-rose-100">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0 ${selectedCustomer.is_member ? "bg-orange-400" : "bg-slate-300"}`}>
+                    {selectedCustomer.name.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-semibold text-slate-700 truncate">{selectedCustomer.name}</p>
+                    {selectedCustomer.is_member && <p className="text-[10px] text-orange-400 font-medium flex items-center gap-1"><Crown className="w-3 h-3" /> Member</p>}
+                  </div>
+                  <button onClick={() => setSelectedCustomer(null)} className="text-rose-400 hover:text-rose-600 p-1">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
+              <div className="space-y-3">
+                {cart.map(item => (
+                  <div key={item.cartKey} className="flex gap-3 p-3 rounded-xl border border-slate-100 bg-white shadow-sm">
+                    <div className="w-14 h-14 rounded-xl overflow-hidden bg-rose-50 shrink-0 border border-rose-100 relative">
+                      {item.image_url ? (
+                        <Image src={item.image_url} alt={item.name} fill className="object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-rose-200">
+                          <Flower2 className="w-5 h-5" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0 flex flex-col justify-between">
+                      <div>
+                        <p className="text-[13px] font-medium text-slate-800 leading-tight truncate">{item.name}</p>
+                        {item.variant_name && (
+                          <p className="text-[10px] text-[#C94F78] flex items-center gap-1 mt-0.5">
+                            <Tag className="w-2.5 h-2.5" /> {item.variant_name}
+                          </p>
+                        )}
+                        <p className="text-[13px] font-bold text-[#C94F78] mt-1">Rp {item.selling_price.toLocaleString("id-ID")}</p>
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center gap-2 border border-slate-100 rounded-lg px-2 py-1 bg-slate-50">
+                          <button onClick={() => updateQty(item.cartKey, -1)} className="text-slate-400 hover:text-[#C94F78] p-0.5"><Minus className="w-3 h-3" /></button>
+                          <span className="text-[13px] font-medium text-slate-700 w-5 text-center">{item.qty}</span>
+                          <button onClick={() => updateQty(item.cartKey, 1)} className="text-slate-400 hover:text-[#C94F78] p-0.5"><Plus className="w-3 h-3" /></button>
+                        </div>
+                        <button onClick={() => removeFromCart(item.cartKey)} className="text-slate-300 hover:text-rose-500 p-1.5"><Trash2 className="w-4 h-4" /></button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-5 border-t border-slate-100 bg-white">
+              <div className="flex justify-between items-end mb-4">
+                <span className="text-[12px] font-medium text-slate-500">Total Pembayaran</span>
+                <span className="text-xl font-bold text-[#C94F78]">Rp {total.toLocaleString("id-ID")}</span>
+              </div>
+              <button onClick={() => { setShowCartModal(false); setShowPaymentModal(true); }}
+                className="w-full py-3.5 bg-[#C94F78] text-white rounded-xl text-[14px] font-semibold flex items-center justify-center gap-2 hover:bg-[#A83E60] transition-colors shadow-pink-sm">
+                <CreditCard className="w-5 h-5" /> Proses Pembayaran
+              </button>
+            </div>
           </div>
         </div>
       )}

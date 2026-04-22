@@ -137,6 +137,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Link>
           );
         })}
+        <button onClick={handleLogout}
+          className="flex-1 flex flex-col items-center justify-center gap-1 active:bg-rose-50 transition-colors">
+          <div className="p-1.5 rounded-lg">
+            <LogOut className="w-5 h-5 text-slate-300" />
+          </div>
+          <span className="text-[9px] text-slate-300">Keluar</span>
+        </button>
       </nav>
     </div>
   );

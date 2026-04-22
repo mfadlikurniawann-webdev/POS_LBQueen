@@ -234,87 +234,143 @@ export default function StokPage() {
         </div>
       </div>
 
-      {/* Table */}
+      {/* List */}
       <div className="flex-1 overflow-auto p-5">
-        <div className="bg-white rounded-2xl border border-[#f0ecec] overflow-hidden">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-[#f5f2f2] text-[10px] text-[#ccc8c8] uppercase tracking-wider">
-                <th className="px-5 py-3 font-medium">Produk</th>
-                <th className="px-5 py-3 font-medium">Sub Kategori</th>
-                <th className="px-5 py-3 font-medium">Varian</th>
-                <th className="px-5 py-3 font-medium">Harga Modal</th>
-                <th className="px-5 py-3 font-medium">Harga Jual</th>
-                <th className="px-5 py-3 font-medium text-center">Stok</th>
-                <th className="px-5 py-3 font-medium text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#faf8f8]">
-              {loading ? (
-                <tr><td colSpan={7} className="py-16 text-center">
-                  <Loader2 className="w-5 h-5 text-[#e8b4c8] animate-spin mx-auto" />
-                </td></tr>
-              ) : filtered.length === 0 ? (
-                <tr><td colSpan={7} className="py-16 text-center text-[12px] text-[#ccc8c8]">
-                  Belum ada produk di kategori ini.
-                </td></tr>
-              ) : filtered.map(p => (
-                <tr key={p.id} className="hover:bg-[#fff8fb] transition-colors group">
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl overflow-hidden bg-[#fff0f5] border border-[#ffd6e7] shrink-0 flex items-center justify-center">
-                        {p.image_url
-                          ? <Image src={p.image_url} alt={p.name} width={40} height={40} className="object-cover w-full h-full" />
-                          : <Flower2 className="w-4 h-4 text-[#f5c0d8]" />
-                        }
-                      </div>
-                      <div>
-                        <p className="text-[13px] text-[#3d3939] font-medium leading-tight">{p.name}</p>
-                        <p className="text-[10px] text-[#ccc8c8] font-mono mt-0.5">{p.product_code}</p>
+        {loading ? (
+          <div className="flex justify-center py-16"><Loader2 className="w-6 h-6 text-[#e8b4c8] animate-spin" /></div>
+        ) : filtered.length === 0 ? (
+          <div className="py-16 text-center text-[12px] text-[#ccc8c8]">Belum ada produk di kategori ini.</div>
+        ) : (
+          <>
+            {/* Mobile View */}
+            <div className="grid grid-cols-1 gap-4 md:hidden pb-16">
+              {filtered.map(p => (
+                <div key={p.id} className="bg-white rounded-2xl border border-[#f0ecec] p-4 flex flex-col gap-3 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-[#fff0f5] border border-[#ffd6e7] shrink-0 flex items-center justify-center">
+                      {p.image_url
+                        ? <Image src={p.image_url} alt={p.name} width={48} height={48} className="object-cover w-full h-full" />
+                        : <Flower2 className="w-5 h-5 text-[#f5c0d8]" />
+                      }
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[14px] text-[#3d3939] font-medium leading-tight">{p.name}</p>
+                      <div className="flex items-center justify-between mt-1.5">
+                        <p className="text-[11px] text-[#ccc8c8] font-mono">{p.product_code}</p>
+                        <span className="text-[10px] text-[#a8a4a4] bg-[#f5f2f2] px-2 py-0.5 rounded-md">
+                          {p.sub_category || "Umum"}
+                        </span>
                       </div>
                     </div>
-                  </td>
-                  <td className="px-5 py-3">
-                    <span className="text-[10px] text-[#a8a4a4] bg-[#f5f2f2] px-2 py-0.5 rounded-md">
-                      {p.sub_category || "Umum"}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3">
-                    {(p.variants?.length ?? 0) > 0 ? (
-                      <div className="flex flex-col gap-0.5">
-                        {p.variants!.slice(0, 2).map(v => (
-                          <span key={v.id} className="text-[10px] text-[#d4508a] bg-[#fff0f5] px-2 py-0.5 rounded-md flex items-center gap-1 w-fit">
-                            <Tag className="w-2.5 h-2.5" /> {v.variant_name}
-                          </span>
-                        ))}
-                        {(p.variants?.length ?? 0) > 2 && (
-                          <span className="text-[10px] text-[#ccc8c8]">+{(p.variants?.length ?? 0) - 2} lagi</span>
-                        )}
-                      </div>
-                    ) : <span className="text-[#e5e1e1] text-[12px]">—</span>}
-                  </td>
-                  <td className="px-5 py-3 text-[12px] text-[#a8a4a4]">Rp {p.purchase_price.toLocaleString("id-ID")}</td>
-                  <td className="px-5 py-3 text-[12px] font-medium text-[#d4508a]">Rp {p.selling_price.toLocaleString("id-ID")}</td>
-                  <td className="px-5 py-3 text-center text-[12px] text-[#7a7676]">
-                    {isTreatment(p.type) ? <span className="text-purple-300 text-[10px]">∞ sesi</span> : `${p.stock} ${p.unit}`}
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      <button onClick={() => openEdit(p)}
-                        className="p-1.5 text-[#ccc8c8] hover:text-[#d4508a] hover:bg-[#fff0f5] rounded-lg transition-all">
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button onClick={() => handleDelete(p.id)}
-                        className="p-1.5 text-[#ccc8c8] hover:text-rose-400 hover:bg-rose-50 rounded-lg transition-all">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                  </div>
+                  
+                  <div className="flex items-center justify-between py-2 border-y border-[#f5f2f2]">
+                    <div>
+                      <p className="text-[10px] text-[#a8a4a4] mb-0.5">Harga Jual</p>
+                      <p className="text-[13px] font-semibold text-[#d4508a]">Rp {p.selling_price.toLocaleString("id-ID")}</p>
                     </div>
-                  </td>
-                </tr>
+                    <div className="text-right">
+                      <p className="text-[10px] text-[#a8a4a4] mb-0.5">Stok</p>
+                      <p className="text-[13px] text-[#3d3939] font-medium">{isTreatment(p.type) ? "∞" : p.stock} <span className="text-[10px]">{isTreatment(p.type) ? "sesi" : p.unit}</span></p>
+                    </div>
+                  </div>
+                  
+                  {(p.variants?.length ?? 0) > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {p.variants!.map(v => (
+                        <span key={v.id} className="text-[10px] text-[#d4508a] bg-[#fff0f5] px-2 py-1 rounded-md flex items-center gap-1 border border-[#ffd6e7]">
+                          <Tag className="w-2.5 h-2.5" /> {v.variant_name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2 mt-1">
+                    <button onClick={() => openEdit(p)} className="flex-1 py-2 bg-[#fafafa] text-[#a8a4a4] hover:text-[#d4508a] hover:bg-[#fff0f5] rounded-xl text-[11px] font-medium border border-[#f0ecec] transition-colors flex items-center justify-center gap-1">
+                      <Edit2 className="w-3.5 h-3.5" /> Edit
+                    </button>
+                    <button onClick={() => handleDelete(p.id)} className="px-4 py-2 bg-rose-50 text-rose-400 hover:bg-rose-100 rounded-xl text-[11px] font-medium transition-colors">
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </div>
+
+            {/* Desktop View */}
+            <div className="hidden md:block bg-white rounded-2xl border border-[#f0ecec] overflow-hidden pb-16 md:pb-0">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-[#f5f2f2] text-[10px] text-[#ccc8c8] uppercase tracking-wider">
+                    <th className="px-5 py-3 font-medium">Produk</th>
+                    <th className="px-5 py-3 font-medium">Sub Kategori</th>
+                    <th className="px-5 py-3 font-medium">Varian</th>
+                    <th className="px-5 py-3 font-medium">Harga Modal</th>
+                    <th className="px-5 py-3 font-medium">Harga Jual</th>
+                    <th className="px-5 py-3 font-medium text-center">Stok</th>
+                    <th className="px-5 py-3 font-medium text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#faf8f8]">
+                  {filtered.map(p => (
+                    <tr key={p.id} className="hover:bg-[#fff8fb] transition-colors group">
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl overflow-hidden bg-[#fff0f5] border border-[#ffd6e7] shrink-0 flex items-center justify-center">
+                            {p.image_url
+                              ? <Image src={p.image_url} alt={p.name} width={40} height={40} className="object-cover w-full h-full" />
+                              : <Flower2 className="w-4 h-4 text-[#f5c0d8]" />
+                            }
+                          </div>
+                          <div>
+                            <p className="text-[13px] text-[#3d3939] font-medium leading-tight">{p.name}</p>
+                            <p className="text-[10px] text-[#ccc8c8] font-mono mt-0.5">{p.product_code}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3">
+                        <span className="text-[10px] text-[#a8a4a4] bg-[#f5f2f2] px-2 py-0.5 rounded-md">
+                          {p.sub_category || "Umum"}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3">
+                        {(p.variants?.length ?? 0) > 0 ? (
+                          <div className="flex flex-col gap-0.5">
+                            {p.variants!.slice(0, 2).map(v => (
+                              <span key={v.id} className="text-[10px] text-[#d4508a] bg-[#fff0f5] px-2 py-0.5 rounded-md flex items-center gap-1 w-fit">
+                                <Tag className="w-2.5 h-2.5" /> {v.variant_name}
+                              </span>
+                            ))}
+                            {(p.variants?.length ?? 0) > 2 && (
+                              <span className="text-[10px] text-[#ccc8c8]">+{(p.variants?.length ?? 0) - 2} lagi</span>
+                            )}
+                          </div>
+                        ) : <span className="text-[#e5e1e1] text-[12px]">—</span>}
+                      </td>
+                      <td className="px-5 py-3 text-[12px] text-[#a8a4a4]">Rp {p.purchase_price.toLocaleString("id-ID")}</td>
+                      <td className="px-5 py-3 text-[12px] font-medium text-[#d4508a]">Rp {p.selling_price.toLocaleString("id-ID")}</td>
+                      <td className="px-5 py-3 text-center text-[12px] text-[#7a7676]">
+                        {isTreatment(p.type) ? <span className="text-purple-300 text-[10px]">∞ sesi</span> : `${p.stock} ${p.unit}`}
+                      </td>
+                      <td className="px-5 py-3">
+                        <div className="flex items-center justify-end gap-1">
+                          <button onClick={() => openEdit(p)}
+                            className="p-1.5 text-[#ccc8c8] hover:text-[#d4508a] hover:bg-[#fff0f5] rounded-lg transition-all">
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button onClick={() => handleDelete(p.id)}
+                            className="p-1.5 text-[#ccc8c8] hover:text-rose-400 hover:bg-rose-50 rounded-lg transition-all">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </div>
 
       {/* ── MODAL ── */}

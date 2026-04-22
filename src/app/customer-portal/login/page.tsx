@@ -66,152 +66,90 @@ export default function CustomerLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-transparent font-sans overflow-hidden">
+    <div className="min-h-screen bg-[#FDFCFD] font-sans relative flex flex-col items-center selection:bg-rose-100 selection:text-[#C94F78]">
       {/* ── PREVIEW BANNER ── */}
       {isAdminPreview && (
-        <div className="fixed top-0 left-0 right-0 bg-amber-500 text-white text-[10px] font-black uppercase tracking-[0.2em] py-2 px-4 z-[100] text-center flex items-center justify-center gap-2">
-          <ShieldAlert className="w-3 h-3" /> Preview Mode: Tampilan login untuk pelanggan (Admin View)
+        <div className="fixed top-0 left-0 right-0 bg-amber-500 text-white text-[10px] font-black uppercase tracking-[0.2em] py-2 px-4 z-[100] text-center flex items-center justify-center gap-2 shadow-md">
+          <ShieldAlert className="w-3 h-3" /> Preview Mode (Admin View)
         </div>
       )}
 
-      {/* === Panel Kiri Dekoratif === */}
-      <div className="hidden lg:flex w-[45%] relative flex-col overflow-hidden"
-        style={{ background: "linear-gradient(145deg, #1a7f5a 0%, #15694a 50%, #0e4d35 100%)" }}>
-        {/* Dekorasi lingkaran */}
-        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full opacity-10 bg-white" />
-        <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full opacity-10 bg-white" />
-        <div className="absolute top-2/3 right-0 w-64 h-64 rounded-full opacity-[0.06] bg-white" />
+      {/* ── TOP BACKGROUND ── */}
+      <div className="w-full h-[40vh] lg:h-[45vh] relative overflow-hidden flex flex-col items-center justify-center shrink-0 bg-rose-50 border-b border-rose-100">
+        {/* Dekorasi Background */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-[0.15] bg-[radial-gradient(circle_at_center,_#C94F78_0%,_transparent_60%)]" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FDFCFD] to-transparent z-10" />
 
-        <div className="relative z-10 flex flex-col h-full justify-between p-12">
-          {/* Logo */}
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl shadow-black/20 p-1.5">
-              <Image src="/lbqueen_logo.png" alt="LBQueen" width={40} height={40}
-                style={{ width: "auto", height: "auto" }} className="rounded-xl" />
-            </div>
-            <div>
-              <h3 className="font-extrabold text-white text-xl leading-none">LBQueen</h3>
-              <p className="text-white/60 text-xs font-semibold tracking-wider uppercase">Care Beauty</p>
-            </div>
+        <div className="relative z-10 flex flex-col items-center mt-[-40px]">
+          <div className="w-20 h-20 bg-white rounded-[24px] shadow-xl shadow-rose-200/50 p-2.5 mb-5 transform -rotate-3 hover:rotate-0 transition-transform duration-300 border border-rose-50">
+            <Image src="/lbqueen_logo.png" alt="LBQueen" width={80} height={80} style={{ width: "100%", height: "100%" }} className="rounded-[16px] object-cover" />
           </div>
-
-          {/* Main Text */}
-          <div>
-            <div className="flex items-center gap-2 mb-5">
-              <Sparkles className="w-5 h-5 text-white/60" />
-              <span className="text-white/60 text-sm font-semibold tracking-wider uppercase">Portal Pelanggan</span>
-            </div>
-            <h1 className="text-5xl font-extrabold text-white leading-tight mb-6">
-              Perawatan<br />Terbaik<br />
-              <span className="text-white/50">Untuk Anda.</span>
-            </h1>
-            <p className="text-white/70 text-lg leading-relaxed mb-8">
-              Akses layanan & produk pilihan LBQueen, pesan langsung via WhatsApp, dan nikmati keuntungan member eksklusif.
-            </p>
-
-            <div className="space-y-3">
-              {[
-                "Lihat menu & treatment terbaru",
-                "Pesan langsung via WhatsApp",
-                "Voucher eksklusif untuk Member",
-                "Riwayat pesanan Anda",
-              ].map(f => (
-                <div key={f} className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <span className="text-white/80 text-sm font-medium">{f}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Member badge */}
-            <div className="mt-8 inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-2xl">
-              <Crown className="w-4 h-4 text-amber-300" />
-              <span className="text-white/80 text-sm font-semibold">Member mendapat voucher & harga spesial</span>
-            </div>
-          </div>
-
-          <p className="text-white/30 text-xs">© {new Date().getFullYear()} LBQueen Care Beauty. All rights reserved.</p>
+          <h1 className="text-[#C94F78] text-2xl font-black tracking-tight drop-shadow-sm flex items-center gap-2">
+            Portal Pelanggan <Crown className="w-5 h-5 text-amber-400" />
+          </h1>
+          <p className="text-[#C94F78]/60 text-[11px] font-bold uppercase tracking-[0.2em] mt-1.5 drop-shadow-sm">
+            Care Beauty
+          </p>
         </div>
       </div>
 
-      {/* === Panel Kanan (Form) === */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-transparent">
-        <div className="w-full max-w-md">
-          {/* Logo Mobile */}
-          <div className="lg:hidden text-center mb-8">
-            <div className="inline-flex items-center gap-3">
-              <Image src="/lbqueen_logo.png" alt="LBQueen" width={48} height={48}
-                style={{ width: "auto", height: "auto" }} className="rounded-2xl shadow-lg" />
-              <div className="text-left">
-                <p className="font-extrabold text-2xl text-gray-900 leading-none">LBQueen</p>
-                <p className="text-xs text-gray-400 font-semibold tracking-wider uppercase">Portal Pelanggan</p>
-              </div>
-            </div>
-          </div>
+      {/* ── CARD CONTAINER ── */}
+      <div className="w-full max-w-[400px] px-5 -mt-20 lg:-mt-24 relative z-20 pb-12">
+        <div className="bg-white rounded-[32px] shadow-2xl shadow-rose-100/60 border border-white p-7 lg:p-8 relative overflow-hidden">
+          {/* Card subtle shine */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C94F78]/20 to-transparent" />
 
-          <div className="bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.06)] border border-gray-100 p-8 lg:p-10">
-            {/* Header */}
-            <div className="mb-8">
-              <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-4">
-                <Crown className="w-6 h-6 text-emerald-600" />
-              </div>
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Halo, Pelanggan! 👋</h2>
-              <p className="text-gray-400 text-sm font-medium">Masuk untuk memesan layanan & produk LBQueen</p>
+          {error && (
+            <div className="mb-6 bg-red-50 border border-red-100 text-red-600 rounded-2xl px-4 py-3 text-[12px] font-bold flex items-center gap-2 animate-in fade-in zoom-in-95">
+              <span className="text-red-400">⚠</span> {error}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <input type="text" required value={username} onChange={e => setUsername(e.target.value)}
+                placeholder="Username Anda"
+                className="w-full px-5 py-4 bg-rose-50/30 border border-rose-100/50 rounded-2xl text-[13px] font-bold text-slate-800 placeholder:text-slate-400 outline-none focus:bg-white focus:border-[#C94F78] focus:ring-4 focus:ring-rose-50 transition-all" />
             </div>
 
-            {error && (
-              <div className="mb-6 bg-red-50 border border-red-100 text-red-600 rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2">
-                <span className="text-red-400">⚠</span> {error}
-              </div>
-            )}
-
-            <form onSubmit={handleLogin} className="space-y-5">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Username</label>
-                <input type="text" required value={username} onChange={e => setUsername(e.target.value)}
-                  id="customer-username"
-                  placeholder="Username Anda..."
-                  className="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-medium focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Password</label>
-                <div className="relative">
-                  <input type={showPass ? "text" : "password"} required value={password} onChange={e => setPassword(e.target.value)}
-                    id="customer-password"
-                    placeholder="Password Anda..."
-                    className="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-medium focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all pr-12" />
-                  <button type="button" onClick={() => setShowPass(!showPass)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                    {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-                <p className="text-xs text-gray-400 mt-2 font-medium">
-                  💡 Password default: <span className="font-mono font-bold text-gray-600">INISIAL-STATUS-ID</span> (contoh: <span className="font-mono">SW-M-5</span>)
-                </p>
-              </div>
-
-              <button type="submit" disabled={loading} id="customer-login-btn"
-                className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-emerald-600/30 hover:shadow-xl disabled:opacity-60 text-base mt-2">
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-                {loading ? "Memverifikasi..." : "Masuk ke Portal"}
+            <div className="relative">
+              <input type={showPass ? "text" : "password"} required value={password} onChange={e => setPassword(e.target.value)}
+                placeholder="Password"
+                className="w-full px-5 py-4 bg-rose-50/30 border border-rose-100/50 rounded-2xl text-[13px] font-bold text-slate-800 placeholder:text-slate-400 outline-none focus:bg-white focus:border-[#C94F78] focus:ring-4 focus:ring-rose-50 transition-all pr-14" />
+              <button type="button" onClick={() => setShowPass(!showPass)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-[#C94F78] bg-white rounded-xl shadow-sm border border-slate-50 transition-colors">
+                {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
-            </form>
-
-            <div className="mt-6 pt-5 border-t border-gray-100 text-center">
-              <p className="text-xs text-gray-400">Belum punya akun? Daftarkan diri Anda ke kasir LBQueen</p>
             </div>
-
-            {/* Link balik ke admin */}
-            <p className="text-center text-xs text-gray-300 mt-4">
-              Staff / Admin?{" "}
-              <a href="/login" className="text-[#C94F78] font-semibold hover:underline">Login Admin →</a>
+            <p className="text-[10px] text-slate-400 font-bold mt-1.5 px-1 leading-relaxed">
+              💡 Default: <span className="text-[#C94F78]">INISIAL-STATUS-ID</span> (cth: SW-M-5)
             </p>
+
+            <button type="submit" disabled={loading}
+              className="w-full py-4 bg-[#C94F78] hover:bg-[#A83E60] text-white font-black text-[14px] rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 shadow-luxury-pink active:scale-[0.98] disabled:opacity-70 mt-2">
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+              {loading ? "Memverifikasi..." : "Log in"}
+            </button>
+          </form>
+
+          <div className="mt-8 pt-6 border-t border-slate-50 text-center flex flex-col items-center gap-3">
+             <p className="text-slate-400 text-[11px] font-bold">
+               Belum punya akun? <span className="text-[#C94F78]">Daftar ke kasir, yuk!</span>
+             </p>
           </div>
+        </div>
+
+        {/* ── FOOTER TERMS ── */}
+        <p className="text-center text-slate-400 text-[10px] mt-8 font-medium leading-relaxed px-4">
+           Dengan log in, kamu menyetujui{" "}
+           <a href="#" className="text-[#C94F78] font-bold hover:underline">Kebijakan Privasi</a> dan{" "}
+           <a href="#" className="text-[#C94F78] font-bold hover:underline">Syarat & Ketentuan</a> LBQueen.
+        </p>
+
+        <div className="mt-8 text-center">
+           <a href="/login" className="text-slate-300 text-[10px] font-bold hover:text-slate-400 transition-colors">
+             Login Staff/Admin →
+           </a>
         </div>
       </div>
     </div>

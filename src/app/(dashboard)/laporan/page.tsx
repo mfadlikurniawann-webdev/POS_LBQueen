@@ -92,7 +92,7 @@ export default function LaporanPage() {
     <div className="h-full flex flex-col bg-white overflow-hidden font-sans">
 
       {/* Toolbar: Filter + Export (Ref Image 1 style) */}
-      <div className="bg-white border-b border-slate-50 px-8 py-5 flex flex-wrap items-center justify-between gap-5 shrink-0 z-10 font-sans">
+      <div className="bg-white border-b border-slate-50 px-5 md:px-8 py-4 md:py-5 flex flex-wrap items-center justify-between gap-4 md:gap-5 shrink-0 z-10 font-sans">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-full px-6 py-3 shadow-inner">
             <CalendarDays className="w-4 h-4 text-slate-400" />
@@ -120,7 +120,7 @@ export default function LaporanPage() {
       </div>
 
       {/* Stats Board (Ref Image Luxury theme) */}
-      <div className="px-8 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 shrink-0 bg-white">
+      <div className="px-5 md:px-8 py-5 md:py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 shrink-0 bg-white">
         {[
           { label: "Total Omzet", value: totalOmzet.toLocaleString("id-ID"), sub: `${(totalOmzet / 1000000).toFixed(1)}jt Total`, icon: <TrendingUp className="w-5 h-5" />, color: "bg-white text-[#A83E60] shadow-luxury-pink border border-rose-50" },
           { label: "Transaksi", value: transactions.length, sub: "nota berhasil", icon: <ShoppingBag className="w-5 h-5" />, color: "bg-slate-900 text-white shadow-xl shadow-slate-100" },
@@ -147,9 +147,9 @@ export default function LaporanPage() {
       </div>
 
       {/* Transaction Table (Luxury styling) */}
-      <div className="flex-1 overflow-auto px-8 pb-32 md:pb-12 bg-white">
-        <div className="bg-white rounded-[40px] border border-slate-100 shadow-premium overflow-hidden relative">
-          <div className="px-12 py-8 border-b border-slate-50 flex items-center justify-between">
+      <div className="flex-1 overflow-auto px-5 md:px-8 pb-32 md:pb-12 bg-white">
+        <div className="bg-white rounded-[24px] md:rounded-[40px] border border-slate-100 shadow-premium overflow-hidden relative">
+          <div className="px-5 md:px-12 py-5 md:py-8 border-b border-slate-50 flex items-center justify-between">
             <h3 className="font-bold text-slate-800 uppercase tracking-widest text-xs">Jurnal Penjualan</h3>
             {loading ? <Loader2 className="w-5 h-5 text-[#C94F78] animate-spin" /> : (
                <div className="w-8 h-8 rounded-full border-2 border-slate-100 border-t-rose-200" />
@@ -159,37 +159,37 @@ export default function LaporanPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] bg-slate-50/50">
-                  <th className="px-12 py-6 text-left">Invoice</th>
-                  <th className="px-12 py-6 text-left">Waktu</th>
-                  <th className="px-12 py-6 text-left">Pelanggan</th>
-                  <th className="px-12 py-6 text-left">Voucher</th>
-                  <th className="px-12 py-6 text-right">Potongan</th>
-                  <th className="px-12 py-6 text-right">Settlement</th>
+                  <th className="px-4 md:px-12 py-4 md:py-6 text-left whitespace-nowrap">Invoice</th>
+                  <th className="px-4 md:px-12 py-4 md:py-6 text-left whitespace-nowrap">Waktu</th>
+                  <th className="px-4 md:px-12 py-4 md:py-6 text-left whitespace-nowrap">Pelanggan</th>
+                  <th className="px-4 md:px-12 py-4 md:py-6 text-left whitespace-nowrap">Voucher</th>
+                  <th className="px-4 md:px-12 py-4 md:py-6 text-right whitespace-nowrap">Potongan</th>
+                  <th className="px-4 md:px-12 py-4 md:py-6 text-right whitespace-nowrap">Settlement</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50 font-medium">
                 {transactions.map(t => (
                   <tr key={t.id} className="hover:bg-rose-50/20 transition-all duration-300 group">
-                    <td className="px-12 py-5">
+                    <td className="px-4 md:px-12 py-4 md:py-5 whitespace-nowrap">
                        <span className="font-bold text-[#C94F78] text-xs underline decoration-rose-100 underline-offset-4 cursor-pointer">{t.invoice_number}</span>
                     </td>
-                    <td className="px-12 py-5 text-[11px] text-slate-400 font-bold uppercase tracking-tight">
+                    <td className="px-4 md:px-12 py-4 md:py-5 text-[11px] text-slate-400 font-bold uppercase tracking-tight whitespace-nowrap">
                        {format(new Date(t.created_at), "dd/MM/yyyy")}
                     </td>
-                    <td className="px-12 py-5 text-[11px] font-bold text-slate-600 uppercase tracking-tight">
+                    <td className="px-4 md:px-12 py-4 md:py-5 text-[11px] font-bold text-slate-600 uppercase tracking-tight whitespace-nowrap">
                        {t.customers ? t.customers.name : <span className="text-slate-300">Walk-in Customer</span>}
                     </td>
-                    <td className="px-12 py-5">
+                    <td className="px-4 md:px-12 py-4 md:py-5 whitespace-nowrap">
                       {t.vouchers ? (
                          <span className="text-[10px] font-bold text-slate-700 border border-slate-100 px-3 py-1.5 rounded-lg bg-slate-50 uppercase tracking-widest">{t.vouchers.code}</span>
                       ) : <span className="text-slate-200">—</span>}
                     </td>
-                    <td className="px-12 py-5 text-right font-bold text-slate-300">
+                    <td className="px-4 md:px-12 py-4 md:py-5 text-right font-bold text-slate-300 whitespace-nowrap">
                        {t.discount_applied > 0 ? (
                          <span className="text-[#C94F78] font-bold">- Rp {t.discount_applied.toLocaleString("id-ID")}</span>
                        ) : "0"}
                     </td>
-                    <td className="px-12 py-5 text-right font-bold text-slate-800 text-[16px] tracking-tight">
+                    <td className="px-4 md:px-12 py-4 md:py-5 text-right font-bold text-slate-800 text-[14px] md:text-[16px] tracking-tight whitespace-nowrap">
                        Rp {t.total_amount.toLocaleString("id-ID")}
                     </td>
                   </tr>
