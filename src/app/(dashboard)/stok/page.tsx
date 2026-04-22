@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import {
-  Plus, Search, Edit2, Trash2, X, Loader2, Flower2, Package, Sparkles,
-  Upload, Image as ImageIcon, Paintbrush2, Eye, Gem, Tag, ChevronDown, ChevronUp
+  Plus, Search, Edit2, Trash2, X, Loader2, Flower2,
+  Package, Sparkles, Upload, Image as ImageIcon,
+  Paintbrush2, Eye, Gem, Tag, ChevronDown,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -19,141 +20,120 @@ const TYPES = [
   "Aset Karyawan",
 ] as const;
 
-const typeConfig: Record<string, { color: string; bg: string; icon: React.ReactNode; accent: string }> = {
-  "Treatment":               { color: "text-purple-600", bg: "bg-purple-50",  icon: <Sparkles className="w-4 h-4" />,    accent: "#9333ea" },
-  "Treatment Care & Beauty": { color: "text-purple-500", bg: "bg-gray-50",    icon: <Flower2 className="w-4 h-4" />,     accent: "#a855f7" },
-  "Product Care & Beauty":   { color: "text-pink-500",   bg: "bg-gray-50",    icon: <Package className="w-4 h-4" />,     accent: "#ec4899" },
-  "Retail Nail":             { color: "text-rose-600",   bg: "bg-rose-50",    icon: <Paintbrush2 className="w-4 h-4" />, accent: "#e11d48" },
-  "Retail Eyelash":          { color: "text-violet-600", bg: "bg-violet-50",  icon: <Eye className="w-4 h-4" />,         accent: "#7c3aed" },
-  "Retail Beauty":           { color: "text-pink-600",   bg: "bg-pink-50",    icon: <Gem className="w-4 h-4" />,         accent: "#C94F78" },
-  "Barang Kantor":           { color: "text-blue-600",   bg: "bg-blue-50",    icon: <Package className="w-4 h-4" />,     accent: "#2563eb" },
-  "Aset Karyawan":           { color: "text-amber-600",  bg: "bg-amber-50",   icon: <Package className="w-4 h-4" />,     accent: "#d97706" },
+type TType = typeof TYPES[number];
+
+const TYPE_META: Record<TType, { icon: React.ReactNode; color: string }> = {
+  "Treatment":               { icon: <Sparkles className="w-3.5 h-3.5" />,    color: "text-purple-500" },
+  "Treatment Care & Beauty": { icon: <Flower2 className="w-3.5 h-3.5" />,     color: "text-rose-400" },
+  "Product Care & Beauty":   { icon: <Package className="w-3.5 h-3.5" />,     color: "text-pink-400" },
+  "Retail Nail":             { icon: <Paintbrush2 className="w-3.5 h-3.5" />, color: "text-red-400" },
+  "Retail Eyelash":          { icon: <Eye className="w-3.5 h-3.5" />,         color: "text-violet-400" },
+  "Retail Beauty":           { icon: <Gem className="w-3.5 h-3.5" />,         color: "text-pink-500" },
+  "Barang Kantor":           { icon: <Package className="w-3.5 h-3.5" />,     color: "text-blue-400" },
+  "Aset Karyawan":           { icon: <Package className="w-3.5 h-3.5" />,     color: "text-amber-400" },
 };
 
 type ProductVariant = {
-  id: number;
-  product_id: number;
-  variant_name: string;
-  price: number;
-  stock: number;
-  is_active: boolean;
+  id: number; product_id: number; variant_name: string;
+  price: number; stock: number; is_active: boolean;
 };
-
 type Product = {
-  id: number;
-  product_code: string;
-  name: string;
-  type: string;
-  purchase_price: number;
-  selling_price: number;
-  stock: number;
-  unit: string;
-  image_url: string | null;
-  sub_category?: string | null;
+  id: number; product_code: string; name: string; type: string;
+  purchase_price: number; selling_price: number; stock: number;
+  unit: string; image_url: string | null; sub_category?: string | null;
   variants?: ProductVariant[];
 };
 
 const emptyForm = {
-  product_code: "",
-  name: "",
-  type: "Treatment",
-  purchase_price: "",
-  selling_price: "",
-  stock: "",
-  unit: "Sesi",
-  image_url: "",
-  sub_category: "",
+  product_code: "", name: "", type: "Treatment" as TType,
+  purchase_price: "", selling_price: "", stock: "", unit: "Sesi",
+  image_url: "", sub_category: "",
 };
-
-const emptyVariantForm = { variant_name: "", price: "", stock: "" };
+const emptyVariantRow = { variant_name: "", price: "", stock: "" };
 
 export default function StokPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [existingSubCategories, setExistingSubCategories] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState("Treatment");
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [editItem, setEditItem] = useState<Product | null>(null);
-  const [form, setForm] = useState(emptyForm);
-  const [saving, setSaving] = useState(false);
-  const [toast, setToast] = useState("");
+  const [products,            setProducts]            = useState<Product[]>([]);
+  const [existingSubCats,     setExistingSubCats]     = useState<string[]>([]);
+  const [activeTab,           setActiveTab]           = useState<TType>("Treatment");
+  const [search,              setSearch]              = useState("");
+  const [loading,             setLoading]             = useState(true);
+  const [showModal,           setShowModal]           = useState(false);
+  const [editItem,            setEditItem]            = useState<Product | null>(null);
+  const [form,                setForm]                = useState(emptyForm);
+  const [saving,              setSaving]              = useState(false);
+  const [toast,               setToast]               = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Variant state
-  const [variants, setVariants] = useState<ProductVariant[]>([]);
-  const [variantForms, setVariantForms] = useState<typeof emptyVariantForm[]>([]);
-  const [showVariantSection, setShowVariantSection] = useState(false);
+  const [variants,      setVariants]      = useState<ProductVariant[]>([]);
+  const [variantForms,  setVariantForms]  = useState<typeof emptyVariantRow[]>([]);
   const [variantSaving, setVariantSaving] = useState(false);
-  const [savedProductId, setSavedProductId] = useState<number | null>(null);
+  const [savedProdId,   setSavedProdId]   = useState<number | null>(null);
 
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("products")
-      .select("*, variants:product_variants(*)")
-      .order("name");
+    const { data } = await supabase.from("products").select("*, variants:product_variants(*)").order("name");
     setProducts(data || []);
-    const subs = Array.from(new Set((data || []).map((p: Product) => p.sub_category).filter(Boolean))) as string[];
-    setExistingSubCategories(subs);
+    setExistingSubCats(Array.from(new Set((data || []).map((p: Product) => p.sub_category).filter(Boolean))) as string[]);
     setLoading(false);
   }, []);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const isRetail = (type: string) => ["Retail Nail", "Retail Eyelash", "Retail Beauty"].includes(type);
-  const isTreatment = (type: string) => type === "Treatment";
-  const hasVariants = variants.length > 0;
+  const isTreatment = (t: string) => t === "Treatment";
 
   const openAdd = () => {
-    setEditItem(null);
-    setSavedProductId(null);
-    setVariants([]);
-    setVariantForms([]);
-    setShowVariantSection(false);
+    setEditItem(null); setSavedProdId(null);
+    setVariants([]); setVariantForms([]);
     setForm({ ...emptyForm, type: activeTab, unit: isTreatment(activeTab) ? "Sesi" : "Pcs" });
     setShowModal(true);
   };
 
   const openEdit = (p: Product) => {
-    setEditItem(p);
-    setSavedProductId(p.id);
-    setVariants(p.variants || []);
-    setVariantForms([]);
-    setShowVariantSection((p.variants?.length ?? 0) > 0);
+    setEditItem(p); setSavedProdId(p.id);
+    setVariants(p.variants || []); setVariantForms([]);
     setForm({
-      product_code: p.product_code,
-      name: p.name,
-      type: p.type,
-      purchase_price: String(p.purchase_price),
-      selling_price: String(p.selling_price),
-      stock: String(p.stock),
-      unit: p.unit,
-      image_url: p.image_url || "",
+      product_code: p.product_code, name: p.name, type: p.type as TType,
+      purchase_price: String(p.purchase_price), selling_price: String(p.selling_price),
+      stock: String(p.stock), unit: p.unit, image_url: p.image_url || "",
       sub_category: p.sub_category || "",
     });
     setShowModal(true);
   };
 
+  const closeModal = () => {
+    setShowModal(false); setEditItem(null);
+    setSavedProdId(null); setVariants([]); setVariantForms([]);
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) { showToast("Gagal: Ukuran file maksimal 2MB"); return; }
-    const reader = new FileReader();
-    reader.onloadend = () => setForm(f => ({ ...f, image_url: reader.result as string }));
-    reader.readAsDataURL(file);
+    if (file.size > 2 * 1024 * 1024) { showToast("Maks 2MB"); return; }
+    const r = new FileReader();
+    r.onloadend = () => setForm(f => ({ ...f, image_url: r.result as string }));
+    r.readAsDataURL(file);
+  };
+
+  const persistNewVariants = async (pid: number) => {
+    const rows = variantForms.filter(v => v.variant_name.trim());
+    if (!rows.length) return;
+    const { error } = await supabase.from("product_variants").insert(
+      rows.map(v => ({ product_id: pid, variant_name: v.variant_name.trim(),
+        price: parseFloat(v.price) || 0, stock: parseInt(v.stock) || 0 }))
+    );
+    if (error) showToast(`Varian: ${error.message}`);
+    else setVariantForms([]);
   };
 
   const handleSave = async () => {
-    if (!form.name || !form.product_code) return showToast("Gagal: Kode dan Nama produk wajib diisi!");
+    if (!form.name || !form.product_code) return showToast("Kode & nama wajib diisi");
     setSaving(true);
     try {
       const payload = {
-        product_code: form.product_code.trim(),
-        name: form.name.trim(),
-        type: form.type,
+        product_code: form.product_code.trim(), name: form.name.trim(), type: form.type,
         purchase_price: parseFloat(form.purchase_price) || 0,
         selling_price: parseFloat(form.selling_price) || 0,
         stock: parseInt(form.stock) || 0,
@@ -161,134 +141,92 @@ export default function StokPage() {
         image_url: form.image_url || null,
         sub_category: form.sub_category?.trim() || null,
       };
-
       if (editItem) {
         const { error } = await supabase.from("products").update(payload).eq("id", editItem.id);
         if (error) throw error;
-        setSavedProductId(editItem.id);
-        showToast("Produk diperbarui!");
+        await persistNewVariants(editItem.id);
       } else {
         const { data, error } = await supabase.from("products").insert(payload).select().single();
         if (error) throw error;
-        setSavedProductId(data.id);
-        showToast("Produk baru ditambahkan! Tambahkan varian jika diperlukan.");
+        setSavedProdId(data.id);
+        await persistNewVariants(data.id);
       }
-      // Save new variant forms
-      await saveNewVariantForms(savedProductId || (editItem?.id ?? null));
-      fetchData();
-    } catch (err: any) {
-      showToast(`Gagal: ${err.message}`);
-    } finally { setSaving(false); }
-  };
-
-  const saveNewVariantForms = async (productId: number | null) => {
-    if (!productId) return;
-    const newVariants = variantForms.filter(v => v.variant_name.trim() !== "");
-    if (newVariants.length === 0) return;
-    const insertPayload = newVariants.map(v => ({
-      product_id: productId,
-      variant_name: v.variant_name.trim(),
-      price: parseFloat(v.price) || 0,
-      stock: parseInt(v.stock) || 0,
-    }));
-    const { error } = await supabase.from("product_variants").insert(insertPayload);
-    if (error) showToast(`Gagal simpan varian: ${error.message}`);
-    else setVariantForms([]);
+      showToast(editItem ? "Perubahan disimpan" : "Produk ditambahkan");
+      closeModal(); fetchData();
+    } catch (e: any) { showToast(e.message); }
+    finally { setSaving(false); }
   };
 
   const handleSaveVariants = async () => {
-    const pid = savedProductId || editItem?.id;
-    if (!pid) { showToast("Simpan produk terlebih dahulu!"); return; }
+    const pid = savedProdId || editItem?.id;
+    if (!pid) { showToast("Simpan produk dulu"); return; }
     setVariantSaving(true);
-    await saveNewVariantForms(pid);
+    await persistNewVariants(pid);
     const { data } = await supabase.from("product_variants").select("*").eq("product_id", pid);
     setVariants(data || []);
     setVariantSaving(false);
-    showToast("Varian berhasil disimpan!");
+    showToast("Varian disimpan");
   };
 
-  const handleDeleteVariant = async (variantId: number) => {
+  const handleDeleteVariant = async (id: number) => {
     if (!confirm("Hapus varian ini?")) return;
-    await supabase.from("product_variants").delete().eq("id", variantId);
-    setVariants(prev => prev.filter(v => v.id !== variantId));
-    showToast("Varian dihapus.");
-  };
-
-  const addVariantRow = () => {
-    setVariantForms(prev => [...prev, { ...emptyVariantForm }]);
-    setShowVariantSection(true);
-  };
-
-  const updateVariantForm = (idx: number, field: keyof typeof emptyVariantForm, val: string) => {
-    setVariantForms(prev => prev.map((v, i) => i === idx ? { ...v, [field]: val } : v));
-  };
-
-  const removeVariantRow = (idx: number) => {
-    setVariantForms(prev => prev.filter((_, i) => i !== idx));
+    await supabase.from("product_variants").delete().eq("id", id);
+    setVariants(p => p.filter(v => v.id !== id));
   };
 
   const handleDelete = async (id: number) => {
     if (!confirm("Hapus produk ini?")) return;
     await supabase.from("products").delete().eq("id", id);
-    showToast("Produk dihapus."); fetchData();
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setEditItem(null);
-    setSavedProductId(null);
-    setVariants([]);
-    setVariantForms([]);
-    setShowVariantSection(false);
+    fetchData();
   };
 
   const filtered = products.filter(p => p.type === activeTab && p.name.toLowerCase().includes(search.toLowerCase()));
-
-  const cfg = (type: string) => typeConfig[type] || typeConfig["Retail Beauty"];
+  const meta = (t: string) => TYPE_META[t as TType] ?? TYPE_META["Retail Beauty"];
 
   return (
-    <div className="h-full flex flex-col bg-gray-50/50 font-sans">
+    <div className="h-full flex flex-col bg-[#fdfcfc]">
       {toast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[60] bg-gray-900 text-white px-6 py-3 rounded-2xl text-xs font-bold shadow-2xl animate-in fade-in slide-in-from-top-4">{toast}</div>
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[60] bg-white border border-[#f0ecec]
+          shadow-soft px-5 py-2.5 rounded-xl text-[12px] text-[#3d3939] animate-in fade-in slide-in-from-top-4">
+          {toast}
+        </div>
       )}
 
-      {/* Header Area */}
-      <div className="bg-white px-6 py-6 border-b border-gray-100 shrink-0">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Header */}
+      <div className="bg-white px-6 py-4 border-b border-[#f0ecec] shrink-0">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
           <div>
-            <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">Inventori Produk</h2>
-            <p className="text-sm text-gray-400 font-medium">Kelola stok dan layanan klinik LBQueen</p>
+            <h2 className="text-[15px] font-semibold text-[#2d2820]">Inventori Produk</h2>
+            <p className="text-[11px] text-[#a8a4a4] mt-0.5">Kelola stok & layanan klinik LBQueen</p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="relative min-w-[280px]">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder={`Cari di ${activeTab}...`}
-                value={search}
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#ccc8c8]" />
+              <input type="text" placeholder={`Cari di ${activeTab}...`} value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-medium focus:bg-white focus:border-[#C94F78] outline-none transition-all"
-              />
+                className="pl-9 pr-3 py-2 bg-[#fafafa] border border-[#f0ecec] rounded-xl text-[12px]
+                  text-[#3d3939] placeholder:text-[#ccc8c8] focus:outline-none focus:border-[#e8719a] transition-colors w-56" />
             </div>
-            <button onClick={openAdd} className="bg-[#C94F78] hover:bg-[#A83E60] text-white font-bold px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-pink-100">
-              <Plus className="w-5 h-5" /> Tambah Produk
+            <button onClick={openAdd}
+              className="flex items-center gap-1.5 px-4 py-2 bg-[#d4508a] text-white rounded-xl text-[12px] font-medium hover:bg-[#b83b72] transition-colors shadow-pink">
+              <Plus className="w-4 h-4" /> Tambah
             </button>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mt-8 overflow-x-auto scrollbar-hide pb-1">
+        <div className="flex gap-1 overflow-x-auto scrollbar-hide pb-0.5">
           {TYPES.map(t => {
-            const c = cfg(t);
+            const m = meta(t);
             const active = activeTab === t;
             return (
               <button key={t} onClick={() => setActiveTab(t)}
-                className={`px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all border-2 flex items-center gap-2 ${
+                className={`flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-lg text-[11px] transition-all ${
                   active
-                    ? "bg-white border-[#C94F78] text-[#C94F78] shadow-sm"
-                    : "bg-transparent border-transparent text-gray-400 hover:text-gray-600"
+                    ? "bg-[#fff0f5] text-[#d4508a] border border-[#ffd6e7] font-medium"
+                    : "text-[#a8a4a4] hover:text-[#d4508a] hover:bg-[#fff8fb]"
                 }`}>
-                <span className={active ? "text-[#C94F78]" : "text-gray-300"}>{c.icon}</span>
+                <span className={active ? "text-[#d4508a]" : "text-[#d4c8cc]"}>{m.icon}</span>
                 {t}
               </button>
             );
@@ -296,75 +234,79 @@ export default function StokPage() {
         </div>
       </div>
 
-      {/* Table Area */}
-      <div className="flex-1 overflow-auto p-6">
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-          <table className="w-full text-left border-collapse">
+      {/* Table */}
+      <div className="flex-1 overflow-auto p-5">
+        <div className="bg-white rounded-2xl border border-[#f0ecec] overflow-hidden">
+          <table className="w-full text-left">
             <thead>
-              <tr className="bg-gray-50/50 border-b border-gray-100 uppercase text-[10px] font-black text-gray-400 tracking-wider">
-                <th className="px-6 py-4">Produk / Layanan</th>
-                <th className="px-6 py-4">Sub Kategori</th>
-                <th className="px-6 py-4">Varian</th>
-                <th className="px-6 py-4">Harga Modal</th>
-                <th className="px-6 py-4">Harga Jual</th>
-                <th className="px-6 py-4 text-center">Stok</th>
-                <th className="px-6 py-4 text-right">Aksi</th>
+              <tr className="border-b border-[#f5f2f2] text-[10px] text-[#ccc8c8] uppercase tracking-wider">
+                <th className="px-5 py-3 font-medium">Produk</th>
+                <th className="px-5 py-3 font-medium">Sub Kategori</th>
+                <th className="px-5 py-3 font-medium">Varian</th>
+                <th className="px-5 py-3 font-medium">Harga Modal</th>
+                <th className="px-5 py-3 font-medium">Harga Jual</th>
+                <th className="px-5 py-3 font-medium text-center">Stok</th>
+                <th className="px-5 py-3 font-medium text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-[#faf8f8]">
               {loading ? (
-                <tr><td colSpan={7} className="py-20 text-center"><Loader2 className="w-8 h-8 text-[#C94F78] animate-spin mx-auto opacity-20" /></td></tr>
+                <tr><td colSpan={7} className="py-16 text-center">
+                  <Loader2 className="w-5 h-5 text-[#e8b4c8] animate-spin mx-auto" />
+                </td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={7} className="py-20 text-center text-gray-400 font-medium">Belum ada data di kategori ini.</td></tr>
+                <tr><td colSpan={7} className="py-16 text-center text-[12px] text-[#ccc8c8]">
+                  Belum ada produk di kategori ini.
+                </td></tr>
               ) : filtered.map(p => (
-                <tr key={p.id} className="hover:bg-pink-50/30 transition-colors group">
-                  <td className="px-6 py-4">
+                <tr key={p.id} className="hover:bg-[#fff8fb] transition-colors group">
+                  <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl overflow-hidden bg-pink-50 border border-pink-100 shrink-0 flex items-center justify-center">
-                        {p.image_url ? (
-                          <Image src={p.image_url} alt={p.name} width={48} height={48} className="object-cover w-full h-full" />
-                        ) : (
-                          <Flower2 className="w-5 h-5 text-pink-200" />
-                        )}
+                      <div className="w-10 h-10 rounded-xl overflow-hidden bg-[#fff0f5] border border-[#ffd6e7] shrink-0 flex items-center justify-center">
+                        {p.image_url
+                          ? <Image src={p.image_url} alt={p.name} width={40} height={40} className="object-cover w-full h-full" />
+                          : <Flower2 className="w-4 h-4 text-[#f5c0d8]" />
+                        }
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900 leading-tight">{p.name}</p>
-                        <p className="text-[11px] text-gray-400 font-mono mt-1">{p.product_code}</p>
+                        <p className="text-[13px] text-[#3d3939] font-medium leading-tight">{p.name}</p>
+                        <p className="text-[10px] text-[#ccc8c8] font-mono mt-0.5">{p.product_code}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="bg-gray-100 text-gray-500 text-[10px] font-bold px-2 py-1 rounded-lg uppercase">{p.sub_category || "Umum"}</span>
+                  <td className="px-5 py-3">
+                    <span className="text-[10px] text-[#a8a4a4] bg-[#f5f2f2] px-2 py-0.5 rounded-md">
+                      {p.sub_category || "Umum"}
+                    </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-5 py-3">
                     {(p.variants?.length ?? 0) > 0 ? (
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-0.5">
                         {p.variants!.slice(0, 2).map(v => (
-                          <span key={v.id} className="inline-flex items-center gap-1.5 text-[10px] font-bold bg-rose-50 text-[#C94F78] px-2.5 py-1 rounded-lg">
-                            <Tag className="w-2.5 h-2.5" />
-                            {v.variant_name} · Rp {v.price.toLocaleString("id-ID")}
+                          <span key={v.id} className="text-[10px] text-[#d4508a] bg-[#fff0f5] px-2 py-0.5 rounded-md flex items-center gap-1 w-fit">
+                            <Tag className="w-2.5 h-2.5" /> {v.variant_name}
                           </span>
                         ))}
                         {(p.variants?.length ?? 0) > 2 && (
-                          <span className="text-[10px] text-gray-400 font-bold">+{(p.variants?.length ?? 0) - 2} varian lagi</span>
+                          <span className="text-[10px] text-[#ccc8c8]">+{(p.variants?.length ?? 0) - 2} lagi</span>
                         )}
                       </div>
-                    ) : (
-                      <span className="text-gray-300 text-[11px] font-bold">—</span>
-                    )}
+                    ) : <span className="text-[#e5e1e1] text-[12px]">—</span>}
                   </td>
-                  <td className="px-6 py-4 text-gray-500 font-medium text-sm">Rp {p.purchase_price.toLocaleString("id-ID")}</td>
-                  <td className="px-6 py-4 font-bold text-[#C94F78] text-sm">Rp {p.selling_price.toLocaleString("id-ID")}</td>
-                  <td className="px-6 py-4 text-center font-bold text-gray-700 text-sm">
-                    {isTreatment(p.type) ? <span className="text-purple-400">∞ Sesi</span> : `${p.stock} ${p.unit}`}
+                  <td className="px-5 py-3 text-[12px] text-[#a8a4a4]">Rp {p.purchase_price.toLocaleString("id-ID")}</td>
+                  <td className="px-5 py-3 text-[12px] font-medium text-[#d4508a]">Rp {p.selling_price.toLocaleString("id-ID")}</td>
+                  <td className="px-5 py-3 text-center text-[12px] text-[#7a7676]">
+                    {isTreatment(p.type) ? <span className="text-purple-300 text-[10px]">∞ sesi</span> : `${p.stock} ${p.unit}`}
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => openEdit(p)} className="p-2 text-gray-400 hover:text-[#C94F78] hover:bg-pink-50 rounded-xl transition-all">
-                        <Edit2 className="w-4 h-4" />
+                  <td className="px-5 py-3">
+                    <div className="flex items-center justify-end gap-1">
+                      <button onClick={() => openEdit(p)}
+                        className="p-1.5 text-[#ccc8c8] hover:text-[#d4508a] hover:bg-[#fff0f5] rounded-lg transition-all">
+                        <Edit2 className="w-3.5 h-3.5" />
                       </button>
-                      <button onClick={() => handleDelete(p.id)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
-                        <Trash2 className="w-4 h-4" />
+                      <button onClick={() => handleDelete(p.id)}
+                        className="p-1.5 text-[#ccc8c8] hover:text-rose-400 hover:bg-rose-50 rounded-lg transition-all">
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </td>
@@ -375,53 +317,54 @@ export default function StokPage() {
         </div>
       </div>
 
-      {/* Modal Form */}
+      {/* ── MODAL ── */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[32px] p-8 w-full max-w-2xl shadow-2xl max-h-[92vh] overflow-auto">
-            <div className="flex justify-between items-center mb-8">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-xl shadow-soft border border-[#f0ecec] max-h-[92vh] overflow-auto">
+            <div className="flex justify-between items-center px-6 py-4 border-b border-[#f5f2f2]">
               <div>
-                <h3 className="text-2xl font-extrabold text-gray-900">{editItem ? "Edit Produk" : "Produk Baru"}</h3>
-                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">{form.type}</p>
+                <p className="text-[14px] font-medium text-[#2d2820]">{editItem ? "Edit Produk" : "Produk Baru"}</p>
+                <p className="text-[10px] text-[#ccc8c8] mt-0.5">{form.type}</p>
               </div>
-              <button onClick={closeModal} className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-900">
-                <X />
+              <button onClick={closeModal} className="text-[#ccc8c8] hover:text-[#3d3939] transition-colors">
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-6">
-              {/* Image Upload */}
-              <div className="flex flex-col items-center">
-                <div className="w-32 h-32 rounded-[32px] bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center relative overflow-hidden group cursor-pointer"
-                  onClick={() => fileInputRef.current?.click()}>
-                  {form.image_url ? (
-                    <Image src={form.image_url} alt="Preview" width={128} height={128} className="object-cover w-full h-full" />
-                  ) : (
-                    <Upload className="w-8 h-8 text-gray-300" />
-                  )}
+            <div className="px-6 py-5 space-y-5">
+              {/* Image */}
+              <div className="flex justify-center">
+                <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-[#fff0f5] border border-[#ffd6e7]
+                  cursor-pointer group" onClick={() => fileInputRef.current?.click()}>
+                  {form.image_url
+                    ? <Image src={form.image_url} alt="Preview" fill className="object-cover" />
+                    : <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-[#f5c0d8]">
+                        <Upload className="w-6 h-6" />
+                        <span className="text-[9px] text-[#e8b4c8]">Foto</span>
+                      </div>
+                  }
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <ImageIcon className="text-white w-6 h-6" />
+                    <ImageIcon className="w-5 h-5 text-white" />
                   </div>
                 </div>
                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
-                <p className="text-[10px] text-gray-400 font-bold uppercase mt-3 tracking-wider">Klik untuk unggah foto (Max 2MB)</p>
               </div>
 
-              {/* Type Selector */}
+              {/* Type selector */}
               <div>
                 <label className="label-form">Tipe Produk</label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-1">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                   {TYPES.map(t => {
-                    const c = cfg(t);
+                    const m = meta(t);
                     return (
                       <button key={t} type="button"
                         onClick={() => setForm(f => ({ ...f, type: t, unit: isTreatment(t) ? "Sesi" : "Pcs" }))}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-xl border-2 text-[10px] font-bold transition-all ${
+                        className={`flex items-center gap-1.5 px-2.5 py-2 rounded-xl border text-[10px] transition-all ${
                           form.type === t
-                            ? "border-[#C94F78] bg-rose-50 text-[#C94F78]"
-                            : "border-gray-100 text-gray-400 hover:border-gray-200"
+                            ? "border-[#d4508a] bg-[#fff0f5] text-[#d4508a] font-medium"
+                            : "border-[#f0ecec] text-[#a8a4a4] hover:border-[#ffd6e7] hover:text-[#d4508a]"
                         }`}>
-                        <span className={form.type === t ? "text-[#C94F78]" : "text-gray-300"}>{c.icon}</span>
+                        {m.icon}
                         <span className="truncate">{t}</span>
                       </button>
                     );
@@ -429,119 +372,122 @@ export default function StokPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* Code & Sub-cat */}
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="label-form">Kode *</label>
-                  <input className="input-form" placeholder="P-001" value={form.product_code} onChange={e => setForm(f => ({ ...f, product_code: e.target.value }))} />
+                  <input className="input-form" placeholder="P-001" value={form.product_code}
+                    onChange={e => setForm(f => ({ ...f, product_code: e.target.value }))} />
                 </div>
                 <div>
                   <label className="label-form">Sub Kategori</label>
-                  <input className="input-form" list="sub-cats" placeholder="Pilih / Ketik..." value={form.sub_category} onChange={e => setForm(f => ({ ...f, sub_category: e.target.value }))} />
-                  <datalist id="sub-cats">{existingSubCategories.map(s => <option key={s} value={s} />)}</datalist>
+                  <input className="input-form" list="sub-cats" placeholder="Pilih atau ketik"
+                    value={form.sub_category} onChange={e => setForm(f => ({ ...f, sub_category: e.target.value }))} />
+                  <datalist id="sub-cats">{existingSubCats.map(s => <option key={s} value={s} />)}</datalist>
                 </div>
               </div>
 
+              {/* Name */}
               <div>
                 <label className="label-form">Nama Produk / Layanan *</label>
-                <input className="input-form" placeholder="Masukkan nama..." value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+                <input className="input-form" placeholder="Nama lengkap produk" value={form.name}
+                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* Price */}
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="label-form">Harga Modal (Rp)</label>
-                  <input type="number" className="input-form" placeholder="0" value={form.purchase_price} onChange={e => setForm(f => ({ ...f, purchase_price: e.target.value }))} />
+                  <input type="number" className="input-form" placeholder="0" value={form.purchase_price}
+                    onChange={e => setForm(f => ({ ...f, purchase_price: e.target.value }))} />
                 </div>
                 <div>
                   <label className="label-form">Harga Jual Default (Rp)</label>
-                  <input type="number" className="input-form" placeholder="0" value={form.selling_price} onChange={e => setForm(f => ({ ...f, selling_price: e.target.value }))} />
+                  <input type="number" className="input-form" placeholder="0" value={form.selling_price}
+                    onChange={e => setForm(f => ({ ...f, selling_price: e.target.value }))} />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* Stock & Unit */}
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="label-form">Stok</label>
-                  <input type="number" className="input-form disabled:opacity-25" disabled={isTreatment(form.type)} placeholder="0" value={form.stock} onChange={e => setForm(f => ({ ...f, stock: e.target.value }))} />
+                  <input type="number" className="input-form" disabled={isTreatment(form.type)}
+                    placeholder="0" value={form.stock} onChange={e => setForm(f => ({ ...f, stock: e.target.value }))} />
                 </div>
                 <div>
-                  <label className="label-form">Satuan Unit</label>
-                  <input className="input-form" placeholder="Pcs, Sesi..." value={form.unit} onChange={e => setForm(f => ({ ...f, unit: e.target.value }))} />
+                  <label className="label-form">Satuan</label>
+                  <input className="input-form" placeholder="Pcs, Sesi..." value={form.unit}
+                    onChange={e => setForm(f => ({ ...f, unit: e.target.value }))} />
                 </div>
               </div>
 
-              {/* ====== VARIANT SECTION ====== */}
-              <div className="border-t border-gray-100 pt-6">
-                <div className="flex items-center justify-between mb-4">
+              {/* ── VARIANTS ── */}
+              <div className="border-t border-[#f5f2f2] pt-4">
+                <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-sm font-extrabold text-gray-800">Varian Produk</p>
-                    <p className="text-[10px] text-gray-400 font-semibold mt-0.5">Opsional · Setiap varian punya harga sendiri</p>
+                    <p className="text-[12px] font-medium text-[#3d3939]">Varian Produk</p>
+                    <p className="text-[10px] text-[#ccc8c8]">Opsional — setiap varian punya harga sendiri</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {showVariantSection && (
-                      <button type="button" onClick={() => setShowVariantSection(false)}
-                        className="p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-all">
-                        <ChevronUp className="w-4 h-4" />
-                      </button>
-                    )}
-                    <button type="button" onClick={addVariantRow}
-                      className="flex items-center gap-2 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-[#C94F78] rounded-xl text-xs font-bold transition-all border border-rose-100">
-                      <Plus className="w-3.5 h-3.5" /> Tambah Varian
-                    </button>
-                  </div>
+                  <button type="button" onClick={() => setVariantForms(p => [...p, { ...emptyVariantRow }])}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-[#fff0f5] text-[#d4508a] rounded-xl
+                      text-[11px] border border-[#ffd6e7] hover:bg-[#ffd6e7] transition-colors">
+                    <Plus className="w-3 h-3" /> Varian
+                  </button>
                 </div>
 
-                {/* Existing Variants (when editing) */}
-                {showVariantSection && variants.length > 0 && (
-                  <div className="space-y-2 mb-4">
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Varian Tersimpan</p>
+                {/* Existing */}
+                {variants.length > 0 && (
+                  <div className="space-y-1.5 mb-3">
+                    <p className="text-[10px] text-[#ccc8c8] mb-1.5">Tersimpan</p>
                     {variants.map(v => (
-                      <div key={v.id} className="flex items-center gap-3 bg-rose-50/50 border border-rose-100 rounded-2xl px-4 py-3">
-                        <Tag className="w-3.5 h-3.5 text-[#C94F78] shrink-0" />
+                      <div key={v.id} className="flex items-center gap-3 bg-[#fff8fb] border border-[#ffeef5] rounded-xl px-3 py-2">
+                        <Tag className="w-3 h-3 text-[#e8b4c8] shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-bold text-gray-800 truncate">{v.variant_name}</p>
-                          <p className="text-[10px] font-bold text-[#C94F78]">Rp {v.price.toLocaleString("id-ID")} · Stok: {v.stock}</p>
+                          <p className="text-[12px] text-[#3d3939] truncate">{v.variant_name}</p>
+                          <p className="text-[10px] text-[#d4508a]">Rp {v.price.toLocaleString("id-ID")} · {v.stock} stok</p>
                         </div>
                         <button type="button" onClick={() => handleDeleteVariant(v.id)}
-                          className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all shrink-0">
-                          <Trash2 className="w-3.5 h-3.5" />
+                          className="text-[#e0d8d8] hover:text-rose-400 transition-colors p-1">
+                          <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
                     ))}
                   </div>
                 )}
 
-                {/* New Variant Forms */}
+                {/* New rows */}
                 {variantForms.length > 0 && (
-                  <div className="space-y-3">
-                    {variantForms.length > 0 && <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Varian Baru</p>}
+                  <div className="space-y-2">
+                    {variantForms.length > 0 && <p className="text-[10px] text-[#ccc8c8]">Baru</p>}
                     {variantForms.map((vf, idx) => (
-                      <div key={idx} className="grid grid-cols-[1fr_auto_auto_auto] items-end gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                      <div key={idx} className="grid grid-cols-[1fr_120px_80px_auto] gap-2 items-end bg-[#fafafa] p-3 rounded-xl border border-[#f0ecec]">
                         <div>
-                          <label className="label-form">Nama Varian *</label>
-                          <input className="input-form" placeholder="contoh: Warna Merah, 15mm Natural..." value={vf.variant_name}
-                            onChange={e => updateVariantForm(idx, "variant_name", e.target.value)} />
+                          <label className="label-form">Nama Varian</label>
+                          <input className="input-form text-[12px]" placeholder="cth: Merah, Natural 15mm..." value={vf.variant_name}
+                            onChange={e => setVariantForms(p => p.map((v, i) => i === idx ? { ...v, variant_name: e.target.value } : v))} />
                         </div>
-                        <div className="w-36">
+                        <div>
                           <label className="label-form">Harga (Rp)</label>
-                          <input type="number" className="input-form" placeholder="0" value={vf.price}
-                            onChange={e => updateVariantForm(idx, "price", e.target.value)} />
+                          <input type="number" className="input-form text-[12px]" placeholder="0" value={vf.price}
+                            onChange={e => setVariantForms(p => p.map((v, i) => i === idx ? { ...v, price: e.target.value } : v))} />
                         </div>
-                        <div className="w-24">
+                        <div>
                           <label className="label-form">Stok</label>
-                          <input type="number" className="input-form" placeholder="0" value={vf.stock}
-                            onChange={e => updateVariantForm(idx, "stock", e.target.value)} />
+                          <input type="number" className="input-form text-[12px]" placeholder="0" value={vf.stock}
+                            onChange={e => setVariantForms(p => p.map((v, i) => i === idx ? { ...v, stock: e.target.value } : v))} />
                         </div>
-                        <button type="button" onClick={() => removeVariantRow(idx)}
-                          className="mb-0.5 p-2.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all self-end">
+                        <button type="button" onClick={() => setVariantForms(p => p.filter((_, i) => i !== idx))}
+                          className="text-[#ccc8c8] hover:text-rose-400 transition-colors pb-0.5">
                           <X className="w-4 h-4" />
                         </button>
                       </div>
                     ))}
-
-                    {/* Save variants separately when editing existing product */}
                     {editItem && (
                       <button type="button" onClick={handleSaveVariants} disabled={variantSaving}
-                        className="w-full py-3 bg-rose-50 hover:bg-rose-100 text-[#C94F78] font-bold rounded-2xl text-xs uppercase tracking-widest transition-all border border-rose-100 disabled:opacity-50">
-                        {variantSaving ? "Menyimpan Varian..." : "Simpan Varian Sekarang"}
+                        className="w-full py-2 bg-[#fff0f5] text-[#d4508a] text-[11px] border border-[#ffd6e7]
+                          rounded-xl hover:bg-[#ffd6e7] transition-colors disabled:opacity-50">
+                        {variantSaving ? "Menyimpan..." : "Simpan Varian"}
                       </button>
                     )}
                   </div>
@@ -549,10 +495,15 @@ export default function StokPage() {
               </div>
             </div>
 
-            <div className="flex gap-4 mt-10">
-              <button onClick={closeModal} className="flex-1 py-4 border-2 border-gray-100 rounded-2xl font-bold text-gray-400 hover:bg-gray-50 transition-all uppercase text-xs tracking-widest">Batal</button>
+            {/* Buttons */}
+            <div className="flex gap-3 px-6 py-4 border-t border-[#f5f2f2]">
+              <button onClick={closeModal}
+                className="flex-1 py-2.5 border border-[#f0ecec] rounded-xl text-[12px] text-[#a8a4a4] hover:bg-[#fafafa] transition-colors">
+                Batal
+              </button>
               <button onClick={handleSave} disabled={saving}
-                className="flex-1 py-4 bg-[#C94F78] hover:bg-[#A83E60] text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-pink-100 disabled:opacity-50 uppercase text-xs tracking-widest">
+                className="flex-1 py-2.5 bg-[#d4508a] text-white rounded-xl text-[12px] font-medium
+                  hover:bg-[#b83b72] transition-colors shadow-pink disabled:opacity-50">
                 {saving ? "Menyimpan..." : (editItem ? "Simpan Perubahan" : "Simpan Produk")}
               </button>
             </div>
