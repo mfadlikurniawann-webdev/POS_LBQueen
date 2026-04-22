@@ -31,6 +31,8 @@ body {
   .shadow-premium     { box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04); }
   .shadow-luxury-pink { box-shadow: 0 4px 20px rgba(201,79,120,0.15); }
   .shadow-pink-sm     { box-shadow: 0 2px 12px rgba(201,79,120,0.2); }
+  .shadow-gojek       { box-shadow: 0 2px 15px rgba(0,0,0,0.05); }
+  .shadow-gojek-lg    { box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
 
   /* Scrollbar */
   .scrollbar-hide::-webkit-scrollbar { display: none; }

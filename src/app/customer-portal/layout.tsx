@@ -1,20 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Home, ShoppingBag, LogOut, User } from "lucide-react";
+import { Home, ShoppingBag, LogOut, Ticket, Star } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { CartProvider, useCart } from "@/context/CartContext";
-
-function CartBadge() {
-  const { totalItems } = useCart();
-  if (totalItems === 0) return null;
-  return (
-    <span className="absolute -top-1 -right-1 bg-[#C94F78] text-white text-[8px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
-      {totalItems}
-    </span>
-  );
-}
 
 function InnerLayout({ children, customer, handleLogout, pathname }: {
   children: React.ReactNode;
@@ -25,83 +14,49 @@ function InnerLayout({ children, customer, handleLogout, pathname }: {
   const { totalItems } = useCart();
 
   return (
-    <div className="min-h-screen bg-[#FDF8FA] flex flex-col font-sans">
-
-      {/* ── HEADER ── */}
-      <header className="bg-white border-b border-rose-100 sticky top-0 z-40 shadow-[0_1px_8px_rgba(201,79,120,0.06)]">
-        <div className="max-w-5xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
-
-          {/* Logo */}
-          <Link href="/customer-portal" className="flex items-center gap-3 shrink-0">
-            <div className="w-8 h-8 rounded-xl overflow-hidden bg-rose-50 border border-rose-100 flex items-center justify-center">
-              <Image src="/lbqueen_logo.png" alt="LBQueen" width={22} height={22} className="object-contain" />
-            </div>
-            <div className="hidden sm:block">
-              <p className="text-[13px] font-bold text-[#C94F78] leading-none">LBQueen</p>
-              <p className="text-[9px] text-rose-300 tracking-widest uppercase mt-0.5">Care Beauty</p>
-            </div>
-          </Link>
-
-          {/* Right */}
-          <div className="flex items-center gap-3">
-            {/* Cart icon */}
-            <div className="relative">
-              <div className="w-9 h-9 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center">
-                <ShoppingBag className="w-4 h-4 text-[#C94F78]" />
-                {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#C94F78] text-white text-[8px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
-                    {totalItems}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* User */}
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-rose-50 border border-rose-100 rounded-xl">
-              <div className="w-6 h-6 rounded-full bg-[#C94F78] flex items-center justify-center text-white text-[10px] font-semibold">
-                {customer?.name?.charAt(0)}
-              </div>
-              <span className="text-[11px] font-medium text-slate-700 hidden sm:block">
-                {customer?.name?.split(" ")[0]}
-              </span>
-            </div>
-
-            {/* Logout */}
-            <button onClick={handleLogout}
-              className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-[#C94F78] transition-all">
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-white flex flex-col font-sans selection:bg-rose-100 selection:text-lb-pink">
 
       {/* ── CONTENT ── */}
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6 pb-28">
+      <main className="flex-1 w-full pb-32">
         {children}
       </main>
 
-      {/* ── BOTTOM NAV (Mobile) ── */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-rose-100 h-16 flex items-center z-50 safe-area-bottom">
+      {/* ── BOTTOM NAV (Gojek Minimal Style) ── */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 h-[72px] flex items-center z-50 safe-area-bottom px-6">
         <Link href="/customer-portal"
-          className={`flex-1 flex flex-col items-center justify-center gap-1 ${pathname === "/customer-portal" ? "text-[#C94F78]" : "text-slate-300"}`}>
-          <Home className="w-5 h-5" />
-          <span className="text-[9px] font-medium">Home</span>
+          className={`flex-1 flex flex-col items-center justify-center gap-1 ${pathname === "/customer-portal" ? "text-[#C94F78]" : "text-gray-400"}`}>
+          <div className={`p-1 rounded-lg ${pathname === "/customer-portal" ? "bg-rose-50" : ""}`}>
+             <Home className="w-6 h-6" />
+          </div>
+          <span className="text-[10px] font-semibold">Home</span>
         </Link>
-        <div className="flex-1 flex flex-col items-center justify-center gap-1 text-slate-300">
-          <div className="relative">
-            <ShoppingBag className="w-5 h-5" />
+        
+        <Link href="/customer-portal?tab=promo"
+          className={`flex-1 flex flex-col items-center justify-center gap-1 ${pathname === "/customer-portal?tab=promo" ? "text-[#C94F78]" : "text-gray-400"}`}>
+          <div className="p-1 rounded-lg">
+             <Star className="w-6 h-6" />
+          </div>
+          <span className="text-[10px] font-semibold">Promo</span>
+        </Link>
+
+        <div className="flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 relative">
+          <div className="p-1 rounded-lg relative">
+            <ShoppingBag className="w-6 h-6" />
             {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 bg-[#C94F78] text-white text-[8px] w-3.5 h-3.5 flex items-center justify-center rounded-full font-bold">
+              <span className="absolute -top-1 -right-1 bg-[#C94F78] text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full font-bold border-2 border-white">
                 {totalItems}
               </span>
             )}
           </div>
-          <span className="text-[9px] font-medium">Keranjang</span>
+          <span className="text-[10px] font-semibold">Pesanan</span>
         </div>
+
         <button onClick={handleLogout}
-          className="flex-1 flex flex-col items-center justify-center gap-1 text-slate-300">
-          <LogOut className="w-5 h-5" />
-          <span className="text-[9px] font-medium">Keluar</span>
+          className="flex-1 flex flex-col items-center justify-center gap-1 text-gray-400">
+          <div className="p-1 rounded-lg">
+             <LogOut className="w-6 h-6" />
+          </div>
+          <span className="text-[10px] font-semibold">Exit</span>
         </button>
       </nav>
     </div>
@@ -131,10 +86,10 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
   if (isLoginPage) return <CartProvider>{children}</CartProvider>;
 
   if (!customer) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FDF8FA]">
+    <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="flex flex-col items-center gap-3">
         <div className="w-8 h-8 rounded-full border-2 border-rose-200 border-t-[#C94F78] animate-spin" />
-        <p className="text-xs text-slate-400">Memuat portal...</p>
+        <p className="text-xs text-slate-400">Memuat...</p>
       </div>
     </div>
   );
