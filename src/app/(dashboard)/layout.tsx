@@ -48,7 +48,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pageTitle = PAGE_TITLE[pathname] ?? "Dashboard";
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
+    <div className="flex h-screen bg-transparent overflow-hidden font-sans">
 
       {/* ── SIDEBAR ── */}
       <aside className="hidden md:flex w-56 bg-white border-r border-slate-100 flex-col shrink-0">
@@ -116,7 +116,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-hidden bg-slate-50">
+        <main className="flex-1 overflow-hidden bg-transparent">
           <div className="h-full overflow-auto scrollbar-hide">
             {children}
           </div>

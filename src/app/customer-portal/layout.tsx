@@ -14,7 +14,7 @@ function InnerLayout({ children, customer, handleLogout, pathname }: {
   const { totalItems } = useCart();
 
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans selection:bg-rose-100 selection:text-lb-pink">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans selection:bg-rose-100 selection:text-lb-pink">
 
       {/* ── CONTENT ── */}
       <main className="flex-1 w-full pb-32">
@@ -87,7 +87,7 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
   if (isLoginPage) return <CartProvider>{children}</CartProvider>;
 
   if (!customer) return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
+    <div className="min-h-screen flex items-center justify-center bg-transparent">
       <div className="flex flex-col items-center gap-3">
         <div className="w-8 h-8 rounded-full border-2 border-rose-200 border-t-[#C94F78] animate-spin" />
         <p className="text-xs text-slate-400">Memuat...</p>

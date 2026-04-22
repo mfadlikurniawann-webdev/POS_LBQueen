@@ -46,7 +46,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-white font-sans">
+    <div className="min-h-screen flex bg-transparent font-sans">
 
       {/* === Panel Kiri (Desktop) === */}
       <div className="hidden lg:flex w-[45%] relative flex-col overflow-hidden" style={{ background: "linear-gradient(145deg, #C94F78 0%, #8B2252 60%, #5C1437 100%)" }}>
@@ -101,7 +101,7 @@ export default function LoginPage() {
       </div>
 
       {/* === Panel Kanan (Form) === */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-gray-50">
+      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-transparent">
         <div className="w-full max-w-md">
           {/* Logo Mobile */}
           <div className="lg:hidden text-center mb-8">

@@ -156,7 +156,7 @@ export default function CustomerPortalPage() {
   }, [activeMainCat]);
 
   return (
-    <div className="min-h-screen bg-[#FDFCFD] font-sans pb-32">
+    <div className="min-h-screen bg-transparent font-sans pb-32">
 
       {/* ── HEADER ── */}
       <header className="bg-white/80 backdrop-blur-md px-5 pt-12 pb-6 sticky top-0 z-50 border-b border-gray-50 flex flex-col gap-4">

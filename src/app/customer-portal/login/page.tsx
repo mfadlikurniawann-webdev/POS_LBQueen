@@ -66,7 +66,7 @@ export default function CustomerLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-white font-sans overflow-hidden">
+    <div className="min-h-screen flex bg-transparent font-sans overflow-hidden">
       {/* ── PREVIEW BANNER ── */}
       {isAdminPreview && (
         <div className="fixed top-0 left-0 right-0 bg-amber-500 text-white text-[10px] font-black uppercase tracking-[0.2em] py-2 px-4 z-[100] text-center flex items-center justify-center gap-2">
@@ -139,7 +139,7 @@ export default function CustomerLoginPage() {
       </div>
 
       {/* === Panel Kanan (Form) === */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-gray-50">
+      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-transparent">
         <div className="w-full max-w-md">
           {/* Logo Mobile */}
           <div className="lg:hidden text-center mb-8">

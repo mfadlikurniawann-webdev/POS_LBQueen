@@ -3,6 +3,7 @@
 
 :root {
   --background: #ffffff;
+  --bg-gradient: linear-gradient(135deg, #fffcfd 0%, #fdf2f6 100%);
   --foreground: #1e293b;
   --lb-pink:       #C94F78;
   --lb-pink-dark:  #A83E60;
@@ -15,13 +16,14 @@
   --color-foreground: var(--foreground);
   --color-lb-pink:      var(--lb-pink);
   --color-lb-pink-dark: var(--lb-pink-dark);
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', 'Helvetica', system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
+  background: var(--bg-gradient);
+  background-attachment: fixed;
   color: var(--foreground);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', 'Helvetica', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
