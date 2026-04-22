@@ -39,8 +39,9 @@ function InnerLayout({ children, customer, handleLogout, pathname }: {
           <span className="text-[10px] font-semibold">Promo</span>
         </Link>
 
-        <div className="flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 relative">
-          <div className="p-1 rounded-lg relative">
+        <Link href="/customer-portal/cart"
+          className={`flex-1 flex flex-col items-center justify-center gap-1 ${pathname === "/customer-portal/cart" ? "text-[#C94F78]" : "text-gray-400"}`}>
+          <div className={`p-1 rounded-lg ${pathname === "/customer-portal/cart" ? "bg-rose-50" : ""}`}>
             <ShoppingBag className="w-6 h-6" />
             {totalItems > 0 && (
               <span className="absolute -top-1 -right-1 bg-[#C94F78] text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full font-bold border-2 border-white">
@@ -49,7 +50,7 @@ function InnerLayout({ children, customer, handleLogout, pathname }: {
             )}
           </div>
           <span className="text-[10px] font-semibold">Pesanan</span>
-        </div>
+        </Link>
 
         <button onClick={handleLogout}
           className="flex-1 flex flex-col items-center justify-center gap-1 text-gray-400">

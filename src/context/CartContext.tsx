@@ -4,6 +4,8 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 export type CartItem = {
   id: number;
+  variant_id?: number;
+  variant_name?: string;
   name: string;
   price: number;
   qty: number;
@@ -15,9 +17,9 @@ export type CartItem = {
 
 type CartContextType = {
   cart: CartItem[];
-  addToCart: (product: any, qty: number) => void;
-  removeFromCart: (id: number) => void;
-  updateQty: (id: number, qty: number) => void;
+  addToCart: (product: any, qty: number, variant?: any) => void;
+  removeFromCart: (id: number, variant_id?: number) => void;
+  updateQty: (id: number, qty: number, variant_id?: number) => void;
   clearCart: () => void;
   totalItems: number;
 };
@@ -36,17 +38,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("lbqueen_cart", JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (product: any, qty: number) => {
+  const addToCart = (product: any, qty: number, variant?: any) => {
     setCart(prev => {
-      const existing = prev.find(i => i.id === product.id);
+      const variant_id = variant?.id;
+      const existing = prev.find(i => i.id === product.id && i.variant_id === variant_id);
       if (existing) {
         const newQty = Math.min(10, existing.qty + qty);
-        return prev.map(i => i.id === product.id ? { ...i, qty: newQty } : i);
+        return prev.map(i => (i.id === product.id && i.variant_id === variant_id) ? { ...i, qty: newQty } : i);
       }
       return [...prev, {
         id: product.id,
+        variant_id: variant_id,
+        variant_name: variant?.variant_name,
         name: product.name,
-        price: product.selling_price,
+        price: variant ? variant.price : product.selling_price,
         qty: Math.min(10, qty),
         image_url: product.image_url,
         is_consultation: false,
@@ -56,13 +61,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const removeFromCart = (id: number) => {
-    setCart(prev => prev.filter(i => i.id !== id));
+  const removeFromCart = (id: number, variant_id?: number) => {
+    setCart(prev => prev.filter(i => !(i.id === id && i.variant_id === variant_id)));
   };
 
-  const updateQty = (id: number, qty: number) => {
+  const updateQty = (id: number, qty: number, variant_id?: number) => {
     const cappedQty = Math.min(10, qty);
-    setCart(prev => prev.map(i => i.id === id ? { ...i, qty: cappedQty, is_consultation: false } : i));
+    setCart(prev => prev.map(i => (i.id === id && i.variant_id === variant_id) ? { ...i, qty: cappedQty, is_consultation: false } : i));
   };
 
   const clearCart = () => setCart([]);
