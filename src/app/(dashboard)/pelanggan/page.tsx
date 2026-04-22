@@ -62,8 +62,9 @@ export default function PelangganPage() {
   const [tab, setTab]               = useState<"pelanggan" | "voucher" | "pesanan">("pelanggan");
 
   const [showCustModal, setShowCustModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [showVouchModal, setShowVouchModal] = useState(false);
-  const [custForm, setCustForm]     = useState(emptyCustomer);
+  const [custForm, setCustForm]     = useState<Partial<Customer>>(emptyCustomer);
   const [vouchForm, setVouchForm]   = useState(emptyVoucher);
   const [products, setProducts]       = useState<any[]>([]);
   const [saving, setSaving]         = useState(false);
@@ -92,32 +93,62 @@ export default function PelangganPage() {
     if (!custForm.name) { showToast("Nama wajib diisi!"); return; }
     setSaving(true);
 
-    // Insert dulu untuk dapat ID
-    const { data: inserted, error } = await supabase
-      .from("customers")
-      .insert({ 
-        name: custForm.name, 
-        phone: custForm.phone, 
-        is_member: custForm.is_member,
-        nik: custForm.nik || null,
-        address: custForm.address || null
-      })
-      .select()
-      .single();
+    if (isEditing && custForm.id) {
+      // Update
+      const { error } = await supabase
+        .from("customers")
+        .update({
+          name: custForm.name,
+          phone: custForm.phone,
+          is_member: custForm.is_member,
+          nik: custForm.nik || null,
+          address: custForm.address || null
+        })
+        .eq("id", custForm.id);
 
-    if (error || !inserted) {
-      showToast("Gagal! Pastikan kolom 'nik' & 'address' sudah dibuat di DB Supabase."); setSaving(false); return;
+      if (error) { showToast("Gagal mengupdate pelanggan!"); setSaving(false); return; }
+      
+      // Update username & password jika nama/member berubah
+      const username      = generateUsername(custForm.name);
+      const passwordPlain = generatePasswordPlain(custForm.name, custForm.is_member, custForm.id);
+      const passwordHash  = hashPassword(passwordPlain);
+      await supabase.from("customers").update({ username, password_plain: passwordPlain, password_hash: passwordHash }).eq("id", custForm.id);
+
+      showToast("Pelanggan berhasil diperbarui!");
+    } else {
+      // Insert
+      const { data: inserted, error } = await supabase
+        .from("customers")
+        .insert({ 
+          name: custForm.name, 
+          phone: custForm.phone, 
+          is_member: custForm.is_member,
+          nik: custForm.nik || null,
+          address: custForm.address || null
+        })
+        .select()
+        .single();
+
+      if (error || !inserted) {
+        showToast("Gagal menambahkan pelanggan."); setSaving(false); return;
+      }
+
+      const username      = generateUsername(custForm.name);
+      const passwordPlain = generatePasswordPlain(custForm.name, custForm.is_member, inserted.id);
+      const passwordHash  = hashPassword(passwordPlain);
+      await supabase.from("customers").update({ username, password_plain: passwordPlain, password_hash: passwordHash }).eq("id", inserted.id);
+
+      showToast("Pelanggan baru ditambahkan!");
     }
 
-    // Generate username & password berdasarkan ID yang baru didapat
-    const username      = generateUsername(custForm.name);
-    const passwordPlain = generatePasswordPlain(custForm.name, custForm.is_member, inserted.id);
-    const passwordHash  = hashPassword(passwordPlain);
+    setSaving(false); setShowCustModal(false); setCustForm(emptyCustomer); setIsEditing(false); fetchAll();
+  };
 
-    await supabase.from("customers").update({ username, password_plain: passwordPlain, password_hash: passwordHash }).eq("id", inserted.id);
-
-    showToast("Pelanggan baru ditambahkan!");
-    setSaving(false); setShowCustModal(false); setCustForm(emptyCustomer); fetchAll();
+  const deleteCust = async (id: number) => {
+    if (!confirm("Yakin ingin menghapus pelanggan ini beserta data pesanan & portalnya?")) return;
+    const { error } = await supabase.from("customers").delete().eq("id", id);
+    if (error) showToast("Gagal menghapus pelanggan. Pastikan tidak ada data yang terkait.");
+    else { showToast("Pelanggan berhasil dihapus!"); fetchAll(); }
   };
 
   const toggleMember = async (c: Customer) => {
@@ -215,7 +246,10 @@ export default function PelangganPage() {
         </div>
         {tab !== "pesanan" && (
           <button
-            onClick={() => tab === "pelanggan" ? setShowCustModal(true) : setShowVouchModal(true)}
+            onClick={() => {
+              if (tab === "pelanggan") { setCustForm(emptyCustomer); setIsEditing(false); setShowCustModal(true); }
+              else setShowVouchModal(true);
+            }}
             className="bg-[#C94F78] hover:bg-lb-rose-dark text-white font-semibold px-6 py-2.5 rounded-2xl flex items-center gap-2 text-[11px] capitalize tracking-widest transition-all shadow-luxury-pink shrink-0">
             <Plus className="w-4 h-4 text-rose-100" /> {tab === "pelanggan" ? "Tambah" : "Buat Voucher"}
           </button>
@@ -277,10 +311,20 @@ export default function PelangganPage() {
                         </div>
                       )}
                       
-                      <button onClick={() => toggleMember(c)}
-                        className={`w-full py-2.5 rounded-xl text-[10px] font-semibold capitalize tracking-widest transition-all ${c.is_member ? "bg-slate-50 text-slate-400" : "bg-amber-50 text-amber-600 border border-amber-100"}`}>
-                        {c.is_member ? "Nonaktifkan Member" : "Aktivasi Member"}
-                      </button>
+                      <div className="flex gap-2">
+                        <button onClick={() => toggleMember(c)}
+                          className={`flex-1 py-2.5 rounded-xl text-[10px] font-semibold capitalize tracking-widest transition-all ${c.is_member ? "bg-slate-50 text-slate-400" : "bg-amber-50 text-amber-600 border border-amber-100"}`}>
+                          {c.is_member ? "Nonaktifkan Member" : "Aktivasi Member"}
+                        </button>
+                        <button onClick={() => { setCustForm(c); setIsEditing(true); setShowCustModal(true); }}
+                          className="px-3 py-2.5 rounded-xl text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-100">
+                          Edit
+                        </button>
+                        <button onClick={() => deleteCust(c.id)}
+                          className="px-3 py-2.5 rounded-xl text-[10px] font-semibold bg-red-50 text-red-600 border border-red-100">
+                          Hapus
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -341,10 +385,20 @@ export default function PelangganPage() {
                             )}
                           </td>
                           <td className="px-6 py-4 text-right">
-                            <button onClick={() => toggleMember(c)}
-                              className={`text-[10px] font-semibold capitalize tracking-widest px-4 py-2 rounded-xl transition-all border ${c.is_member ? "bg-white text-rose-400 border-rose-100 hover:bg-rose-50" : "bg-white text-amber-600 border-amber-100 hover:bg-amber-50"}`}>
-                              {c.is_member ? "Revoke Gold" : "Upgrade Gold"}
-                            </button>
+                            <div className="flex items-center justify-end gap-2">
+                              <button onClick={() => toggleMember(c)}
+                                className={`text-[10px] font-semibold capitalize tracking-widest px-4 py-2 rounded-xl transition-all border ${c.is_member ? "bg-white text-rose-400 border-rose-100 hover:bg-rose-50" : "bg-white text-amber-600 border-amber-100 hover:bg-amber-50"}`}>
+                                {c.is_member ? "Revoke Gold" : "Upgrade Gold"}
+                              </button>
+                              <button onClick={() => { setCustForm(c); setIsEditing(true); setShowCustModal(true); }}
+                                className="text-[10px] font-semibold capitalize px-3 py-2 rounded-xl transition-all border bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100">
+                                Edit
+                              </button>
+                              <button onClick={() => deleteCust(c.id)}
+                                className="text-[10px] font-semibold capitalize px-3 py-2 rounded-xl transition-all border bg-red-50 text-red-600 border-red-100 hover:bg-red-100">
+                                Hapus
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -536,7 +590,7 @@ export default function PelangganPage() {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => !saving && setShowCustModal(false)}>
           <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-5">
-              <h3 className="text-xl font-semibold">Tambah Pelanggan</h3>
+              <h3 className="text-xl font-semibold">{isEditing ? "Edit Pelanggan" : "Tambah Pelanggan"}</h3>
               <button onClick={() => setShowCustModal(false)}><X className="text-gray-400" /></button>
             </div>
             <div className="space-y-4">
@@ -573,7 +627,7 @@ export default function PelangganPage() {
               </div>
 
               {/* Preview akun portal */}
-              {custForm.name && (
+              {custForm.name && !isEditing && (
                 <div className="bg-pink-50 border border-pink-100 rounded-xl p-3">
                   <p className="text-xs font-semibold text-[#C94F78] mb-2 capitalize tracking-wider flex items-center gap-1">
                     <Key className="w-3 h-3" /> Preview Akun Portal

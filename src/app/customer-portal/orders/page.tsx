@@ -72,14 +72,16 @@ export default function OrdersPage() {
   return (
     <div className="min-h-screen bg-[#FDFCFD] pb-32">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-100 px-5 pt-12 pb-4 flex items-center justify-between">
+      <div className="sticky top-0 z-50 bg-[#C94F78] px-5 pt-12 pb-6 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-4">
-           <Link href="/customer-portal" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 active:scale-90 transition-all">
+           <Link href="/customer-portal" className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white active:scale-90 transition-all">
              <ChevronLeft className="w-6 h-6" />
            </Link>
-           <h1 className="text-lg font-semibold text-gray-900 leading-tight">Order Saya</h1>
+           <h1 className="text-xl font-bold text-white leading-tight flex items-center gap-2">
+             Order Saya
+           </h1>
         </div>
-        <button onClick={() => window.open(`https://wa.me/${WA_NUMBER}`, "_blank")} className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-[#C94F78]">
+        <button onClick={() => window.open(`https://wa.me/${WA_NUMBER}`, "_blank")} className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white active:scale-90 transition-all">
            <HelpCircle className="w-5 h-5" />
         </button>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Home, ShoppingBag, LogOut, Ticket, Star } from "lucide-react";
+import { Home, ShoppingBag, LogOut, Ticket, Star, User } from "lucide-react";
 import Link from "next/link";
 import { CartProvider, useCart } from "@/context/CartContext";
 
@@ -52,13 +52,13 @@ function InnerLayout({ children, customer, handleLogout, pathname }: {
           <span className="text-[10px] font-semibold">Pesanan</span>
         </Link>
 
-        <button onClick={handleLogout}
-          className="flex-1 flex flex-col items-center justify-center gap-1 text-gray-400">
-          <div className="p-1 rounded-lg">
-             <LogOut className="w-6 h-6" />
+        <Link href="/customer-portal/profile"
+          className={`flex-1 flex flex-col items-center justify-center gap-1 ${pathname === "/customer-portal/profile" ? "text-[#C94F78]" : "text-gray-400"}`}>
+          <div className={`p-1 rounded-lg ${pathname === "/customer-portal/profile" ? "bg-rose-50" : ""}`}>
+             <User className="w-6 h-6" />
           </div>
-          <span className="text-[10px] font-semibold">Exit</span>
-        </button>
+          <span className="text-[10px] font-semibold">Profil</span>
+        </Link>
       </nav>
     </div>
   );

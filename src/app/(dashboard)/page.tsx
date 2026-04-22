@@ -27,8 +27,8 @@ type CartItem = {
   cartKey: string;
 };
 
-const RETAIL_TYPES   = ["Retail products", "Retail products nail", "Retail products eyelash", "Retail products beauty"];
-const SELLABLE_TYPES = ["Treatment Care & Beauty", "Product Care & Beauty", ...RETAIL_TYPES];
+const RETAIL_TYPES   = ["Retail products", "Retail products nail", "Retail products eyelash", "Retail products beauty", "Retail Beauty", "Retail Eyelash"];
+const SELLABLE_TYPES = ["Treatment Care & Beauty", "Product Care & Beauty", "Treatment", ...RETAIL_TYPES];
 
 const TYPE_ICON: Record<string, React.ReactNode> = {
   "Treatment Care & Beauty": <Sparkles className="w-3 h-3" />,
