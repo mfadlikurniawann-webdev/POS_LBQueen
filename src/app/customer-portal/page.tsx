@@ -176,7 +176,7 @@ export default function CustomerPortalPage() {
                  ) : <User className="w-5 h-5 text-white/70" />}
               </div>
               <div>
-                 <p className="text-[10px] font-semibold text-white/70 uppercase tracking-widest leading-none mb-1">Ritual Kecantikan,</p>
+                 <p className="text-[10px] font-semibold text-white/70 capitalize tracking-widest leading-none mb-1">Ritual Kecantikan,</p>
                  <h2 className="text-[15px] font-semibold text-white leading-tight">{customer?.name || "Pelanggan Setia"}</h2>
               </div>
            </div>
@@ -209,7 +209,7 @@ export default function CustomerPortalPage() {
                <Image src={b.image} alt={b.title} fill className="object-cover" />
                <div className="absolute bottom-4 left-6 right-6 z-20">
                   <h4 className="text-white text-[18px] font-semibold leading-tight mb-1">{b.title}</h4>
-                  <p className="text-white/70 text-[10px] font-medium uppercase tracking-widest">{b.subtitle}</p>
+                  <p className="text-white/70 text-[10px] font-medium capitalize tracking-widest">{b.subtitle}</p>
                </div>
             </div>
           ))}
@@ -225,7 +225,7 @@ export default function CustomerPortalPage() {
         
         {/* ── GRID CATEGORY FILTER (App Store Style) ── */}
         <div className="mb-8">
-           <h3 className="text-sm font-semibold text-gray-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+           <h3 className="text-sm font-semibold text-gray-800 capitalize tracking-widest mb-4 flex items-center gap-2">
              <Filter className="w-4 h-4 text-[#C94F78]" /> Telusuri Kategori
            </h3>
            <div className="grid grid-cols-2 gap-3">
@@ -262,7 +262,7 @@ export default function CustomerPortalPage() {
              <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar py-1">
                 <button 
                    onClick={() => setActiveSubCat(null)}
-                   className={`whitespace-nowrap px-4 py-2 rounded-full text-[11px] font-semibold uppercase tracking-tight transition-all ${
+                   className={`whitespace-nowrap px-4 py-2 rounded-full text-[11px] font-semibold capitalize tracking-tight transition-all ${
                      !activeSubCat ? "bg-[#C94F78] text-white" : "bg-white text-gray-400 border border-gray-100"
                    }`}
                 >
@@ -272,7 +272,7 @@ export default function CustomerPortalPage() {
                   <button 
                     key={sub}
                     onClick={() => setActiveSubCat(activeSubCat === sub ? null : sub)}
-                    className={`whitespace-nowrap px-4 py-2 rounded-full text-[11px] font-semibold uppercase tracking-tight transition-all ${
+                    className={`whitespace-nowrap px-4 py-2 rounded-full text-[11px] font-semibold capitalize tracking-tight transition-all ${
                       activeSubCat === sub ? "bg-[#C94F78] text-white shadow-md shadow-rose-100" : "bg-white text-gray-400 border border-gray-100"
                     }`}
                   >
@@ -289,7 +289,7 @@ export default function CustomerPortalPage() {
              <button 
                key={tab}
                onClick={() => setActiveTab(tab as any)}
-               className={`whitespace-nowrap px-6 py-2 rounded-full text-[11px] font-semibold uppercase tracking-widest transition-all ${
+               className={`whitespace-nowrap px-6 py-2 rounded-full text-[11px] font-semibold capitalize tracking-widest transition-all ${
                  activeTab === tab 
                    ? "bg-rose-50 text-[#C94F78] border border-rose-100" 
                    : "bg-white text-gray-400 border border-gray-100"
@@ -305,15 +305,15 @@ export default function CustomerPortalPage() {
            {loading ? (
              <div className="py-20 flex flex-col items-center gap-4">
                 <Loader2 className="w-8 h-8 text-[#C94F78] animate-spin" />
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Memuat Layanan terbaik...</p>
+                <p className="text-xs font-semibold text-gray-400 capitalize tracking-widest">Memuat Layanan terbaik...</p>
              </div>
            ) : filtered.length === 0 ? (
              <div className="py-20 text-center flex flex-col items-center gap-4">
                 <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
                    <SearchIcon className="w-6 h-6 text-gray-200" />
                 </div>
-                <p className="text-sm font-semibold text-gray-300 uppercase tracking-widest">Produk tidak ditemukan</p>
-                <button onClick={() => { setActiveMainCat(null); setActiveSubCat(null); setActiveTab("semua"); setSearchQuery(""); }} className="text-[11px] font-semibold text-[#C94F78] underline uppercase mt-2">Reset Filter</button>
+                <p className="text-sm font-semibold text-gray-300 capitalize tracking-widest">Produk tidak ditemukan</p>
+                <button onClick={() => { setActiveMainCat(null); setActiveSubCat(null); setActiveTab("semua"); setSearchQuery(""); }} className="text-[11px] font-semibold text-[#C94F78] underline capitalize mt-2">Reset Filter</button>
              </div>
            ) : (
              <div className="grid grid-cols-2 gap-x-4 gap-y-6">
@@ -343,7 +343,7 @@ export default function CustomerPortalPage() {
                        <div className="px-1 flex-1 flex flex-col justify-between">
                          <div>
                             <p className="text-[12px] font-semibold text-gray-800 line-clamp-2 mb-1 leading-tight h-8">{product.name}</p>
-                            <p className="text-[10px] font-semibold text-gray-400 mb-2 truncate uppercase tracking-tighter">{product.sub_category || "Umum"}</p>
+                            <p className="text-[10px] font-semibold text-gray-400 mb-2 truncate capitalize tracking-tighter">{product.sub_category || "Umum"}</p>
                          </div>
                          
                          <div className="flex items-center justify-between">
@@ -382,7 +382,7 @@ export default function CustomerPortalPage() {
                   ) : <div className="w-full h-full flex items-center justify-center text-rose-200 italic font-semibold text-4xl opacity-30">LB</div>}
                </div>
                <div className="flex-1 pt-2">
-                  <p className="text-[12px] font-semibold text-[#C94F78] uppercase tracking-widest mb-1">{selectedProduct.type}</p>
+                  <p className="text-[12px] font-semibold text-[#C94F78] capitalize tracking-widest mb-1">{selectedProduct.type}</p>
                   <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-4">{selectedProduct.name}</h3>
                   <div className="flex items-baseline gap-2">
                      <span className="text-xl font-semibold text-[#C94F78]">
@@ -396,7 +396,7 @@ export default function CustomerPortalPage() {
                {/* Variants */}
                {selectedProduct.variants && selectedProduct.variants.length > 0 && (
                  <div>
-                    <h4 className="text-[12px] font-semibold text-gray-900 uppercase tracking-widest mb-4">Pilih Varian</h4>
+                    <h4 className="text-[12px] font-semibold text-gray-900 capitalize tracking-widest mb-4">Pilih Varian</h4>
                     <div className="flex flex-wrap gap-3">
                        {selectedProduct.variants.map((v) => (
                          <button 
@@ -417,7 +417,7 @@ export default function CustomerPortalPage() {
 
                {/* Quantity */}
                <div className="flex items-center justify-between">
-                  <h4 className="text-[12px] font-semibold text-gray-900 uppercase tracking-widest">Jumlah</h4>
+                  <h4 className="text-[12px] font-semibold text-gray-900 capitalize tracking-widest">Jumlah</h4>
                   <div className="flex items-center gap-6 bg-gray-50 rounded-2xl px-5 py-2.5 border border-gray-100">
                      <button 
                        onClick={() => setSelectionQty(Math.max(1, selectionQty - 1))}

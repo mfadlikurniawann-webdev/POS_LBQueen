@@ -183,8 +183,8 @@ export default function InvoicePage() {
                
                return (
                  <div key={idx} className="flex flex-col">
-                   <span className="font-bold uppercase break-words leading-tight">{itemName}</span>
-                   {hasVariant && <span className="uppercase text-[8px] pl-2">- {item.variant_name}</span>}
+                   <span className="font-bold capitalize break-words leading-tight">{itemName}</span>
+                   {hasVariant && <span className="capitalize text-[8px] pl-2">- {item.variant_name}</span>}
                    
                    <div className="flex justify-between mt-0.5">
                      <span>{item.quantity} x {item.price.toLocaleString("id-ID")}</span>
@@ -234,7 +234,7 @@ export default function InvoicePage() {
 
          <div className="border-t border-dashed border-black/50 my-2" />
          
-         <div className={`${is58 ? "text-[8px]" : "text-[9px]"} text-center mb-2 uppercase break-words px-1`}>
+         <div className={`${is58 ? "text-[8px]" : "text-[9px]"} text-center mb-2 capitalize break-words px-1`}>
             {invoice.payment >= invoice.total_amount 
               ? "Pembayaran Lunas" 
               : `Pembayaran DP ${invoice.payment.toLocaleString("id-ID")}`}

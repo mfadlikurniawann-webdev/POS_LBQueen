@@ -301,7 +301,7 @@ export default function StokPage() {
             <div className="hidden md:block bg-white rounded-2xl border border-[#f0ecec] overflow-hidden pb-16 md:pb-0">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-[#f5f2f2] text-[10px] text-[#ccc8c8] uppercase tracking-wider">
+                  <tr className="border-b border-[#f5f2f2] text-[10px] text-[#ccc8c8] capitalize tracking-wider">
                     <th className="px-5 py-3 font-medium">Produk</th>
                     <th className="px-5 py-3 font-medium">Sub Kategori</th>
                     <th className="px-5 py-3 font-medium">Varian</th>

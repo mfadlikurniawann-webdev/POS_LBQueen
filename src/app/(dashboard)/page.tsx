@@ -341,7 +341,7 @@ export default function KasirPage() {
             <span className="font-medium text-slate-700">Rp {subtotal.toLocaleString("id-ID")}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-[11px] text-slate-400 uppercase tracking-wider">Total</span>
+            <span className="text-[11px] text-slate-400 capitalize tracking-wider">Total</span>
             <span className="text-lg font-semibold text-[#C94F78]">Rp {total.toLocaleString("id-ID")}</span>
           </div>
           <button onClick={() => setShowPaymentModal(true)} disabled={!cart.length}
@@ -441,7 +441,7 @@ export default function KasirPage() {
               </button>
             </div>
             <div className="bg-rose-50 border border-rose-100 rounded-xl p-4 mb-4">
-              <p className="text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Total Tagihan</p>
+              <p className="text-[10px] text-slate-400 mb-1 capitalize tracking-wider">Total Tagihan</p>
               <p className="text-2xl font-semibold text-[#C94F78]">Rp {total.toLocaleString("id-ID")}</p>
             </div>
             <div className="mb-4">

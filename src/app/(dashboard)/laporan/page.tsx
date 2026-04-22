@@ -97,10 +97,10 @@ export default function LaporanPage() {
           <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-full px-6 py-3 shadow-inner">
             <CalendarDays className="w-4 h-4 text-slate-400" />
             <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
-              className="bg-transparent text-[11px] font-semibold text-slate-700 outline-none uppercase tracking-[0.1em]" />
+              className="bg-transparent text-[11px] font-semibold text-slate-700 outline-none capitalize tracking-[0.1em]" />
             <span className="text-slate-300 font-semibold px-1">—</span>
             <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)}
-              className="bg-transparent text-[11px] font-semibold text-slate-700 outline-none uppercase tracking-[0.1em]" />
+              className="bg-transparent text-[11px] font-semibold text-slate-700 outline-none capitalize tracking-[0.1em]" />
           </div>
           <div className="w-11 h-11 rounded-full bg-rose-50/50 flex items-center justify-center cursor-pointer hover:bg-rose-100/50 transition-colors border border-rose-50 shadow-sm">
              <TrendingUp className="w-4 h-4 text-[#A83E60]" />
@@ -109,11 +109,11 @@ export default function LaporanPage() {
         
         <div className="flex gap-3">
           <button onClick={exportPDF}
-            className="flex items-center gap-3 px-7 py-3 bg-white text-slate-400 font-semibold rounded-full text-[10px] uppercase tracking-[0.15em] hover:text-[#A83E60] hover:border-rose-100 transition-all border border-slate-100 shadow-sm">
+            className="flex items-center gap-3 px-7 py-3 bg-white text-slate-400 font-semibold rounded-full text-[10px] capitalize tracking-[0.15em] hover:text-[#A83E60] hover:border-rose-100 transition-all border border-slate-100 shadow-sm">
             <FileDown className="w-4 h-4" /> PDF
           </button>
           <button onClick={exportExcel}
-            className="flex items-center gap-3 px-7 py-3 bg-white text-slate-400 font-semibold rounded-full text-[10px] uppercase tracking-[0.15em] hover:text-emerald-500 hover:border-emerald-100 transition-all border border-slate-100 shadow-sm">
+            className="flex items-center gap-3 px-7 py-3 bg-white text-slate-400 font-semibold rounded-full text-[10px] capitalize tracking-[0.15em] hover:text-emerald-500 hover:border-emerald-100 transition-all border border-slate-100 shadow-sm">
             <DownloadCloud className="w-4 h-4" /> Excel
           </button>
         </div>
@@ -133,14 +133,14 @@ export default function LaporanPage() {
             
             <div className="relative z-10">
               <div className="flex items-start justify-between mb-8">
-                <p className={`${i === 0 ? "text-slate-400" : "text-white/60"} text-[10px] font-semibold uppercase tracking-[0.2em]`}>{s.label}</p>
+                <p className={`${i === 0 ? "text-slate-400" : "text-white/60"} text-[10px] font-semibold capitalize tracking-[0.2em]`}>{s.label}</p>
                 <div className={`${i === 0 ? "bg-rose-50 text-[#C94F78]" : "bg-white/20 text-white"} p-3 rounded-2xl backdrop-blur-sm border border-transparent ${i === 0 ? "group-hover:border-rose-100" : ""}`}>{s.icon}</div>
               </div>
               <div className="flex items-baseline gap-2 mb-1.5">
                  <span className="text-xl font-semibold">Rp</span>
                  <p className="text-3xl font-semibold tracking-tight">{s.value}</p>
               </div>
-              <p className={`${i === 0 ? "text-rose-300" : "text-white/40"} text-[10px] font-semibold uppercase tracking-wider`}>{s.sub}</p>
+              <p className={`${i === 0 ? "text-rose-300" : "text-white/40"} text-[10px] font-semibold capitalize tracking-wider`}>{s.sub}</p>
             </div>
           </div>
         ))}
@@ -150,7 +150,7 @@ export default function LaporanPage() {
       <div className="flex-1 overflow-auto px-5 md:px-8 pb-32 md:pb-12 bg-white">
         <div className="bg-white rounded-[24px] md:rounded-[40px] border border-slate-100 shadow-premium overflow-hidden relative">
           <div className="px-5 md:px-12 py-5 md:py-8 border-b border-slate-50 flex items-center justify-between">
-            <h3 className="font-semibold text-slate-800 uppercase tracking-widest text-xs">Jurnal Penjualan</h3>
+            <h3 className="font-semibold text-slate-800 capitalize tracking-widest text-xs">Jurnal Penjualan</h3>
             {loading ? <Loader2 className="w-5 h-5 text-[#C94F78] animate-spin" /> : (
                <div className="w-8 h-8 rounded-full border-2 border-slate-100 border-t-rose-200" />
             )}
@@ -158,7 +158,7 @@ export default function LaporanPage() {
           <div className="overflow-auto scrollbar-hide">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em] bg-slate-50/50">
+                <tr className="text-[10px] font-semibold text-slate-400 capitalize tracking-[0.2em] bg-slate-50/50">
                   <th className="px-4 md:px-12 py-4 md:py-6 text-left whitespace-nowrap">Invoice</th>
                   <th className="px-4 md:px-12 py-4 md:py-6 text-left whitespace-nowrap">Waktu</th>
                   <th className="px-4 md:px-12 py-4 md:py-6 text-left whitespace-nowrap">Pelanggan</th>
@@ -175,15 +175,15 @@ export default function LaporanPage() {
                          {t.invoice_number}
                        </a>
                     </td>
-                    <td className="px-4 md:px-12 py-4 md:py-5 text-[11px] text-slate-400 font-semibold uppercase tracking-tight whitespace-nowrap">
+                    <td className="px-4 md:px-12 py-4 md:py-5 text-[11px] text-slate-400 font-semibold capitalize tracking-tight whitespace-nowrap">
                        {format(new Date(t.created_at), "dd/MM/yyyy")}
                     </td>
-                    <td className="px-4 md:px-12 py-4 md:py-5 text-[11px] font-semibold text-slate-600 uppercase tracking-tight whitespace-nowrap">
+                    <td className="px-4 md:px-12 py-4 md:py-5 text-[11px] font-semibold text-slate-600 capitalize tracking-tight whitespace-nowrap">
                        {t.customers ? t.customers.name : <span className="text-slate-300">Walk-in Customer</span>}
                     </td>
                     <td className="px-4 md:px-12 py-4 md:py-5 whitespace-nowrap">
                       {t.vouchers ? (
-                         <span className="text-[10px] font-semibold text-slate-700 border border-slate-100 px-3 py-1.5 rounded-lg bg-slate-50 uppercase tracking-widest">{t.vouchers.code}</span>
+                         <span className="text-[10px] font-semibold text-slate-700 border border-slate-100 px-3 py-1.5 rounded-lg bg-slate-50 capitalize tracking-widest">{t.vouchers.code}</span>
                       ) : <span className="text-slate-200">—</span>}
                     </td>
                     <td className="px-4 md:px-12 py-4 md:py-5 text-right font-semibold text-slate-300 whitespace-nowrap">
@@ -201,7 +201,7 @@ export default function LaporanPage() {
             {!loading && transactions.length === 0 && (
               <div className="py-32 text-center">
                  <ShoppingBag className="w-20 h-20 mx-auto mb-6 text-slate-100 opacity-50" />
-                 <p className="text-slate-300 text-xs font-semibold uppercase tracking-[0.25em]">Belum ada data transaksi</p>
+                 <p className="text-slate-300 text-xs font-semibold capitalize tracking-[0.25em]">Belum ada data transaksi</p>
               </div>
             )}
           </div>

@@ -68,7 +68,7 @@ export default function CartPage() {
         </div>
         <h2 className="text-xl font-semibold text-gray-900 mb-2">Keranjang Kosong</h2>
         <p className="text-sm text-gray-400 mb-8 max-w-[240px]">Sepertinya Anda belum memilih perawatan premium hari ini.</p>
-        <Link href="/customer-portal" className="bg-[#C94F78] text-white px-8 py-3 rounded-full font-semibold text-sm tracking-widest shadow-lg shadow-rose-100 uppercase transition-all active:scale-95">
+        <Link href="/customer-portal" className="bg-[#C94F78] text-white px-8 py-3 rounded-full font-semibold text-sm tracking-widest shadow-lg shadow-rose-100 capitalize transition-all active:scale-95">
           Mulai Belanja
         </Link>
       </div>
@@ -84,7 +84,7 @@ export default function CartPage() {
         </Link>
         <div>
           <h1 className="text-lg font-semibold text-gray-900 leading-tight">Keranjang Saya</h1>
-          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">{totalItems} Item • Checkout via WhatsApp</p>
+          <p className="text-[11px] font-semibold text-gray-400 capitalize tracking-widest">{totalItems} Item • Checkout via WhatsApp</p>
         </div>
       </div>
 
@@ -154,7 +154,7 @@ export default function CartPage() {
 
         {/* Totals Section */}
         <div className="bg-white rounded-[32px] p-6 border border-gray-100 shadow-sm space-y-4">
-           <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-widest mb-4">Ringkasan Pesanan</h3>
+           <h3 className="text-sm font-semibold text-gray-900 capitalize tracking-widest mb-4">Ringkasan Pesanan</h3>
            <div className="flex justify-between items-center text-sm font-semibold text-gray-400">
               <span>Subtotal</span>
               <span>Rp {cartTotal.toLocaleString("id-ID")}</span>

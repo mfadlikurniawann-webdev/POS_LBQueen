@@ -40,7 +40,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="flex items-center gap-2 text-slate-300">
         <div className="w-4 h-4 rounded-full border-2 border-[#C94F78] border-t-transparent animate-spin" />
-        <span className="text-xs tracking-widest uppercase">Memuat...</span>
+        <span className="text-xs tracking-widest capitalize">Memuat...</span>
       </div>
     </div>
   );

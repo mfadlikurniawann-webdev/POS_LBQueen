@@ -186,7 +186,7 @@ export default function PelangganPage() {
             <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-bl-full transition-transform group-hover:scale-110" />
             <div className="relative z-10 flex items-start justify-between">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-white/70 mb-1">{s.label}</p>
+                <p className="text-[10px] font-semibold capitalize tracking-widest text-white/70 mb-1">{s.label}</p>
                 <p className="text-2xl font-semibold">{s.value}</p>
               </div>
               <div className="bg-white/20 p-2 rounded-2xl backdrop-blur-sm">{s.icon}</div>
@@ -204,7 +204,7 @@ export default function PelangganPage() {
             { key: "pesanan", label: `Pesanan${orders.filter(o => o.status === "pending").length > 0 ? ` (${orders.filter(o => o.status === "pending").length})` : ""}` },
           ] as const).map(t => (
             <button key={t.key} onClick={() => setTab(t.key)}
-              className={`px-6 py-2 rounded-2xl text-[11px] font-semibold uppercase tracking-widest transition-all whitespace-nowrap border-2 ${
+              className={`px-6 py-2 rounded-2xl text-[11px] font-semibold capitalize tracking-widest transition-all whitespace-nowrap border-2 ${
                 tab === t.key 
                   ? "bg-lb-pink text-white border-lb-pink shadow-luxury-pink scale-[1.03]" 
                   : "bg-white text-slate-400 border-slate-100 hover:bg-lb-pink hover:border-lb-pink hover:text-white hover:shadow-luxury-pink"
@@ -216,7 +216,7 @@ export default function PelangganPage() {
         {tab !== "pesanan" && (
           <button
             onClick={() => tab === "pelanggan" ? setShowCustModal(true) : setShowVouchModal(true)}
-            className="bg-[#C94F78] hover:bg-lb-rose-dark text-white font-semibold px-6 py-2.5 rounded-2xl flex items-center gap-2 text-[11px] uppercase tracking-widest transition-all shadow-luxury-pink shrink-0">
+            className="bg-[#C94F78] hover:bg-lb-rose-dark text-white font-semibold px-6 py-2.5 rounded-2xl flex items-center gap-2 text-[11px] capitalize tracking-widest transition-all shadow-luxury-pink shrink-0">
             <Plus className="w-4 h-4 text-rose-100" /> {tab === "pelanggan" ? "Tambah" : "Buat Voucher"}
           </button>
         )}
@@ -231,7 +231,7 @@ export default function PelangganPage() {
             <div className="relative mb-5 max-w-sm group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-lb-pink transition-colors" />
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari nama atau nomor HP..."
-                className="w-full pl-11 pr-4 py-2.5 bg-white border-2 border-slate-50 rounded-2xl text-[11px] font-semibold uppercase tracking-widest focus:border-lb-pink focus:ring-4 focus:ring-rose-50 outline-none transition-all shadow-sm" />
+                className="w-full pl-11 pr-4 py-2.5 bg-white border-2 border-slate-50 rounded-2xl text-[11px] font-semibold capitalize tracking-widest focus:border-lb-pink focus:ring-4 focus:ring-rose-50 outline-none transition-all shadow-sm" />
             </div>
 
             {loading ? (
@@ -260,25 +260,25 @@ export default function PelangganPage() {
                           )}
                         </div>
                         <div className="text-right">
-                          {c.is_member && <span className="bg-amber-100 text-amber-600 text-[8px] font-semibold px-2 py-1 rounded-full uppercase tracking-tighter">Gold Member</span>}
+                          {c.is_member && <span className="bg-amber-100 text-amber-600 text-[8px] font-semibold px-2 py-1 rounded-full capitalize tracking-tighter">Gold Member</span>}
                         </div>
                       </div>
                       
                       {c.username && (
                         <div className="bg-rose-50/50 rounded-2xl p-3 border border-rose-100/50 mb-3">
                            <div className="flex justify-between text-[9px] mb-1">
-                              <span className="text-gray-400 font-semibold uppercase">Portal Username</span>
+                              <span className="text-gray-400 font-semibold capitalize">Portal Username</span>
                               <span className="text-gray-800 font-semibold">{c.username}</span>
                            </div>
                            <div className="flex justify-between text-[9px]">
-                              <span className="text-gray-400 font-semibold uppercase">Portal Password</span>
+                              <span className="text-gray-400 font-semibold capitalize">Portal Password</span>
                               <span className="text-lb-pink font-semibold font-mono">{c.password_plain}</span>
                            </div>
                         </div>
                       )}
                       
                       <button onClick={() => toggleMember(c)}
-                        className={`w-full py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-widest transition-all ${c.is_member ? "bg-slate-50 text-slate-400" : "bg-amber-50 text-amber-600 border border-amber-100"}`}>
+                        className={`w-full py-2.5 rounded-xl text-[10px] font-semibold capitalize tracking-widest transition-all ${c.is_member ? "bg-slate-50 text-slate-400" : "bg-amber-50 text-amber-600 border border-amber-100"}`}>
                         {c.is_member ? "Nonaktifkan Member" : "Aktivasi Member"}
                       </button>
                     </div>
@@ -289,7 +289,7 @@ export default function PelangganPage() {
                 <div className="hidden md:block bg-white rounded-[32px] border border-gray-100 shadow-premium overflow-hidden">
                   <table className="w-full text-sm">
                     <thead className="bg-gray-50/50 border-b border-gray-100">
-                      <tr className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
+                      <tr className="text-[10px] font-semibold text-gray-400 capitalize tracking-widest">
                         <th className="px-6 py-5 text-left">Pelanggan</th>
                         <th className="px-6 py-5 text-left">Kontak</th>
                         <th className="px-6 py-5 text-center">Status</th>
@@ -320,19 +320,19 @@ export default function PelangganPage() {
                           </td>
                           <td className="px-6 py-4 text-center">
                             {c.is_member
-                              ? <span className="bg-amber-100 text-amber-700 text-[9px] font-semibold px-3 py-1 rounded-full uppercase tracking-widest border border-amber-200">Gold Member</span>
-                              : <span className="text-slate-300 text-[9px] font-semibold uppercase tracking-widest">Reguler</span>
+                              ? <span className="bg-amber-100 text-amber-700 text-[9px] font-semibold px-3 py-1 rounded-full capitalize tracking-widest border border-amber-200">Gold Member</span>
+                              : <span className="text-slate-300 text-[9px] font-semibold capitalize tracking-widest">Reguler</span>
                             }
                           </td>
                           <td className="px-6 py-4">
                             {c.username ? (
                               <div className="flex gap-3">
                                 <div className="flex flex-col">
-                                   <span className="text-[8px] text-gray-300 font-semibold uppercase tracking-tighter">User</span>
+                                   <span className="text-[8px] text-gray-300 font-semibold capitalize tracking-tighter">User</span>
                                    <span className="text-[11px] font-semibold text-gray-700">{c.username}</span>
                                 </div>
                                 <div className="flex flex-col">
-                                   <span className="text-[8px] text-gray-300 font-semibold uppercase tracking-tighter">Pass</span>
+                                   <span className="text-[8px] text-gray-300 font-semibold capitalize tracking-tighter">Pass</span>
                                    <span className="text-[11px] font-semibold text-lb-pink font-mono">{c.password_plain}</span>
                                 </div>
                               </div>
@@ -342,7 +342,7 @@ export default function PelangganPage() {
                           </td>
                           <td className="px-6 py-4 text-right">
                             <button onClick={() => toggleMember(c)}
-                              className={`text-[10px] font-semibold uppercase tracking-widest px-4 py-2 rounded-xl transition-all border ${c.is_member ? "bg-white text-rose-400 border-rose-100 hover:bg-rose-50" : "bg-white text-amber-600 border-amber-100 hover:bg-amber-50"}`}>
+                              className={`text-[10px] font-semibold capitalize tracking-widest px-4 py-2 rounded-xl transition-all border ${c.is_member ? "bg-white text-rose-400 border-rose-100 hover:bg-rose-50" : "bg-white text-amber-600 border-amber-100 hover:bg-amber-50"}`}>
                               {c.is_member ? "Revoke Gold" : "Upgrade Gold"}
                             </button>
                           </td>
@@ -365,32 +365,32 @@ export default function PelangganPage() {
                 
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-4">
-                    <div className="bg-gray-900 text-white px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-widest shadow-xl">
+                    <div className="bg-gray-900 text-white px-4 py-1.5 rounded-full text-[10px] font-semibold capitalize tracking-widest shadow-xl">
                       {v.code}
                     </div>
                     {v.products?.name && (
-                      <div className="bg-rose-50 text-lb-pink px-2.5 py-1 rounded-xl text-[9px] font-semibold uppercase tracking-tighter border border-rose-100">
+                      <div className="bg-rose-50 text-lb-pink px-2.5 py-1 rounded-xl text-[9px] font-semibold capitalize tracking-tighter border border-rose-100">
                         {v.products.name}
                       </div>
                     )}
                   </div>
                   
                   <h3 className="font-semibold text-lg text-gray-800 leading-tight mb-1">{v.name}</h3>
-                  <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Voucher Member</p>
+                  <p className="text-[10px] text-gray-400 font-semibold capitalize tracking-widest">Voucher Member</p>
                   
                   <div className="mt-6 pt-6 border-t border-gray-50 flex justify-between items-end">
                     <div>
-                      <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Potongan</p>
+                      <p className="text-[9px] font-semibold text-gray-400 capitalize tracking-widest mb-1">Potongan</p>
                       <p className="font-semibold text-lb-pink text-2xl tracking-tighter italic">Rp {v.discount_amount.toLocaleString("id-ID")}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Min. Belanja</p>
+                      <p className="text-[9px] font-semibold text-gray-400 capitalize tracking-widest mb-1">Min. Belanja</p>
                       <p className="font-semibold text-gray-900 text-sm tracking-tight text-right">Rp {v.min_purchase.toLocaleString("id-ID")}</p>
                     </div>
                   </div>
                   
                   <button onClick={() => toggleVoucher(v.id, v.is_active)}
-                    className={`w-full mt-6 py-3 rounded-2xl text-[10px] font-semibold uppercase tracking-widest transition-all ${v.is_active ? "bg-rose-50 text-lb-pink hover:bg-lb-pink hover:text-white" : "bg-slate-100 text-slate-400 hover:bg-slate-200"}`}>
+                    className={`w-full mt-6 py-3 rounded-2xl text-[10px] font-semibold capitalize tracking-widest transition-all ${v.is_active ? "bg-rose-50 text-lb-pink hover:bg-lb-pink hover:text-white" : "bg-slate-100 text-slate-400 hover:bg-slate-200"}`}>
                     {v.is_active ? "Nonaktifkan Promo" : "Aktifkan Kembali"}
                   </button>
                 </div>
@@ -399,7 +399,7 @@ export default function PelangganPage() {
             {!loading && vouchers.length === 0 && (
               <div className="col-span-full py-20 text-center text-gray-300">
                 <Tag className="w-16 h-16 mx-auto mb-4 opacity-10" />
-                <p className="font-semibold uppercase tracking-widest text-sm">Belum ada promo tersedia</p>
+                <p className="font-semibold capitalize tracking-widest text-sm">Belum ada promo tersedia</p>
               </div>
             )}
           </div>
@@ -414,13 +414,13 @@ export default function PelangganPage() {
                     <MessageCircle className="w-5 h-5" />
                  </div>
                  <div>
-                    <h2 className="font-semibold text-slate-800 tracking-tight uppercase text-sm">Pesanan via Portal</h2>
-                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">Real-time Dashboard</p>
+                    <h2 className="font-semibold text-slate-800 tracking-tight capitalize text-sm">Pesanan via Portal</h2>
+                    <p className="text-[10px] text-slate-400 font-semibold capitalize tracking-widest">Real-time Dashboard</p>
                  </div>
               </div>
               <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                 <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-widest">Live Updates</span>
+                 <span className="text-[10px] font-semibold text-emerald-600 capitalize tracking-widest">Live Updates</span>
               </div>
             </div>
 
@@ -431,7 +431,7 @@ export default function PelangganPage() {
                 <div className="w-20 h-20 bg-gray-50 rounded-[40px] flex items-center justify-center mb-6">
                    <MessageCircle className="w-10 h-10 opacity-20" />
                 </div>
-                <p className="font-semibold uppercase tracking-widest text-xs">Belum ada pesanan masuk</p>
+                <p className="font-semibold capitalize tracking-widest text-xs">Belum ada pesanan masuk</p>
               </div>
             ) : (
               <>
@@ -442,7 +442,7 @@ export default function PelangganPage() {
                     return (
                       <div key={o.id} className="bg-white rounded-[32px] p-5 shadow-sm border border-gray-100 relative">
                         <div className="flex items-center justify-between mb-4">
-                           <div className={`px-3 py-1 rounded-full text-[9px] font-semibold uppercase tracking-widest ${cfg.color}`}>
+                           <div className={`px-3 py-1 rounded-full text-[9px] font-semibold capitalize tracking-widest ${cfg.color}`}>
                              {cfg.label}
                            </div>
                            <span className="text-[10px] text-gray-400 font-semibold">
@@ -456,8 +456,8 @@ export default function PelangganPage() {
                         </div>
                         {o.status === "pending" && (
                           <div className="flex gap-2">
-                             <button onClick={() => updateOrderStatus(o.id, "confirmed")} className="flex-1 py-2.5 rounded-2xl bg-emerald-500 text-white font-semibold text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100">Diterima</button>
-                             <button onClick={() => updateOrderStatus(o.id, "cancelled")} className="flex-1 py-2.5 rounded-2xl bg-gray-50 text-gray-400 font-semibold text-[10px] uppercase tracking-widest">Tolak</button>
+                             <button onClick={() => updateOrderStatus(o.id, "confirmed")} className="flex-1 py-2.5 rounded-2xl bg-emerald-500 text-white font-semibold text-[10px] capitalize tracking-widest shadow-lg shadow-emerald-100">Diterima</button>
+                             <button onClick={() => updateOrderStatus(o.id, "cancelled")} className="flex-1 py-2.5 rounded-2xl bg-gray-50 text-gray-400 font-semibold text-[10px] capitalize tracking-widest">Tolak</button>
                           </div>
                         )}
                       </div>
@@ -469,7 +469,7 @@ export default function PelangganPage() {
                 <div className="hidden md:block bg-white rounded-[32px] border border-gray-100 shadow-premium overflow-hidden">
                   <table className="w-full text-sm">
                     <thead className="bg-gray-50/50 border-b border-gray-100">
-                      <tr className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
+                      <tr className="text-[10px] font-semibold text-gray-400 capitalize tracking-widest">
                         <th className="px-6 py-5 text-left">Pelanggan</th>
                         <th className="px-6 py-5 text-left">Produk / Layanan</th>
                         <th className="px-6 py-5 text-center">Waktu Pesan</th>
@@ -497,11 +497,11 @@ export default function PelangganPage() {
                             <td className="px-6 py-4 text-center">
                                <div className="flex flex-col items-center">
                                   <span className="text-[11px] font-semibold text-gray-800">{new Date(o.ordered_at).toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}</span>
-                                  <span className="text-[9px] font-semibold text-gray-400 uppercase">{new Date(o.ordered_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</span>
+                                  <span className="text-[9px] font-semibold text-gray-400 capitalize">{new Date(o.ordered_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</span>
                                </div>
                             </td>
                             <td className="px-6 py-4 text-center">
-                              <span className={`inline-flex items-center gap-2 text-[9px] font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full ${cfg.color}`}>
+                              <span className={`inline-flex items-center gap-2 text-[9px] font-semibold capitalize tracking-widest px-3 py-1.5 rounded-full ${cfg.color}`}>
                                 <Icon className="w-3.5 h-3.5" />{cfg.label}
                               </span>
                             </td>
@@ -509,11 +509,11 @@ export default function PelangganPage() {
                               {o.status === "pending" && (
                                 <div className="flex gap-2 justify-end">
                                   <button onClick={() => updateOrderStatus(o.id, "confirmed")}
-                                    className="px-4 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-widest bg-emerald-500 text-white shadow-lg shadow-emerald-100 hover:scale-105 transition-all">
+                                    className="px-4 py-2 rounded-xl text-[10px] font-semibold capitalize tracking-widest bg-emerald-500 text-white shadow-lg shadow-emerald-100 hover:scale-105 transition-all">
                                     Konfirmasi
                                   </button>
                                   <button onClick={() => updateOrderStatus(o.id, "cancelled")}
-                                    className="px-4 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-widest bg-white border border-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all">
+                                    className="px-4 py-2 rounded-xl text-[10px] font-semibold capitalize tracking-widest bg-white border border-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all">
                                     Tolak
                                   </button>
                                 </div>
@@ -575,7 +575,7 @@ export default function PelangganPage() {
               {/* Preview akun portal */}
               {custForm.name && (
                 <div className="bg-pink-50 border border-pink-100 rounded-xl p-3">
-                  <p className="text-xs font-semibold text-[#C94F78] mb-2 uppercase tracking-wider flex items-center gap-1">
+                  <p className="text-xs font-semibold text-[#C94F78] mb-2 capitalize tracking-wider flex items-center gap-1">
                     <Key className="w-3 h-3" /> Preview Akun Portal
                   </p>
                   <p className="text-xs text-gray-600">Username: <strong>{generateUsername(custForm.name)}</strong></p>
@@ -605,7 +605,7 @@ export default function PelangganPage() {
             <div className="space-y-4">
               <div>
                 <label className="label-form">Kode Voucher *</label>
-                <input className="input-form uppercase" placeholder="e.g. MEMBER100" value={vouchForm.code} onChange={e => setVouchForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} />
+                <input className="input-form capitalize" placeholder="e.g. MEMBER100" value={vouchForm.code} onChange={e => setVouchForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} />
               </div>
               <div>
                 <label className="label-form">Gunakan Untuk Produk *</label>
@@ -645,7 +645,7 @@ export default function PelangganPage() {
       )}
 
       <style jsx global>{`
-        .label-form { display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+        .label-form { display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: capitalize; letter-spacing: 0.1em; margin-bottom: 8px; }
         .input-form { width: 100%; padding: 12px 16px; border: 1.5px solid #f1f5f9; border-radius: 16px; font-size: 14px; font-weight: 500; color: #334155; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); outline: none; background: white; }
         .input-form:focus { border-color: #C94F78; box-shadow: 0 0 0 4px rgba(201,79,120,0.08); background: white; }
       `}</style>
