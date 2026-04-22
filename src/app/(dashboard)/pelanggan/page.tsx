@@ -110,7 +110,7 @@ export default function PelangganPage() {
       
       // Update username & password jika nama/member berubah
       const username      = generateUsername(custForm.name);
-      const passwordPlain = generatePasswordPlain(custForm.name, custForm.is_member, custForm.id);
+      const passwordPlain = generatePasswordPlain(custForm.name, custForm.is_member ?? false, custForm.id);
       const passwordHash  = hashPassword(passwordPlain);
       await supabase.from("customers").update({ username, password_plain: passwordPlain, password_hash: passwordHash }).eq("id", custForm.id);
 
@@ -134,7 +134,7 @@ export default function PelangganPage() {
       }
 
       const username      = generateUsername(custForm.name);
-      const passwordPlain = generatePasswordPlain(custForm.name, custForm.is_member, inserted.id);
+      const passwordPlain = generatePasswordPlain(custForm.name, custForm.is_member ?? false, inserted.id);
       const passwordHash  = hashPassword(passwordPlain);
       await supabase.from("customers").update({ username, password_plain: passwordPlain, password_hash: passwordHash }).eq("id", inserted.id);
 
@@ -605,11 +605,11 @@ export default function PelangganPage() {
                 </div>
                 <div>
                   <label className="label-form">No. KTP (NIK)</label>
-                  <input className="input-form" placeholder="16 digit NIK" maxLength={16} value={custForm.nik} onChange={e => setCustForm(f => ({ ...f, nik: e.target.value }))} />
+                  <input className="input-form" placeholder="16 digit NIK" maxLength={16} value={custForm.nik ?? ""} onChange={e => setCustForm(f => ({ ...f, nik: e.target.value }))} />
                 </div>
                 <div>
                   <label className="label-form">Alamat Lengkap</label>
-                  <input className="input-form" placeholder="Jl. Contoh..." value={custForm.address} onChange={e => setCustForm(f => ({ ...f, address: e.target.value }))} />
+                  <input className="input-form" placeholder="Jl. Contoh..." value={custForm.address ?? ""} onChange={e => setCustForm(f => ({ ...f, address: e.target.value }))} />
                 </div>
               </div>
               <div className="flex items-center justify-between p-4 bg-amber-50 border border-amber-100 rounded-xl">
