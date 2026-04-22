@@ -2,16 +2,60 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { Search, ShoppingCart, Trash2, Package, CreditCard, Tag, UserCheck, X, Loader2, CheckCircle, Flower2, Crown, Sparkles, Plus, Minus, ChevronRight, Zap, CheckCircle2 } from "lucide-react";
+import {
+  Search, ShoppingCart, Trash2, Package, CreditCard, Tag, UserCheck, X,
+  Loader2, Flower2, Crown, Plus, Minus, CheckCircle2, Paintbrush2, Eye, Gem, Sparkles,
+} from "lucide-react";
 import Image from "next/image";
 
-type Product = {
-  id: number; name: string; type: string;
-  selling_price: number; stock: number; unit: string; image_url: string | null;
+type ProductVariant = {
+  id: number;
+  product_id: number;
+  variant_name: string;
+  price: number;
+  stock: number;
+  is_active: boolean;
 };
+
+type Product = {
+  id: number;
+  name: string;
+  type: string;
+  selling_price: number;
+  stock: number;
+  unit: string;
+  image_url: string | null;
+  variants?: ProductVariant[];
+};
+
 type Customer = { id: number; name: string; phone: string; is_member: boolean };
 type Voucher = { id: number; code: string; name: string; discount_amount: number; min_purchase: number };
-type CartItem = Product & { qty: number };
+
+type CartItem = {
+  id: number;             // product id
+  name: string;
+  type: string;
+  selling_price: number;  // effective price (variant price if chosen)
+  stock: number;
+  unit: string;
+  image_url: string | null;
+  qty: number;
+  variant_id?: number | null;
+  variant_name?: string | null;
+  cartKey: string;        // unique key: productId + variantId
+};
+
+const RETAIL_TYPES = ["Retail Nail", "Retail Eyelash", "Retail Beauty"];
+const SELLABLE_TYPES = ["Treatment Care & Beauty", "Product Care & Beauty", "Treatment", ...RETAIL_TYPES];
+
+const typeIconMap: Record<string, React.ReactNode> = {
+  "Treatment":               <Sparkles className="w-3 h-3" />,
+  "Treatment Care & Beauty": <Flower2 className="w-3 h-3" />,
+  "Product Care & Beauty":   <Package className="w-3 h-3" />,
+  "Retail Nail":             <Paintbrush2 className="w-3 h-3" />,
+  "Retail Eyelash":          <Eye className="w-3 h-3" />,
+  "Retail Beauty":           <Gem className="w-3 h-3" />,
+};
 
 export default function KasirPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -25,6 +69,8 @@ export default function KasirPage() {
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showVariantModal, setShowVariantModal] = useState(false);
+  const [variantTarget, setVariantTarget] = useState<Product | null>(null);
   const [paymentAmount, setPaymentAmount] = useState("");
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -38,7 +84,11 @@ export default function KasirPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     const [{ data: prods }, { data: custs }, { data: vouchs }] = await Promise.all([
-      supabase.from("products").select("*").in("type", ["Treatment Care & Beauty", "Product Care & Beauty", "Treatment", "Retail Produk"]).order("name"),
+      supabase
+        .from("products")
+        .select("*, variants:product_variants(*)")
+        .in("type", SELLABLE_TYPES)
+        .order("name"),
       supabase.from("customers").select("*").order("name"),
       supabase.from("vouchers").select("*").eq("is_active", true),
     ]);
@@ -52,19 +102,52 @@ export default function KasirPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const addToCart = (product: Product) => {
+  // Click product card
+  const handleProductClick = (product: Product) => {
+    const activeVariants = (product.variants || []).filter(v => v.is_active);
+    if (activeVariants.length > 0) {
+      // Has variants — show selector modal
+      setVariantTarget(product);
+      setShowVariantModal(true);
+    } else {
+      // No variants — add directly
+      addToCartDirect(product, null, null, product.selling_price);
+    }
+  };
+
+  const addToCartDirect = (product: Product, variantId: number | null, variantName: string | null, effectivePrice: number) => {
+    const cartKey = `${product.id}-${variantId ?? "base"}`;
     setCart(prev => {
-      const existing = prev.find(i => i.id === product.id);
-      if (existing) return prev.map(i => i.id === product.id ? { ...i, qty: i.qty + 1 } : i);
-      return [...prev, { ...product, qty: 1 }];
+      const existing = prev.find(i => i.cartKey === cartKey);
+      if (existing) return prev.map(i => i.cartKey === cartKey ? { ...i, qty: i.qty + 1 } : i);
+      return [...prev, {
+        id: product.id,
+        name: product.name,
+        type: product.type,
+        selling_price: effectivePrice,
+        stock: product.stock,
+        unit: product.unit,
+        image_url: product.image_url,
+        qty: 1,
+        variant_id: variantId,
+        variant_name: variantName,
+        cartKey,
+      }];
     });
   };
 
-  const updateQty = (id: number, delta: number) => {
-    setCart(prev => prev.map(i => i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i));
+  const selectVariant = (variant: ProductVariant) => {
+    if (!variantTarget) return;
+    addToCartDirect(variantTarget, variant.id, variant.variant_name, variant.price);
+    setShowVariantModal(false);
+    setVariantTarget(null);
   };
 
-  const removeFromCart = (id: number) => setCart(prev => prev.filter(i => i.id !== id));
+  const updateQty = (cartKey: string, delta: number) => {
+    setCart(prev => prev.map(i => i.cartKey === cartKey ? { ...i, qty: Math.max(1, i.qty + delta) } : i));
+  };
+
+  const removeFromCart = (cartKey: string) => setCart(prev => prev.filter(i => i.cartKey !== cartKey));
 
   const subtotal = cart.reduce((acc, i) => acc + i.selling_price * i.qty, 0);
   const discount = (selectedVoucher && selectedCustomer?.is_member && subtotal >= selectedVoucher.min_purchase)
@@ -90,15 +173,34 @@ export default function KasirPage() {
       if (txnErr) throw txnErr;
 
       const details = cart.map(i => ({
-        transaction_id: txn.id, product_id: i.id,
-        quantity: i.qty, price: i.selling_price, subtotal: i.selling_price * i.qty,
+        transaction_id: txn.id,
+        product_id: i.id,
+        quantity: i.qty,
+        price: i.selling_price,
+        subtotal: i.selling_price * i.qty,
+        variant_id: i.variant_id || null,
+        variant_name: i.variant_name || null,
       }));
       await supabase.from("transaction_details").insert(details);
 
-      // Update stock untuk Retail Produk saja
+      // Update stock untuk Retail products & variannya
       for (const item of cart) {
-        if (item.type === "Retail Produk") {
-          await supabase.from("products").update({ stock: item.stock - item.qty }).eq("id", item.id);
+        if (RETAIL_TYPES.includes(item.type)) {
+          if (item.variant_id) {
+            // Update stok varian
+            const variant = products
+              .find(p => p.id === item.id)
+              ?.variants?.find(v => v.id === item.variant_id);
+            if (variant) {
+              await supabase.from("product_variants").update({ stock: variant.stock - item.qty }).eq("id", item.variant_id);
+            }
+          } else {
+            // Update stok produk langsung
+            const prod = products.find(p => p.id === item.id);
+            if (prod) {
+              await supabase.from("products").update({ stock: prod.stock - item.qty }).eq("id", item.id);
+            }
+          }
         }
       }
 
@@ -115,6 +217,14 @@ export default function KasirPage() {
     (activeCategory ? p.type === activeCategory : true) &&
     p.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  const categoryLabel = (cat: string) => {
+    const shortMap: Record<string, string> = {
+      "Treatment Care & Beauty": "Treatment C&B",
+      "Product Care & Beauty": "Product C&B",
+    };
+    return shortMap[cat] || cat;
+  };
 
   return (
     <div className="flex h-full overflow-hidden bg-white font-sans">
@@ -136,24 +246,25 @@ export default function KasirPage() {
           </div>
         </div>
 
-        {/* Categories (Ref Image 1 & 2 Luxury style) */}
+        {/* Categories */}
         <div className="px-8 pb-4 overflow-x-auto scrollbar-hide flex gap-3 shrink-0">
           {["Semua", ...categories].map(cat => {
             const active = (cat === "Semua" && !activeCategory) || activeCategory === cat;
             return (
               <button key={cat} onClick={() => setActiveCategory(cat === "Semua" ? null : cat)}
-                className={`whitespace-nowrap px-8 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] transition-all border-1.5 ${
-                  active 
-                    ? "bg-[#C94F78] border-[#C94F78] text-white shadow-luxury-pink scale-[1.02]" 
+                className={`whitespace-nowrap px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.12em] transition-all border flex items-center gap-1.5 ${
+                  active
+                    ? "bg-[#C94F78] border-[#C94F78] text-white shadow-luxury-pink scale-[1.02]"
                     : "bg-transparent border-slate-100 text-slate-400 hover:bg-[#C94F78] hover:border-[#C94F78] hover:text-white hover:shadow-luxury-pink"
                 }`}>
-                {cat}
+                {typeIconMap[cat] && <span className="opacity-70">{typeIconMap[cat]}</span>}
+                {categoryLabel(cat)}
               </button>
             );
           })}
         </div>
 
-        {/* Product Grid / Empty State */}
+        {/* Product Grid */}
         <div className="flex-1 overflow-auto px-8 py-6 scrollbar-hide mb-20 md:mb-0">
           {loading ? (
             <div className="h-full flex items-center justify-center"><Loader2 className="w-8 h-8 text-[#C94F78] animate-spin opacity-20" /></div>
@@ -165,30 +276,59 @@ export default function KasirPage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
-              {filtered.map(p => (
-                <button key={p.id} onClick={() => addToCart(p)}
-                  className="group bg-white rounded-[32px] p-3.5 border border-transparent hover:border-rose-50 shadow-premium hover:shadow-luxury-pink transition-all duration-500 text-left relative flex flex-col scale-100 active:scale-[0.98]">
-                  <div className="aspect-square rounded-[24px] bg-rose-50/30 overflow-hidden mb-5 relative">
-                    {p.image_url ? (
-                      <Image src={p.image_url} alt={p.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center opacity-30"><Flower2 className="w-10 h-10 text-[#C94F78]" /></div>
-                    )}
-                    <div className="absolute top-3 right-3 bg-white/80 backdrop-blur-md rounded-xl px-2.5 py-1.5 shadow-sm border border-white/20">
-                      <p className="text-[8px] font-bold text-[#C94F78] uppercase tracking-wider">{p.type.split(' ')[0]}</p>
+              {filtered.map(p => {
+                const activeVariants = (p.variants || []).filter(v => v.is_active);
+                const hasVariants = activeVariants.length > 0;
+                return (
+                  <button key={p.id} onClick={() => handleProductClick(p)}
+                    className="group bg-white rounded-[32px] p-3.5 border border-transparent hover:border-rose-50 shadow-premium hover:shadow-luxury-pink transition-all duration-500 text-left relative flex flex-col scale-100 active:scale-[0.98]">
+                    <div className="aspect-square rounded-[24px] bg-rose-50/30 overflow-hidden mb-5 relative">
+                      {p.image_url ? (
+                        <Image src={p.image_url} alt={p.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center opacity-30">
+                          {typeIconMap[p.type] ? (
+                            <span className="text-[#C94F78] scale-[3]">{typeIconMap[p.type]}</span>
+                          ) : (
+                            <Flower2 className="w-10 h-10 text-[#C94F78]" />
+                          )}
+                        </div>
+                      )}
+                      <div className="absolute top-3 right-3 bg-white/80 backdrop-blur-md rounded-xl px-2.5 py-1.5 shadow-sm border border-white/20">
+                        <p className="text-[8px] font-bold text-[#C94F78] uppercase tracking-wider">{p.type.split(' ')[0]}</p>
+                      </div>
+                      {hasVariants && (
+                        <div className="absolute bottom-3 left-3 bg-[#C94F78]/90 backdrop-blur-md rounded-lg px-2 py-1 text-white">
+                          <p className="text-[8px] font-bold uppercase tracking-wider flex items-center gap-1">
+                            <Tag className="w-2.5 h-2.5" /> {activeVariants.length} Varian
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <div className="px-1.5 flex-1 flex flex-col">
-                    <h4 className="font-semibold text-slate-800 text-sm leading-tight line-clamp-2 mb-4 group-hover:text-[#C94F78] transition-colors">{p.name}</h4>
-                    <div className="mt-auto flex items-center justify-between">
-                      <p className="font-bold text-[#C94F78] text-base tracking-tight">Rp {p.selling_price.toLocaleString("id-ID")}</p>
-                      <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-[#C94F78] transition-all duration-300">
-                        <Plus className="w-4 h-4 text-slate-300 group-hover:text-white" />
+                    <div className="px-1.5 flex-1 flex flex-col">
+                      <h4 className="font-semibold text-slate-800 text-sm leading-tight line-clamp-2 mb-4 group-hover:text-[#C94F78] transition-colors">{p.name}</h4>
+                      <div className="mt-auto flex items-center justify-between">
+                        <div>
+                          {hasVariants ? (
+                            <p className="font-bold text-[#C94F78] text-xs tracking-tight">
+                              Rp {Math.min(...activeVariants.map(v => v.price)).toLocaleString("id-ID")}
+                              <span className="text-slate-400 font-medium"> ↑</span>
+                            </p>
+                          ) : (
+                            <p className="font-bold text-[#C94F78] text-base tracking-tight">Rp {p.selling_price.toLocaleString("id-ID")}</p>
+                          )}
+                        </div>
+                        <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-[#C94F78] transition-all duration-300">
+                          {hasVariants
+                            ? <Tag className="w-4 h-4 text-slate-300 group-hover:text-white" />
+                            : <Plus className="w-4 h-4 text-slate-300 group-hover:text-white" />
+                          }
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -203,7 +343,7 @@ export default function KasirPage() {
           </div>
           <div>
             <h3 className="font-bold text-slate-900 text-lg leading-none">Keranjang</h3>
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-2.5">{cart.length} PRODUK DIPILIH</p>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-2.5">{cart.length} ITEM DIPILIH</p>
           </div>
         </div>
 
@@ -217,7 +357,7 @@ export default function KasirPage() {
           ) : (
             <div className="bg-slate-50/50 border border-slate-100 p-5 rounded-[28px] flex items-center justify-between group px-6">
               <div className="flex items-center gap-4">
-                <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-white shadow-sm shadow-inner ${selectedCustomer.is_member ? "bg-orange-400" : "bg-slate-300"}`}>
+                <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-white shadow-sm ${selectedCustomer.is_member ? "bg-orange-400" : "bg-slate-300"}`}>
                   {selectedCustomer.name.charAt(0)}
                 </div>
                 <div>
@@ -225,7 +365,9 @@ export default function KasirPage() {
                   {selectedCustomer.is_member && <p className="text-[9px] font-bold text-orange-500 uppercase tracking-widest mt-1">Premium Member</p>}
                 </div>
               </div>
-              <button onClick={() => { setSelectedCustomer(null); setSelectedVoucher(null); }} className="text-slate-300 hover:text-rose-500 transition-colors"><X className="w-5 h-5" /></button>
+              <button onClick={() => { setSelectedCustomer(null); setSelectedVoucher(null); }} className="text-slate-300 hover:text-rose-500 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
             </div>
           )}
         </div>
@@ -241,20 +383,28 @@ export default function KasirPage() {
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">Pilih produk di kiri untuk menambahkan pesanan</p>
             </div>
           ) : cart.map(item => (
-            <div key={item.id} className="flex gap-5 p-3 group hover:bg-slate-50/70 rounded-[24px] transition-all duration-300">
+            <div key={item.cartKey} className="flex gap-5 p-3 group hover:bg-slate-50/70 rounded-[24px] transition-all duration-300">
               <div className="w-15 h-15 rounded-[18px] bg-rose-50/50 overflow-hidden shrink-0 border border-rose-50">
-                {item.image_url ? <Image src={item.image_url} alt={item.name} width={60} height={60} className="object-cover w-full h-full" /> : <div className="w-full h-full flex items-center justify-center text-pink-200"><Flower2 className="w-7 h-7" /></div>}
+                {item.image_url
+                  ? <Image src={item.image_url} alt={item.name} width={60} height={60} className="object-cover w-full h-full" />
+                  : <div className="w-full h-full flex items-center justify-center text-pink-200"><Flower2 className="w-7 h-7" /></div>
+                }
               </div>
               <div className="flex-1 min-w-0 flex flex-col justify-center">
-                <p className="font-semibold text-slate-900 text-sm truncate mb-1.5">{item.name}</p>
+                <p className="font-semibold text-slate-900 text-sm truncate mb-0.5">{item.name}</p>
+                {item.variant_name && (
+                  <p className="text-[10px] font-bold text-[#C94F78] flex items-center gap-1 mb-1">
+                    <Tag className="w-2.5 h-2.5" />{item.variant_name}
+                  </p>
+                )}
                 <p className="text-[11px] font-bold text-[#C94F78] mb-3">Rp {item.selling_price.toLocaleString("id-ID")}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4 bg-white border border-slate-100 rounded-xl px-2.5 py-1">
-                    <button onClick={() => updateQty(item.id, -1)} className="text-slate-400 font-bold p-1 hover:text-slate-900 transition-colors"> <Minus className="w-3.5 h-3.5" /> </button>
+                    <button onClick={() => updateQty(item.cartKey, -1)} className="text-slate-400 font-bold p-1 hover:text-slate-900 transition-colors"> <Minus className="w-3.5 h-3.5" /> </button>
                     <span className="text-xs font-bold text-slate-800 w-5 text-center">{item.qty}</span>
-                    <button onClick={() => updateQty(item.id, 1)} className="text-slate-400 font-bold p-1 hover:text-slate-900 transition-colors"> <Plus className="w-3.5 h-3.5" /> </button>
+                    <button onClick={() => updateQty(item.cartKey, 1)} className="text-slate-400 font-bold p-1 hover:text-slate-900 transition-colors"> <Plus className="w-3.5 h-3.5" /> </button>
                   </div>
-                  <button onClick={() => removeFromCart(item.id)} className="text-slate-200 hover:text-rose-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => removeFromCart(item.cartKey)} className="text-slate-200 hover:text-rose-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             </div>
@@ -287,8 +437,61 @@ export default function KasirPage() {
         </div>
       </div>
 
-      {/* Payment Modals & Others... */}
-      {/* (Keep standard modal implementations as they are functional and visually consistent with rounded theme) */}
+      {/* ===== VARIANT SELECTION MODAL ===== */}
+      {showVariantModal && variantTarget && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+          <div className="bg-white rounded-[40px] p-8 w-full max-w-md shadow-2xl animate-in zoom-in-95 max-h-[85vh] overflow-auto">
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex items-start gap-4 flex-1 min-w-0">
+                {variantTarget.image_url && (
+                  <div className="w-16 h-16 rounded-[20px] overflow-hidden bg-rose-50 shrink-0 border border-rose-100">
+                    <Image src={variantTarget.image_url} alt={variantTarget.name} width={64} height={64} className="object-cover w-full h-full" />
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{variantTarget.type}</p>
+                  <h3 className="text-lg font-extrabold text-gray-900 leading-tight">{variantTarget.name}</h3>
+                  <p className="text-[10px] font-bold text-[#C94F78] mt-1 uppercase tracking-widest">
+                    {(variantTarget.variants?.filter(v => v.is_active) || []).length} Varian Tersedia
+                  </p>
+                </div>
+              </div>
+              <button onClick={() => { setShowVariantModal(false); setVariantTarget(null); }}
+                className="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 shrink-0 ml-4">
+                <X />
+              </button>
+            </div>
+
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Pilih Varian</p>
+
+            <div className="space-y-3">
+              {(variantTarget.variants || []).filter(v => v.is_active).map(variant => (
+                <button key={variant.id} onClick={() => selectVariant(variant)}
+                  className="w-full flex items-center justify-between p-5 rounded-[24px] border-2 border-gray-50 bg-gray-50/50 hover:bg-white hover:border-[#C94F78] hover:shadow-luxury-pink transition-all group">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-2xl bg-rose-50 flex items-center justify-center group-hover:bg-[#C94F78] transition-all">
+                      <Tag className="w-4 h-4 text-[#C94F78] group-hover:text-white transition-colors" />
+                    </div>
+                    <div className="text-left">
+                      <p className="font-black text-gray-800 text-sm group-hover:text-[#C94F78] transition-colors">{variant.variant_name}</p>
+                      <p className="text-[10px] text-gray-400 font-bold mt-0.5">Stok: {variant.stock} {variantTarget.unit}</p>
+                    </div>
+                  </div>
+                  <p className="font-black text-[#C94F78] text-base">Rp {variant.price.toLocaleString("id-ID")}</p>
+                </button>
+              ))}
+            </div>
+
+            {/* Option: add without variant (use base price) */}
+            <button onClick={() => { addToCartDirect(variantTarget, null, null, variantTarget.selling_price); setShowVariantModal(false); setVariantTarget(null); }}
+              className="w-full mt-4 py-3.5 border-2 border-dashed border-gray-200 rounded-[24px] text-xs font-bold text-gray-400 hover:text-gray-600 hover:border-gray-300 transition-all">
+              Tambah Tanpa Varian (Harga Default: Rp {variantTarget.selling_price.toLocaleString("id-ID")})
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Customer Modal */}
       {showCustomerModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
           <div className="bg-white rounded-[40px] p-8 w-full max-w-md shadow-2xl animate-in zoom-in-95 overflow-hidden">
@@ -309,6 +512,7 @@ export default function KasirPage() {
                       <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">{c.phone}</p>
                     </div>
                   </div>
+                  {c.is_member && <Crown className="w-4 h-4 text-orange-400" />}
                 </button>
               ))}
             </div>
@@ -316,6 +520,7 @@ export default function KasirPage() {
         </div>
       )}
 
+      {/* Payment Modal */}
       {showPaymentModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
           <div className="bg-white rounded-[40px] p-10 w-full max-w-sm shadow-2xl animate-in zoom-in-95">
