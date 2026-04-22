@@ -31,17 +31,17 @@ function InnerLayout({ children, customer, handleLogout, pathname }: {
           <span className="text-[10px] font-semibold">Home</span>
         </Link>
         
-        <Link href="/customer-portal?tab=promo"
-          className={`flex-1 flex flex-col items-center justify-center gap-1 ${pathname === "/customer-portal?tab=promo" ? "text-[#C94F78]" : "text-gray-400"}`}>
-          <div className="p-1 rounded-lg">
+        <Link href="/customer-portal/promo"
+          className={`flex-1 flex flex-col items-center justify-center gap-1 ${pathname === "/customer-portal/promo" ? "text-[#C94F78]" : "text-gray-400"}`}>
+          <div className={`p-1 rounded-lg ${pathname === "/customer-portal/promo" ? "bg-rose-50" : ""}`}>
              <Star className="w-6 h-6" />
           </div>
           <span className="text-[10px] font-semibold">Promo</span>
         </Link>
 
-        <Link href="/customer-portal/cart"
-          className={`flex-1 flex flex-col items-center justify-center gap-1 ${pathname === "/customer-portal/cart" ? "text-[#C94F78]" : "text-gray-400"}`}>
-          <div className={`p-1 rounded-lg ${pathname === "/customer-portal/cart" ? "bg-rose-50" : ""}`}>
+        <Link href="/customer-portal/orders"
+          className={`flex-1 flex flex-col items-center justify-center gap-1 ${pathname === "/customer-portal/orders" ? "text-[#C94F78]" : "text-gray-400"}`}>
+          <div className={`p-1 rounded-lg relative ${pathname === "/customer-portal/orders" ? "bg-rose-50" : ""}`}>
             <ShoppingBag className="w-6 h-6" />
             {totalItems > 0 && (
               <span className="absolute -top-1 -right-1 bg-[#C94F78] text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full font-bold border-2 border-white">

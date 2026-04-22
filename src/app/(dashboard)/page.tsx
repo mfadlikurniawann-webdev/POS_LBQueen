@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import {
   Search, ShoppingCart, Trash2, Package, CreditCard, UserCheck, X,
   Loader2, Flower2, Plus, Minus, CheckCircle2, Tag, Crown,
-  Paintbrush2, Eye, Gem, Sparkles,
+  Paintbrush2, Eye, Gem, Sparkles, Heart,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -27,16 +27,16 @@ type CartItem = {
   cartKey: string;
 };
 
-const RETAIL_TYPES   = ["Retail Nail", "Retail Eyelash", "Retail Beauty"];
-const SELLABLE_TYPES = ["Treatment Care & Beauty", "Product Care & Beauty", "Treatment", ...RETAIL_TYPES];
+const RETAIL_TYPES   = ["Retail products", "Retail products nail", "Retail products eyelash", "Retail products beauty"];
+const SELLABLE_TYPES = ["Treatment Care & Beauty", "Product Care & Beauty", ...RETAIL_TYPES];
 
 const TYPE_ICON: Record<string, React.ReactNode> = {
-  "Treatment":               <Sparkles className="w-3 h-3" />,
-  "Treatment Care & Beauty": <Flower2 className="w-3 h-3" />,
+  "Treatment Care & Beauty": <Sparkles className="w-3 h-3" />,
   "Product Care & Beauty":   <Package className="w-3 h-3" />,
-  "Retail Nail":             <Paintbrush2 className="w-3 h-3" />,
-  "Retail Eyelash":          <Eye className="w-3 h-3" />,
-  "Retail Beauty":           <Gem className="w-3 h-3" />,
+  "Retail products":         <Gem className="w-3 h-3" />,
+  "Retail products nail":    <Paintbrush2 className="w-3 h-3" />,
+  "Retail products eyelash": <Eye className="w-3 h-3" />,
+  "Retail products beauty":  <Heart className="w-3 h-3" />,
 };
 
 export default function KasirPage() {

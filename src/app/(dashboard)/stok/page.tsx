@@ -5,31 +5,31 @@ import { supabase } from "@/lib/supabase";
 import {
   Plus, Search, Edit2, Trash2, X, Loader2, Flower2,
   Package, Sparkles, Upload, Image as ImageIcon,
-  Paintbrush2, Eye, Gem, Tag, ChevronDown,
+  Paintbrush2, Eye, Gem, Tag, ChevronDown, Heart,
 } from "lucide-react";
 import Image from "next/image";
 
 const TYPES = [
-  "Treatment",
   "Treatment Care & Beauty",
   "Product Care & Beauty",
-  "Retail Nail",
-  "Retail Eyelash",
-  "Retail Beauty",
-  "Barang Kantor",
+  "Retail products",
+  "Retail products nail",
+  "Retail products eyelash",
+  "Retail products beauty",
+  "Barang Klinik",
   "Aset Karyawan",
 ] as const;
 
 type TType = typeof TYPES[number];
 
 const TYPE_META: Record<TType, { icon: React.ReactNode; color: string }> = {
-  "Treatment":               { icon: <Sparkles className="w-3.5 h-3.5" />,    color: "text-purple-500" },
-  "Treatment Care & Beauty": { icon: <Flower2 className="w-3.5 h-3.5" />,     color: "text-rose-400" },
-  "Product Care & Beauty":   { icon: <Package className="w-3.5 h-3.5" />,     color: "text-pink-400" },
-  "Retail Nail":             { icon: <Paintbrush2 className="w-3.5 h-3.5" />, color: "text-red-400" },
-  "Retail Eyelash":          { icon: <Eye className="w-3.5 h-3.5" />,         color: "text-violet-400" },
-  "Retail Beauty":           { icon: <Gem className="w-3.5 h-3.5" />,         color: "text-pink-500" },
-  "Barang Kantor":           { icon: <Package className="w-3.5 h-3.5" />,     color: "text-blue-400" },
+  "Treatment Care & Beauty": { icon: <Sparkles className="w-3.5 h-3.5" />,    color: "text-purple-500" },
+  "Product Care & Beauty":   { icon: <Package className="w-3.5 h-3.5" />,     color: "text-rose-400" },
+  "Retail products":         { icon: <Gem className="w-3.5 h-3.5" />,         color: "text-pink-400" },
+  "Retail products nail":    { icon: <Paintbrush2 className="w-3.5 h-3.5" />, color: "text-red-400" },
+  "Retail products eyelash": { icon: <Eye className="w-3.5 h-3.5" />,         color: "text-violet-400" },
+  "Retail products beauty":  { icon: <Heart className="w-3.5 h-3.5" />,        color: "text-pink-500" },
+  "Barang Klinik":           { icon: <Package className="w-3.5 h-3.5" />,     color: "text-blue-400" },
   "Aset Karyawan":           { icon: <Package className="w-3.5 h-3.5" />,     color: "text-amber-400" },
 };
 
@@ -45,7 +45,7 @@ type Product = {
 };
 
 const emptyForm = {
-  product_code: "", name: "", type: "Treatment" as TType,
+  product_code: "", name: "", type: "Treatment Care & Beauty" as TType,
   purchase_price: "", selling_price: "", stock: "", unit: "Sesi",
   image_url: "", sub_category: "",
 };
@@ -54,7 +54,7 @@ const emptyVariantRow = { variant_name: "", price: "", stock: "" };
 export default function StokPage() {
   const [products,            setProducts]            = useState<Product[]>([]);
   const [existingSubCats,     setExistingSubCats]     = useState<string[]>([]);
-  const [activeTab,           setActiveTab]           = useState<TType>("Treatment");
+  const [activeTab,           setActiveTab]           = useState<TType>("Treatment Care & Beauty");
   const [search,              setSearch]              = useState("");
   const [loading,             setLoading]             = useState(true);
   const [showModal,           setShowModal]           = useState(false);
@@ -82,7 +82,7 @@ export default function StokPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const isTreatment = (t: string) => t === "Treatment";
+  const isTreatment = (t: string) => t === "Treatment Care & Beauty";
 
   const openAdd = () => {
     setEditItem(null); setSavedProdId(null);
@@ -181,7 +181,7 @@ export default function StokPage() {
   };
 
   const filtered = products.filter(p => p.type === activeTab && p.name.toLowerCase().includes(search.toLowerCase()));
-  const meta = (t: string) => TYPE_META[t as TType] ?? TYPE_META["Retail Beauty"];
+  const meta = (t: string) => TYPE_META[t as TType] ?? TYPE_META["Product Care & Beauty"];
 
   return (
     <div className="h-full flex flex-col bg-[#fdfcfc]">
