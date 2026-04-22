@@ -35,21 +35,15 @@ type Product = {
 
 const WA_NUMBER = "6282176171448";
 
-const MAIN_CATEGORIES = [
-  { 
-    id: "treatment", 
-    label: "Treatment Care Beauty", 
-    type: "Treatment Care & Beauty",
-    image: "https://images.unsplash.com/photo-1570172619666-114317a402f6?auto=format&fit=crop&q=80&w=400",
-    subCats: ["Beauty facial & body", "Eyelash", "Nail art", "Eyebrow"]
-  },
-  { 
-    id: "product", 
-    label: "Product Care Beauty", 
-    type: "Product Care & Beauty",
-    image: "https://images.unsplash.com/photo-1598446401943-7f99994c5f72?auto=format&fit=crop&q=80&w=400",
-    subCats: ["Produk eyelash", "Produk nail", "Produk eyebrow", "Produk skincare"]
-  }
+const GRID_CATEGORIES = [
+  { id: "facial", label: "Facial & Body", sub: "Beauty facial & body", type: "Treatment Care & Beauty", bg: "bg-gradient-to-br from-blue-400 to-blue-500 shadow-blue-200", icon: "✨" },
+  { id: "eyelash", label: "Eyelash Art", sub: "Eyelash", type: "Treatment Care & Beauty", bg: "bg-gradient-to-br from-purple-400 to-purple-500 shadow-purple-200", icon: "👁️" },
+  { id: "nail", label: "Nail Art", sub: "Nail art", type: "Treatment Care & Beauty", bg: "bg-gradient-to-br from-pink-400 to-pink-500 shadow-pink-200", icon: "💅" },
+  { id: "eyebrow", label: "Eyebrow", sub: "Eyebrow", type: "Treatment Care & Beauty", bg: "bg-gradient-to-br from-emerald-400 to-emerald-500 shadow-emerald-200", icon: "🪄" },
+  { id: "skincare", label: "Skincare", sub: "Produk skincare", type: "Product Care & Beauty", bg: "bg-gradient-to-br from-sky-400 to-sky-500 shadow-sky-200", icon: "🧴" },
+  { id: "p-eyelash", label: "Eyelash Prod", sub: "Produk eyelash", type: "Product Care & Beauty", bg: "bg-gradient-to-br from-orange-400 to-orange-500 shadow-orange-200", icon: "🛍️" },
+  { id: "p-nail", label: "Nail Prod", sub: "Produk nail", type: "Product Care & Beauty", bg: "bg-gradient-to-br from-indigo-400 to-indigo-500 shadow-indigo-200", icon: "🎨" },
+  { id: "p-eyebrow", label: "Eyebrow Prod", sub: "Produk eyebrow", type: "Product Care & Beauty", bg: "bg-gradient-to-br from-rose-400 to-rose-500 shadow-rose-200", icon: "🎀" }
 ];
 
 const BANNERS = [
@@ -66,8 +60,7 @@ export default function CustomerPortalPage() {
   const [searchQuery,    setSearchQuery]    = useState("");
   
   // Filtering states
-  const [activeMainCat, setActiveMainCat] = useState<string | null>(null);
-  const [activeSubCat,  setActiveSubCat]  = useState<string | null>(null);
+  const [activeGridCat, setActiveGridCat] = useState<string | null>(null);
   const [activeTab,      setActiveTab]      = useState<"semua" | "promo" | "set">("semua");
 
   // Variant Selection State
@@ -115,17 +108,19 @@ export default function CustomerPortalPage() {
     return products.filter(p => {
       const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
       
-      const mainCatConfig = MAIN_CATEGORIES.find(c => c.id === activeMainCat);
-      const matchMain = activeMainCat ? p.type === mainCatConfig?.type : true;
-      const matchSub = activeSubCat ? p.sub_category === activeSubCat : true;
+      const gridConfig = GRID_CATEGORIES.find(c => c.id === activeGridCat);
+      let matchCat = true;
+      if (gridConfig) {
+        matchCat = p.type === gridConfig.type && p.sub_category === gridConfig.sub;
+      }
       
       let matchTab = true;
       if (activeTab === "promo") matchTab = (p.voucher_discount ?? 0) > 0;
       if (activeTab === "set")   matchTab = p.is_set;
       
-      return matchSearch && matchMain && matchSub && matchTab;
+      return matchSearch && matchCat && matchTab;
     });
-  }, [products, searchQuery, activeMainCat, activeSubCat, activeTab]);
+  }, [products, searchQuery, activeGridCat, activeTab]);
 
   const handleOpenSelection = (product: Product) => {
     setSelectedProduct(product);
@@ -149,11 +144,6 @@ export default function CustomerPortalPage() {
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
     setSelectedProduct(null);
   };
-
-  const subCats = useMemo(() => {
-    if (!activeMainCat) return [];
-    return MAIN_CATEGORIES.find(c => c.id === activeMainCat)?.subCats || [];
-  }, [activeMainCat]);
 
   return (
     <div className="min-h-screen bg-transparent font-sans pb-32">
@@ -221,57 +211,36 @@ export default function CustomerPortalPage() {
 
       <div className="px-5">
         
-        {/* ── TWO-TIER CATEGORY FILTER ── */}
+        {/* ── GRID CATEGORY FILTER (App Store Style) ── */}
         <div className="mb-8">
            <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-4 flex items-center gap-2">
-             <Filter className="w-4 h-4 text-[#C94F78]" /> Pilih Kategori
+             <Filter className="w-4 h-4 text-[#C94F78]" /> Telusuri Kategori
            </h3>
-           <div className="grid grid-cols-2 gap-4">
-              {MAIN_CATEGORIES.map((cat) => (
-                <button 
-                  key={cat.id} 
-                  onClick={() => {
-                    setActiveMainCat(activeMainCat === cat.id ? null : cat.id);
-                    setActiveSubCat(null);
-                  }}
-                  className={`relative h-24 rounded-[28px] overflow-hidden border-2 transition-all ${
-                    activeMainCat === cat.id ? "border-[#C94F78] scale-[1.02] shadow-lg shadow-rose-100" : "border-transparent text-gray-400"
-                  }`}
-                >
-                   <Image src={cat.image} alt={cat.label} fill className={`object-cover transition-all duration-500 ${activeMainCat === cat.id ? "scale-110 grayscale-0" : "grayscale opacity-50"}`} />
-                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4 text-center">
-                      <span className="text-white text-[12px] font-black leading-tight uppercase tracking-tighter">
-                        {cat.label}
-                      </span>
-                   </div>
-                </button>
-              ))}
-           </div>
-
-           {/* Sub Categories Chips */}
-           {activeMainCat && (
-             <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar py-1">
-                <button 
-                   onClick={() => setActiveSubCat(null)}
-                   className={`whitespace-nowrap px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-tight transition-all ${
-                     !activeSubCat ? "bg-[#C94F78] text-white" : "bg-white text-gray-400 border border-gray-100"
-                   }`}
-                >
-                   Semua
-                </button>
-                {subCats.map(sub => (
+           <div className="grid grid-cols-2 gap-3">
+              {GRID_CATEGORIES.map((cat) => {
+                const isActive = activeGridCat === cat.id;
+                return (
                   <button 
-                    key={sub}
-                    onClick={() => setActiveSubCat(activeSubCat === sub ? null : sub)}
-                    className={`whitespace-nowrap px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-tight transition-all ${
-                      activeSubCat === sub ? "bg-[#C94F78] text-white shadow-md shadow-rose-100" : "bg-white text-gray-400 border border-gray-100"
-                    }`}
+                    key={cat.id} 
+                    onClick={() => setActiveGridCat(isActive ? null : cat.id)}
+                    className={`relative h-24 rounded-[24px] overflow-hidden transition-all duration-300 text-left p-4 group
+                      ${isActive ? `${cat.bg} scale-[1.02] shadow-lg ring-2 ring-white/50 ring-offset-2 ring-offset-rose-50` : `${cat.bg} opacity-90 hover:opacity-100 hover:scale-[1.01] shadow-md`}
+                    `}
                   >
-                    {sub}
+                     <div className="absolute top-3 right-3 text-2xl filter drop-shadow-md transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12">
+                       {cat.icon}
+                     </div>
+                     <div className="absolute bottom-3 left-4 right-2">
+                        <span className="text-white text-[13px] font-black leading-tight tracking-tight drop-shadow-sm block">
+                          {cat.label}
+                        </span>
+                     </div>
+                     {/* Glassmorphism subtle overlay */}
+                     <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </button>
-                ))}
-             </div>
-           )}
+                );
+              })}
+           </div>
         </div>
 
         {/* ── STICKY TAB FILTER ── */}
@@ -304,7 +273,7 @@ export default function CustomerPortalPage() {
                    <SearchIcon className="w-6 h-6 text-gray-200" />
                 </div>
                 <p className="text-sm font-bold text-gray-300 uppercase tracking-widest">Produk tidak ditemukan</p>
-                <button onClick={() => { setActiveMainCat(null); setActiveSubCat(null); setActiveTab("semua"); setSearchQuery(""); }} className="text-[11px] font-black text-[#C94F78] underline uppercase">Reset Filter</button>
+                <button onClick={() => { setActiveGridCat(null); setActiveTab("semua"); setSearchQuery(""); }} className="text-[11px] font-black text-[#C94F78] underline uppercase mt-2">Reset Filter</button>
              </div>
            ) : (
              <div className="grid grid-cols-2 gap-x-4 gap-y-6">

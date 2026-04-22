@@ -10,6 +10,7 @@ import {
 type Customer = {
   id: number; name: string; phone: string; is_member: boolean; join_date: string;
   username: string | null; password_plain: string | null;
+  nik?: string | null; address?: string | null;
 };
 type Voucher = {
   id: number; code: string; name: string; discount_amount: number;
@@ -22,7 +23,7 @@ type CustomerOrder = {
   customers: { name: string } | null;
 };
 
-const emptyCustomer = { name: "", phone: "", is_member: false };
+const emptyCustomer = { name: "", phone: "", is_member: false, nik: "", address: "" };
 const emptyVoucher  = { code: "", name: "", discount_amount: "", min_purchase: "", product_id: "" };
 
 /** Buat inisial dari nama: "Sri Wahyuni" → "SW" */
@@ -94,12 +95,18 @@ export default function PelangganPage() {
     // Insert dulu untuk dapat ID
     const { data: inserted, error } = await supabase
       .from("customers")
-      .insert({ name: custForm.name, phone: custForm.phone, is_member: custForm.is_member })
+      .insert({ 
+        name: custForm.name, 
+        phone: custForm.phone, 
+        is_member: custForm.is_member,
+        nik: custForm.nik || null,
+        address: custForm.address || null
+      })
       .select()
       .single();
 
     if (error || !inserted) {
-      showToast("Gagal menyimpan pelanggan!"); setSaving(false); return;
+      showToast("Gagal! Pastikan kolom 'nik' & 'address' sudah dibuat di DB Supabase."); setSaving(false); return;
     }
 
     // Generate username & password berdasarkan ID yang baru didapat
@@ -245,6 +252,12 @@ export default function PelangganPage() {
                             <Phone className="w-3 h-3 text-gray-300" />
                             <span className="text-[10px] text-gray-400 font-bold">{c.phone || "—"}</span>
                           </div>
+                          {c.nik && (
+                             <p className="text-[9px] text-gray-400 mt-1 font-mono">NIK: {c.nik}</p>
+                          )}
+                          {c.address && (
+                             <p className="text-[9px] text-gray-400 mt-0.5 line-clamp-1">{c.address}</p>
+                          )}
                         </div>
                         <div className="text-right">
                           {c.is_member && <span className="bg-amber-100 text-amber-600 text-[8px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">Gold Member</span>}
@@ -296,10 +309,14 @@ export default function PelangganPage() {
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="flex items-center gap-2 text-[11px] font-bold text-gray-400">
-                               <div className="p-1.5 bg-gray-50 rounded-lg"><Phone className="w-3 h-3" /></div>
-                               {c.phone || "—"}
-                            </span>
+                            <div className="flex flex-col gap-1">
+                               <span className="flex items-center gap-2 text-[11px] font-bold text-gray-400">
+                                  <div className="p-1.5 bg-gray-50 rounded-lg"><Phone className="w-3 h-3" /></div>
+                                  {c.phone || "—"}
+                               </span>
+                               {c.nik && <span className="text-[9px] text-gray-400 font-mono ml-7">NIK: {c.nik}</span>}
+                               {c.address && <span className="text-[9px] text-gray-400 ml-7 line-clamp-1 max-w-[150px]">{c.address}</span>}
+                            </div>
                           </td>
                           <td className="px-6 py-4 text-center">
                             {c.is_member
@@ -523,13 +540,23 @@ export default function PelangganPage() {
               <button onClick={() => setShowCustModal(false)}><X className="text-gray-400" /></button>
             </div>
             <div className="space-y-4">
-              <div>
-                <label className="label-form">Nama Lengkap *</label>
-                <input className="input-form" placeholder="Nama pelanggan" value={custForm.name} onChange={e => setCustForm(f => ({ ...f, name: e.target.value }))} />
-              </div>
-              <div>
-                <label className="label-form">Nomor HP / WhatsApp</label>
-                <input className="input-form" placeholder="0812..." value={custForm.phone} onChange={e => setCustForm(f => ({ ...f, phone: e.target.value }))} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="label-form">Nama Lengkap *</label>
+                  <input className="input-form" placeholder="Nama pelanggan" value={custForm.name} onChange={e => setCustForm(f => ({ ...f, name: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="label-form">Nomor HP / WhatsApp</label>
+                  <input className="input-form" placeholder="0812..." value={custForm.phone} onChange={e => setCustForm(f => ({ ...f, phone: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="label-form">No. KTP (NIK)</label>
+                  <input className="input-form" placeholder="16 digit NIK" maxLength={16} value={custForm.nik} onChange={e => setCustForm(f => ({ ...f, nik: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="label-form">Alamat Lengkap</label>
+                  <input className="input-form" placeholder="Jl. Contoh..." value={custForm.address} onChange={e => setCustForm(f => ({ ...f, address: e.target.value }))} />
+                </div>
               </div>
               <div className="flex items-center justify-between p-4 bg-amber-50 border border-amber-100 rounded-xl">
                 <div className="flex items-center gap-2">
