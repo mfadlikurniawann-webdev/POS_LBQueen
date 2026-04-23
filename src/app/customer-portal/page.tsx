@@ -55,8 +55,8 @@ const MAIN_CATEGORIES = [
 ];
 
 const BANNERS = [
-  { id: 1, image: "https://images.unsplash.com/photo-1570172619666-114317a402f6?auto=format&fit=crop&q=80&w=1200", title: "Premium Facial Treatment", subtitle: "Wujudkan kulit impian Anda hari ini." },
-  { id: 2, image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=1200", title: "Luxury Eyelash & Nails", subtitle: "Tampil mempesona di setiap kesempatan." },
+  { id: 1, image: "/banner_facial.png", title: "Premium Facial Treatment", subtitle: "Wujudkan kulit impian Anda hari ini." },
+  { id: 2, image: "/banner_eyelash.png", title: "Luxury Eyelash & Nails", subtitle: "Tampil mempesona di setiap kesempatan." },
 ];
 
 export default function CustomerPortalPage() {
@@ -157,10 +157,10 @@ export default function CustomerPortalPage() {
   }, [activeMainCat]);
 
   return (
-    <div className="min-h-screen bg-transparent font-sans pb-32">
+    <div className="min-h-screen bg-transparent font-sans pb-32 max-w-7xl mx-auto md:px-8">
 
       {/* ── HEADER (Pink Wave Gradient) ── */}
-      <header className="relative bg-gradient-to-r from-[#D95F87] via-[#C94F78] to-[#A83E60] px-5 pt-12 pb-6 sticky top-0 z-50 rounded-b-[32px] shadow-lg shadow-rose-200/50 flex flex-col gap-4 overflow-hidden">
+      <header className="relative bg-gradient-to-r from-[#D95F87] via-[#C94F78] to-[#A83E60] px-5 pt-12 pb-6 sticky top-0 z-50 rounded-b-[32px] md:rounded-b-[48px] md:mt-4 md:rounded-t-[48px] shadow-lg shadow-rose-200/50 flex flex-col gap-4 overflow-hidden">
         {/* Wave Decoration */}
         <svg className="absolute bottom-0 left-0 w-full h-auto opacity-20 pointer-events-none" viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
           <path fill="#ffffff" d="M0,96L48,112C96,128,192,160,288,154.7C384,149,480,107,576,96C672,85,768,107,864,122.7C960,139,1056,149,1152,144C1248,139,1344,117,1392,106.7L1440,96L1440,200L1392,200C1344,200,1248,200,1152,200C1056,200,960,200,864,200C768,200,672,200,576,200C480,200,384,200,288,200C192,200,96,200,48,200L0,200Z"></path>
@@ -315,7 +315,7 @@ export default function CustomerPortalPage() {
                 <button onClick={() => { setActiveMainCat(null); setActiveSubCat(null); setActiveTab("semua"); setSearchQuery(""); }} className="text-[11px] font-semibold text-[#C94F78] underline capitalize mt-2">Reset Filter</button>
              </div>
            ) : (
-             <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-6">
                 {filtered.map(product => {
                   const hasPromo = (product.voucher_discount || 0) > 0;
                   const displayPrice = product.selling_price - (product.voucher_discount || 0);

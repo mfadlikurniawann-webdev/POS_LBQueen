@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Home, ShoppingBag, LogOut, Ticket, Star, User, ClipboardList } from "lucide-react";
+import { Home, ShoppingBag, LogOut, Ticket, Star, User, ClipboardList, Menu } from "lucide-react";
 import Link from "next/link";
 import { CartProvider, useCart } from "@/context/CartContext";
 
@@ -13,16 +13,53 @@ function InnerLayout({ children, customer, handleLogout, pathname }: {
 }) {
   const { totalItems } = useCart();
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-transparent flex flex-col font-sans selection:bg-rose-100 selection:text-lb-pink">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans selection:bg-rose-100 selection:text-lb-pink md:bg-[#FDFCFD]">
+
+      {/* ── DESKTOP HEADER & BURGER MENU ── */}
+      <header className="hidden md:flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100 sticky top-0 z-[60]">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-[#C94F78] font-bold text-xl">
+            LB
+          </div>
+          <span className="font-bold text-[#C94F78] text-lg tracking-widest">LBQueen</span>
+        </div>
+
+        <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 text-slate-500 hover:text-[#C94F78] transition-colors">
+          <Menu className="w-6 h-6" />
+        </button>
+
+        {/* Desktop Slide-out Menu */}
+        {menuOpen && (
+          <div className="absolute top-[73px] right-8 w-64 bg-white border border-gray-100 shadow-2xl rounded-2xl p-4 flex flex-col gap-2">
+             <Link href="/customer-portal" onClick={() => setMenuOpen(false)} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === "/customer-portal" ? "bg-rose-50 text-[#C94F78]" : "text-slate-500 hover:bg-slate-50"}`}>
+               <Home className="w-5 h-5" /> <span className="text-sm font-semibold">Home</span>
+             </Link>
+             <Link href="/customer-portal/promo" onClick={() => setMenuOpen(false)} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === "/customer-portal/promo" ? "bg-rose-50 text-[#C94F78]" : "text-slate-500 hover:bg-slate-50"}`}>
+               <Star className="w-5 h-5" /> <span className="text-sm font-semibold">Promo</span>
+             </Link>
+             <Link href="/customer-portal/cart" onClick={() => setMenuOpen(false)} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === "/customer-portal/cart" ? "bg-rose-50 text-[#C94F78]" : "text-slate-500 hover:bg-slate-50"}`}>
+               <ShoppingBag className="w-5 h-5" /> <span className="text-sm font-semibold">Keranjang</span>
+             </Link>
+             <Link href="/customer-portal/orders" onClick={() => setMenuOpen(false)} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === "/customer-portal/orders" ? "bg-rose-50 text-[#C94F78]" : "text-slate-500 hover:bg-slate-50"}`}>
+               <ClipboardList className="w-5 h-5" /> <span className="text-sm font-semibold">Pesanan</span>
+             </Link>
+             <Link href="/customer-portal/profile" onClick={() => setMenuOpen(false)} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === "/customer-portal/profile" ? "bg-rose-50 text-[#C94F78]" : "text-slate-500 hover:bg-slate-50"}`}>
+               <User className="w-5 h-5" /> <span className="text-sm font-semibold">Profil</span>
+             </Link>
+          </div>
+        )}
+      </header>
 
       {/* ── CONTENT ── */}
-      <main className="flex-1 w-full pb-32">
+      <main className="flex-1 w-full pb-32 md:pb-8 max-w-[1920px] mx-auto">
         {children}
       </main>
 
-      {/* ── BOTTOM NAV (Gojek Minimal Style) ── */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 h-[72px] flex items-center z-50 safe-area-bottom px-6">
+      {/* ── BOTTOM NAV (Hidden on Desktop) ── */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 h-[72px] flex items-center z-50 safe-area-bottom px-6">
         <Link href="/customer-portal"
           className={`flex-1 flex flex-col items-center justify-center gap-1 ${pathname === "/customer-portal" ? "text-[#C94F78]" : "text-gray-400"}`}>
           <div className={`p-1 rounded-lg ${pathname === "/customer-portal" ? "bg-rose-50" : ""}`}>
