@@ -34,7 +34,7 @@ export default function CartPage() {
     if (!customer || cart.length === 0) return;
     setProcessing(true);
     try {
-      await supabase.from("customer_orders").insert(
+      const { error: insertError } = await supabase.from("customer_orders").insert(
         cart.map(item => ({
           customer_id: customer.id,
           customer_name: customer.name,
@@ -43,6 +43,8 @@ export default function CartPage() {
           status: "pending",
         }))
       );
+
+      if (insertError) throw insertError;
 
       let msg = `Halo LBQueen! Saya *${customer.name}*${customer.is_member ? " (Member)" : ""}.\n\nPesanan saya:\n\n`;
       cart.forEach((item, i) => {
@@ -53,8 +55,9 @@ export default function CartPage() {
       
       clearCart();
       window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      alert("Gagal mengirim pesanan ke sistem: " + (e.message || "Terjadi kesalahan jaringan"));
     } finally {
       setProcessing(false);
     }

@@ -18,6 +18,7 @@ type Order = {
   product_name: string;
   status: string;
   created_at: string;
+  completed_at?: string;
   customer_name: string;
 };
 
@@ -132,9 +133,16 @@ export default function OrdersPage() {
                          <div className={`p-1.5 rounded-lg ${status.bg} ${status.color}`}>
                             {status.icon}
                          </div>
-                         <span className={`text-[10px] font-semibold capitalize tracking-widest ${status.color}`}>
-                           {status.label}
-                         </span>
+                         <div>
+                           <span className={`text-[10px] font-semibold capitalize tracking-widest ${status.color}`}>
+                             {status.label}
+                           </span>
+                           {order.status === 'completed' && order.completed_at && (
+                             <p className="text-[9px] text-emerald-600 font-bold mt-0.5">
+                               Selesai: {new Date(order.completed_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', year: 'numeric' })}
+                             </p>
+                           )}
+                         </div>
                       </div>
                       <span className="text-[10px] font-semibold text-gray-400 tracking-widest">
                         {new Date(order.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' })}

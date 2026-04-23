@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { ShoppingCart, Package, Users, FileText, LogOut, Settings } from "lucide-react";
+import { ShoppingCart, Package, Users, FileText, LogOut, Settings, Bell } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -11,6 +11,7 @@ const navItems = [
   { Icon: Package,      label: "Inventori", href: "/stok" },
   { Icon: Users,        label: "Pelanggan", href: "/pelanggan" },
   { Icon: FileText,     label: "Laporan",   href: "/laporan" },
+  { Icon: Bell,         label: "Pesanan Online", href: "/pesanan" },
   { Icon: Settings,     label: "Pengaturan",href: "/pengaturan" },
 ];
 
@@ -19,6 +20,7 @@ const PAGE_TITLE: Record<string, string> = {
   "/stok":      "Inventori Produk",
   "/pelanggan": "Pelanggan & Member",
   "/laporan":   "Laporan Keuangan",
+  "/pesanan":   "Manajemen Pesanan Online",
   "/pengaturan":"Pengaturan Sistem",
 };
 
