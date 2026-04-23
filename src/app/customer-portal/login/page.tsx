@@ -75,24 +75,24 @@ export default function CustomerLoginPage() {
       <div className="relative z-10 w-full max-w-[420px] px-6">
         
         <div className="flex flex-col items-center mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
-           <div className="w-20 h-20 bg-white rounded-[32px] shadow-2xl p-2 mb-5 border border-white backdrop-blur-xl">
-             <Image src="/lbqueen_logo.png" alt="LBQueen" width={80} height={80} className="rounded-[24px] object-cover" />
+           <div className="w-20 h-20 bg-white rounded-[28px] shadow-2xl p-2.5 mb-5 border border-white/50 backdrop-blur-xl">
+             <Image src="/lbqueen_logo.png" alt="LBQueen" width={80} height={80} className="rounded-2xl object-cover" />
            </div>
-           <h1 className="text-white lg:text-slate-800 text-3xl font-bold tracking-tight drop-shadow-md flex items-center gap-2">
-             LBQueen Portal <Heart className="w-5 h-5 text-rose-300 lg:text-[#C94F78]" />
+           <h1 className="text-white text-3xl font-bold tracking-tight drop-shadow-md flex items-center gap-2">
+             LBQueen Portal <Heart className="w-5 h-5 text-rose-200" />
            </h1>
-           <p className="text-rose-50 lg:text-slate-400 text-[11px] font-bold uppercase tracking-[0.3em] mt-2 opacity-90">
+           <p className="text-rose-50 text-[11px] font-bold uppercase tracking-[0.3em] mt-2 opacity-90">
              Customer Exclusive
            </p>
         </div>
 
-        <div className="bg-white/90 backdrop-blur-3xl rounded-[44px] shadow-2xl shadow-rose-200/50 border border-white p-10 animate-in zoom-in-95 duration-500">
+        <div className="bg-white/80 backdrop-blur-2xl rounded-[40px] shadow-2xl shadow-rose-200/50 border border-white p-10 animate-in zoom-in-95 duration-500">
           
           <div className="mb-8">
-             <h2 className="text-xl font-extrabold text-slate-800 flex items-center gap-2">
+             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                Halo Cantik! ✨
              </h2>
-             <p className="text-slate-400 text-xs font-semibold mt-1">Masuk untuk akses treatment & promo spesial.</p>
+             <p className="text-slate-400 text-xs font-medium mt-1">Masuk untuk akses treatment & promo spesial.</p>
           </div>
 
           {error && (
@@ -103,27 +103,27 @@ export default function CustomerLoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label className="block text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-[0.2em] ml-1">Username Member</label>
+              <label className="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest ml-1">Username Member</label>
               <input type="text" required value={username} onChange={e => setUsername(e.target.value)}
                 placeholder="Masukkan username Anda"
-                className="w-full px-6 py-4.5 bg-rose-50/30 border border-rose-100/50 rounded-[24px] text-[14px] font-bold text-slate-800 placeholder:text-slate-300 outline-none focus:bg-white focus:border-[#C94F78] focus:ring-8 focus:ring-rose-50/50 transition-all" />
+                className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-[14px] font-semibold text-slate-800 placeholder:text-slate-300 outline-none focus:bg-white focus:border-[#C94F78] focus:ring-4 focus:ring-rose-50 transition-all" />
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-[0.2em] ml-1">Password</label>
+              <label className="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest ml-1">Password</label>
               <div className="relative">
                 <input type={showPass ? "text" : "password"} required value={password} onChange={e => setPassword(e.target.value)}
                   placeholder="Masukkan password"
-                  className="w-full px-6 py-4.5 bg-rose-50/30 border border-rose-100/50 rounded-[24px] text-[14px] font-bold text-slate-800 placeholder:text-slate-300 outline-none focus:bg-white focus:border-[#C94F78] focus:ring-8 focus:ring-rose-50/50 transition-all pr-14" />
+                  className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-[14px] font-semibold text-slate-800 placeholder:text-slate-300 outline-none focus:bg-white focus:border-[#C94F78] focus:ring-4 focus:ring-rose-50 transition-all pr-14" />
                 <button type="button" onClick={() => setShowPass(!showPass)}
-                  className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-[#C94F78] transition-colors">
-                  {showPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center text-slate-300 hover:text-[#C94F78] bg-white rounded-xl shadow-sm border border-slate-50 transition-colors">
+                  {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
             <button type="submit" disabled={loading}
-              className="w-full py-5 bg-[#C94F78] hover:bg-[#A83E60] text-white font-bold text-[15px] rounded-[24px] flex items-center justify-center gap-2 transition-all duration-300 shadow-luxury-pink active:scale-[0.96] disabled:opacity-70 mt-4 uppercase tracking-[0.1em]">
+              className="w-full py-4.5 bg-[#C94F78] hover:bg-[#A83E60] text-white font-bold text-[14px] rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 shadow-luxury-pink active:scale-[0.98] disabled:opacity-70 mt-6 uppercase tracking-widest">
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
               {loading ? "Menyambungkan..." : "Masuk ke Portal"}
             </button>

@@ -66,10 +66,10 @@ export default function LoginPage() {
            <div className="w-20 h-20 bg-white rounded-[28px] shadow-2xl p-2.5 mb-5 border border-white/50 backdrop-blur-xl">
              <Image src="/lbqueen_logo.png" alt="LBQueen" width={80} height={80} className="rounded-2xl object-cover" />
            </div>
-           <h1 className="text-white lg:text-slate-800 text-3xl font-bold tracking-tight drop-shadow-md flex items-center gap-2">
-             LBQueen Admin <Sparkles className="w-5 h-5 text-rose-200 lg:text-rose-400" />
+           <h1 className="text-white text-3xl font-bold tracking-tight drop-shadow-md flex items-center gap-2">
+             LBQueen Admin <Sparkles className="w-5 h-5 text-rose-200" />
            </h1>
-           <p className="text-rose-100 lg:text-slate-400 text-[11px] font-bold uppercase tracking-[0.3em] mt-2 opacity-80">
+           <p className="text-rose-100 text-[11px] font-bold uppercase tracking-[0.3em] mt-2 opacity-80">
              Management System
            </p>
         </div>
