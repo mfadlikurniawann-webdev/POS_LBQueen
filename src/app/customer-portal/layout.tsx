@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { Home, ShoppingBag, LogOut, Ticket, Star, User, ClipboardList, Menu } from "lucide-react";
 import Link from "next/link";
@@ -21,8 +22,8 @@ function InnerLayout({ children, customer, handleLogout, pathname }: {
       {/* ── DESKTOP HEADER & BURGER MENU ── */}
       <header className="hidden md:flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100 sticky top-0 z-[60]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-[#C94F78] font-bold text-xl">
-            LB
+          <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center overflow-hidden p-1.5 border border-rose-100 shadow-sm">
+            <Image src="/lbqueen_logo.png" alt="LBQueen" width={30} height={30} className="object-contain" />
           </div>
           <span className="font-bold text-[#C94F78] text-lg tracking-widest">LBQueen</span>
         </div>

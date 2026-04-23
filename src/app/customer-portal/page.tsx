@@ -10,6 +10,7 @@ import {
   ArrowRight, Heart, Filter
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 
 type ProductVariant = {
@@ -40,17 +41,17 @@ const MAIN_CATEGORIES = [
     id: "treatment", 
     label: "Treatment Care & Beauty", 
     type: "Treatment Care & Beauty",
-    subCats: ["eyelash", "breash", "nail art", "eyebrow", "Skin care Clinic"],
+    desc: "Perawatan kulit & tubuh",
     bg: "bg-gradient-to-br from-[#D95F87] to-[#A83E60] shadow-rose-200",
-    icon: "✨"
+    icon: Sparkles
   },
   { 
     id: "product", 
     label: "Product Care & Beauty", 
     type: "Product Care & Beauty",
-    subCats: ["Produk eyelash", "Produk nail", "Produk eyebrow", "Produk skincare"],
+    desc: "Skincare eksklusif",
     bg: "bg-gradient-to-br from-[#E88EAA] to-[#C94F78] shadow-pink-200",
-    icon: "🛍️"
+    icon: Package
   }
 ];
 
@@ -67,8 +68,6 @@ export default function CustomerPortalPage() {
   const [searchQuery,    setSearchQuery]    = useState("");
   
   // Filtering states
-  const [activeMainCat, setActiveMainCat] = useState<string | null>(null);
-  const [activeSubCat,  setActiveSubCat]  = useState<string | null>(null);
   const [activeTab,      setActiveTab]      = useState<"semua" | "promo" | "set">("semua");
 
   // Variant Selection State
@@ -116,17 +115,13 @@ export default function CustomerPortalPage() {
     return products.filter(p => {
       const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
       
-      const mainCatConfig = MAIN_CATEGORIES.find(c => c.id === activeMainCat);
-      const matchMain = activeMainCat ? p.type === mainCatConfig?.type : true;
-      const matchSub = activeSubCat ? p.sub_category === activeSubCat : true;
-      
       let matchTab = true;
       if (activeTab === "promo") matchTab = (p.voucher_discount ?? 0) > 0;
       if (activeTab === "set")   matchTab = p.is_set;
       
-      return matchSearch && matchMain && matchSub && matchTab;
+      return matchSearch && matchTab;
     });
-  }, [products, searchQuery, activeMainCat, activeSubCat, activeTab]);
+  }, [products, searchQuery, activeTab]);
 
   const handleOpenSelection = (product: Product) => {
     setSelectedProduct(product);
@@ -151,11 +146,6 @@ export default function CustomerPortalPage() {
     setSelectedProduct(null);
   };
 
-  const subCats = useMemo(() => {
-    if (!activeMainCat) return [];
-    return MAIN_CATEGORIES.find(c => c.id === activeMainCat)?.subCats || [];
-  }, [activeMainCat]);
-
   return (
     <div className="min-h-screen bg-transparent font-sans pb-32 max-w-7xl mx-auto md:px-8">
 
@@ -169,10 +159,8 @@ export default function CustomerPortalPage() {
 
         <div className="relative z-10 flex items-center justify-between">
            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 border border-white/30 backdrop-blur-sm flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
-                 {customer?.name ? (
-                   <span className="text-white font-semibold text-sm">{customer.name.charAt(0)}</span>
-                 ) : <User className="w-5 h-5 text-white/70" />}
+              <div className="w-10 h-10 rounded-full bg-white/20 border border-white/30 backdrop-blur-sm flex items-center justify-center overflow-hidden shrink-0 shadow-sm p-1">
+                 <Image src="/lbqueen_logo.png" alt="LBQueen" width={32} height={32} className="object-contain drop-shadow-lg" />
               </div>
               <div>
                  <p className="text-[10px] font-semibold text-white/70 capitalize tracking-widest leading-none mb-1">Ritual Kecantikan,</p>
@@ -227,59 +215,33 @@ export default function CustomerPortalPage() {
            <h3 className="text-sm font-semibold text-gray-800 capitalize tracking-widest mb-4 flex items-center gap-2">
              <Filter className="w-4 h-4 text-[#C94F78]" /> Telusuri Kategori
            </h3>
-           <div className="grid grid-cols-2 gap-3">
-              {MAIN_CATEGORIES.map((cat) => {
-                const isActive = activeMainCat === cat.id;
-                return (
-                  <button 
-                    key={cat.id} 
-                    onClick={() => {
-                      setActiveMainCat(isActive ? null : cat.id);
-                      setActiveSubCat(null);
-                    }}
-                    className={`relative h-24 rounded-[24px] overflow-hidden transition-all duration-300 text-left p-4 group
-                      ${isActive ? `${cat.bg} scale-[1.02] shadow-lg ring-2 ring-white/50 ring-offset-2 ring-offset-rose-50` : `${cat.bg} opacity-90 hover:opacity-100 hover:scale-[1.01] shadow-md`}
-                    `}
-                  >
-                     <div className="absolute top-3 right-3 text-3xl filter drop-shadow-md transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12">
-                       {cat.icon}
-                     </div>
-                     <div className="absolute bottom-3 left-4 right-2">
-                        <span className="text-white text-[13px] font-semibold leading-tight tracking-tight drop-shadow-sm block">
-                          {cat.label}
-                        </span>
-                     </div>
-                     {/* Glassmorphism subtle overlay */}
-                     <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </button>
-                );
-              })}
-           </div>
-
-           {/* Sub Categories Chips */}
-           {activeMainCat && (
-             <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar py-1">
-                <button 
-                   onClick={() => setActiveSubCat(null)}
-                   className={`whitespace-nowrap px-4 py-2 rounded-full text-[11px] font-semibold capitalize tracking-tight transition-all ${
-                     !activeSubCat ? "bg-[#C94F78] text-white" : "bg-white text-gray-400 border border-gray-100"
-                   }`}
+           <div className="grid grid-cols-2 gap-3 md:gap-4">
+              {MAIN_CATEGORIES.map((cat) => (
+                <Link 
+                  key={cat.id} 
+                  href={`/customer-portal/category/${encodeURIComponent(cat.type)}`}
+                  className={`relative h-28 md:h-32 rounded-[24px] overflow-hidden transition-all duration-300 text-left p-4 md:p-5 group ${cat.bg} shadow-md hover:shadow-xl hover:scale-[1.02]`}
                 >
-                   Semua
-                </button>
-                {subCats.map(sub => (
-                  <button 
-                    key={sub}
-                    onClick={() => setActiveSubCat(activeSubCat === sub ? null : sub)}
-                    className={`whitespace-nowrap px-4 py-2 rounded-full text-[11px] font-semibold capitalize tracking-tight transition-all ${
-                      activeSubCat === sub ? "bg-[#C94F78] text-white shadow-md shadow-rose-100" : "bg-white text-gray-400 border border-gray-100"
-                    }`}
-                  >
-                    {sub}
-                  </button>
-                ))}
-             </div>
-           )}
+                   {/* Decorative Elements */}
+                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none group-hover:bg-white/30 transition-all duration-500" />
+                   <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/5 rounded-full blur-xl -ml-10 -mb-10 pointer-events-none" />
+                   
+                   <div className="relative z-10 flex flex-col h-full justify-between">
+                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm border border-white/30 group-hover:scale-110 transition-transform duration-300">
+                        <cat.icon className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
+                      </div>
+                      <div>
+                         <span className="text-white text-[13px] md:text-[15px] font-bold leading-tight tracking-tight drop-shadow-sm block mb-0.5">
+                           {cat.label}
+                         </span>
+                         <span className="text-white/80 text-[10px] md:text-[11px] font-medium tracking-wide drop-shadow-sm block">
+                           {cat.desc}
+                         </span>
+                      </div>
+                   </div>
+                </Link>
+              ))}
+           </div>
         </div>
 
         {/* ── STICKY TAB FILTER ── */}
@@ -312,7 +274,7 @@ export default function CustomerPortalPage() {
                    <SearchIcon className="w-6 h-6 text-gray-200" />
                 </div>
                 <p className="text-sm font-semibold text-gray-300 capitalize tracking-widest">Produk tidak ditemukan</p>
-                <button onClick={() => { setActiveMainCat(null); setActiveSubCat(null); setActiveTab("semua"); setSearchQuery(""); }} className="text-[11px] font-semibold text-[#C94F78] underline capitalize mt-2">Reset Filter</button>
+                <button onClick={() => { setActiveTab("semua"); setSearchQuery(""); }} className="text-[11px] font-semibold text-[#C94F78] underline capitalize mt-2">Reset Filter</button>
              </div>
            ) : (
              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-6">
