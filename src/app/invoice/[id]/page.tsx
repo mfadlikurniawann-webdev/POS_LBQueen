@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { format } from "date-fns";
-import { Printer, ChevronLeft, Loader2, AlertCircle } from "lucide-react";
+import { Printer, ChevronLeft, Loader2, AlertCircle, Bluetooth } from "lucide-react";
 import Image from "next/image";
+import { bluetoothPrinter } from "@/lib/bluetoothPrinter";
 
 type InvoiceItem = {
   id: number;
@@ -38,6 +39,7 @@ export default function InvoicePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [size, setSize] = useState<"58mm" | "80mm">("80mm");
+  const [printingBt, setPrintingBt] = useState(false);
   
   // Pegawai can be fetched from local storage
   const [cashierName, setCashierName] = useState("Owner");
@@ -107,6 +109,41 @@ export default function InvoicePage() {
   const printWidth = size === "58mm" ? "w-[58mm] max-w-[200px]" : "w-[80mm] max-w-[280px]";
   const is58 = size === "58mm";
 
+  const handleBluetoothPrint = async () => {
+    if (!invoice) return;
+    setPrintingBt(true);
+    try {
+      if (!bluetoothPrinter.isConnected()) {
+        await bluetoothPrinter.connect();
+      }
+      
+      const cart = items.map(i => ({
+        id: i.product_id,
+        name: i.products?.name || "",
+        variant_name: i.variant_name || "",
+        qty: i.quantity,
+        selling_price: i.price,
+      }));
+
+      await bluetoothPrinter.printReceipt(
+        invoice.invoice_number,
+        invoice.customers?.name || "",
+        cart,
+        invoice.subtotal,
+        invoice.discount_applied,
+        invoice.total_amount,
+        invoice.payment,
+        invoice.change_amount
+      );
+      alert("Berhasil mencetak ke printer Bluetooth!");
+    } catch (err: any) {
+      console.error(err);
+      alert("Gagal mencetak ke Bluetooth: " + err.message);
+    } finally {
+      setPrintingBt(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 font-mono flex flex-col items-center py-8">
       {/* ── CONTROLS (NO PRINT) ── */}
@@ -133,12 +170,21 @@ export default function InvoicePage() {
           </button>
         </div>
 
-        <button 
-          onClick={() => window.print()}
-          className="w-full bg-[#C94F78] hover:bg-[#A83E60] text-white py-3 rounded-xl font-sans font-bold flex items-center justify-center gap-2 shadow-lg shadow-rose-200 transition-all active:scale-95"
-        >
-          <Printer className="w-5 h-5" /> Cetak Sekarang
-        </button>
+        <div className="flex flex-col gap-2">
+          <button 
+            onClick={() => window.print()}
+            className="w-full bg-[#C94F78] hover:bg-[#A83E60] text-white py-3 rounded-xl font-sans font-bold flex items-center justify-center gap-2 shadow-lg shadow-rose-200 transition-all active:scale-95"
+          >
+            <Printer className="w-5 h-5" /> Cetak Biasa (Browser)
+          </button>
+          <button 
+            onClick={handleBluetoothPrint}
+            disabled={printingBt}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl font-sans font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-200 transition-all active:scale-95 disabled:opacity-50"
+          >
+            <Bluetooth className="w-5 h-5" /> {printingBt ? "Memproses..." : "Cetak Printer Bluetooth"}
+          </button>
+        </div>
       </div>
 
       {/* ── INVOICE PAPER ── */}

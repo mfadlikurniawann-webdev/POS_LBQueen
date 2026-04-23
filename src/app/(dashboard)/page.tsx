@@ -140,19 +140,16 @@ export default function KasirPage() {
         }
       }
 
-      try {
-        if (bluetoothPrinter.isConnected()) {
-          await bluetoothPrinter.printReceipt(inv, selectedCustomer?.name || "", cart, subtotal, discountValue, total, paid, change);
-        }
-      } catch (printErr) {
-        console.error("Gagal mencetak ke bluetooth", printErr);
-      }
+
 
       setCart([]); setSelectedCustomer(null); setPaymentAmount(""); setCustomDiscount("");
       setShowPaymentModal(false);
       setSuccessTxnId(txn.id);
       fetchData();
-    } catch { showToast("Gagal menyimpan transaksi."); }
+    } catch (err: any) { 
+      console.error(err);
+      showToast(`Gagal: ${err?.message || "menyimpan transaksi."}`); 
+    }
     finally { setProcessing(false); }
   };
 
@@ -478,7 +475,7 @@ export default function KasirPage() {
               disabled={processing || !paymentAmount || parseFloat(paymentAmount) < total}
               className="w-full py-3 bg-[#C94F78] text-white rounded-xl text-[13px] font-semibold
                 hover:bg-[#A83E60] transition-colors disabled:opacity-40 shadow-pink-sm flex items-center justify-center gap-2">
-              <Printer className="w-4 h-4" /> {processing ? "Memproses..." : "Cetak Invoice"}
+              <Printer className="w-4 h-4" /> {processing ? "Memproses..." : "Simpan Transaksi"}
             </button>
           </div>
         </div>
