@@ -13,7 +13,7 @@ type Order = {
   customer_name: string;
   product_name: string;
   status: string;
-  created_at: string;
+  ordered_at: string;
   completed_at?: string;
 };
 
@@ -28,7 +28,7 @@ export default function AdminOrdersPage() {
     const { data, error } = await supabase
       .from("customer_orders")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("ordered_at", { ascending: false });
     
     if (data) setOrders(data);
     setLoading(false);
@@ -126,7 +126,7 @@ export default function AdminOrdersPage() {
                 <div className="flex items-center gap-1.5 text-slate-400">
                   <Calendar className="w-3.5 h-3.5" />
                   <span className="text-[10px] font-medium">
-                    {new Date(order.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {new Date(order.ordered_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', year: 'numeric' })}
                   </span>
                 </div>
               </div>
@@ -184,13 +184,21 @@ export default function AdminOrdersPage() {
                   </button>
                 )}
                 {order.status === "completed" && (
-                  <button
-                    disabled={updatingId === order.id}
-                    onClick={() => updateStatus(order.id, "processing")}
-                    className="flex-1 py-2 bg-slate-100 text-slate-500 rounded-xl text-[11px] font-bold hover:bg-slate-200 transition-all"
-                  >
-                    Reset ke Proses
-                  </button>
+                  <>
+                    <button
+                      disabled={updatingId === order.id}
+                      onClick={() => updateStatus(order.id, "processing")}
+                      className="flex-1 py-2 bg-slate-100 text-slate-500 rounded-xl text-[11px] font-bold hover:bg-slate-200 transition-all"
+                    >
+                      Reset ke Proses
+                    </button>
+                    <button
+                      onClick={() => window.open(`/invoice-online/${order.id}`, "_blank")}
+                      className="flex-1 py-2 bg-[#C94F78] text-white rounded-xl text-[11px] font-bold hover:bg-[#A83E60] transition-all flex items-center justify-center gap-1.5 shadow-sm shadow-rose-100"
+                    >
+                      Cetak Invoice
+                    </button>
+                  </>
                 )}
                 <button
                   onClick={() => {

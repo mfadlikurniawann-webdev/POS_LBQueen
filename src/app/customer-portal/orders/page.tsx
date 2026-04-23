@@ -17,7 +17,7 @@ type Order = {
   product_id: number;
   product_name: string;
   status: string;
-  created_at: string;
+  ordered_at: string;
   completed_at?: string;
   customer_name: string;
 };
@@ -34,7 +34,7 @@ export default function OrdersPage() {
       .from("customer_orders")
       .select("*")
       .eq("customer_id", custId)
-      .order("created_at", { ascending: false });
+      .order("ordered_at", { ascending: false });
     
     if (data) setOrders(data);
     setLoading(false);
@@ -145,7 +145,7 @@ export default function OrdersPage() {
                          </div>
                       </div>
                       <span className="text-[10px] font-semibold text-gray-400 tracking-widest">
-                        {new Date(order.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' })}
+                        {new Date(order.ordered_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' })}
                       </span>
                    </div>
                    
