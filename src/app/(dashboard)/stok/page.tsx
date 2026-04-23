@@ -413,7 +413,7 @@ export default function StokPage() {
                     const m = meta(t);
                     return (
                       <button key={t} type="button"
-                        onClick={() => setForm(f => ({ ...f, type: t, unit: isTreatment(t) ? "Sesi" : "Pcs" }))}
+                        onClick={() => setForm(f => ({ ...f, type: t, unit: isTreatment(t) ? "Sesi" : "Pcs", sub_category: "" }))}
                         className={`flex items-center gap-1.5 px-2.5 py-2 rounded-xl border text-[10px] transition-all ${
                           form.type === t
                             ? "border-[#d4508a] bg-[#fff0f5] text-[#d4508a] font-medium"
