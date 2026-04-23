@@ -27,16 +27,11 @@ type CartItem = {
   cartKey: string;
 };
 
-const RETAIL_TYPES   = ["Retail products", "Retail products nail", "Retail products eyelash", "Retail products beauty", "Retail Beauty", "Retail Eyelash"];
-const SELLABLE_TYPES = ["Treatment Care & Beauty", "Product Care & Beauty", "Treatment", ...RETAIL_TYPES];
+const SELLABLE_TYPES = ["Treatment Care & Beauty", "Product Care & Beauty"];
 
 const TYPE_ICON: Record<string, React.ReactNode> = {
   "Treatment Care & Beauty": <Sparkles className="w-3 h-3" />,
-  "Product Care & Beauty":   <Package className="w-3 h-3" />,
-  "Retail products":         <Gem className="w-3 h-3" />,
-  "Retail products nail":    <Paintbrush2 className="w-3 h-3" />,
-  "Retail products eyelash": <Eye className="w-3 h-3" />,
-  "Retail products beauty":  <Heart className="w-3 h-3" />,
+  "Product Care & Beauty": <Package className="w-3 h-3" />,
 };
 
 export default function KasirPage() {
@@ -127,15 +122,18 @@ export default function KasirPage() {
         }))
       );
 
+      // The new structure only has Treatment Care & Beauty, and Kasir only sells this.
+      // So all products sold here are not retail materials, but if they are treatments,
+      // we don't reduce stock. If they have stock, we could reduce it if needed.
+      // But the user said Kasir sells treatments and they might have infinite stock.
+      // We will leave the stock reduction logic based on variant or product if they have finite stock.
       for (const item of cart) {
-        if (RETAIL_TYPES.includes(item.type)) {
-          if (item.variant_id) {
-            const v = products.find(p => p.id === item.id)?.variants?.find(v => v.id === item.variant_id);
-            if (v) await supabase.from("product_variants").update({ stock: v.stock - item.qty }).eq("id", item.variant_id);
-          } else {
-            const pr = products.find(p => p.id === item.id);
-            if (pr) await supabase.from("products").update({ stock: pr.stock - item.qty }).eq("id", pr.id);
-          }
+        if (item.variant_id) {
+          const v = products.find(p => p.id === item.id)?.variants?.find(v => v.id === item.variant_id);
+          if (v && v.stock > 0) await supabase.from("product_variants").update({ stock: v.stock - item.qty }).eq("id", item.variant_id);
+        } else {
+          const pr = products.find(p => p.id === item.id);
+          if (pr && pr.stock > 0) await supabase.from("products").update({ stock: pr.stock - item.qty }).eq("id", pr.id);
         }
       }
 

@@ -38,15 +38,15 @@ const WA_NUMBER = "6282176171448";
 const MAIN_CATEGORIES = [
   { 
     id: "treatment", 
-    label: "Treatment Care Beauty", 
+    label: "Treatment Care & Beauty", 
     type: "Treatment Care & Beauty",
-    subCats: ["Beauty facial & body", "Eyelash", "Nail art", "Eyebrow"],
+    subCats: ["eyelash", "breash", "nail art", "eyebrow", "Skin care Clinic"],
     bg: "bg-gradient-to-br from-[#D95F87] to-[#A83E60] shadow-rose-200",
     icon: "✨"
   },
   { 
     id: "product", 
-    label: "Product Care Beauty", 
+    label: "Product Care & Beauty", 
     type: "Product Care & Beauty",
     subCats: ["Produk eyelash", "Produk nail", "Produk eyebrow", "Produk skincare"],
     bg: "bg-gradient-to-br from-[#E88EAA] to-[#C94F78] shadow-pink-200",
@@ -57,7 +57,6 @@ const MAIN_CATEGORIES = [
 const BANNERS = [
   { id: 1, image: "https://images.unsplash.com/photo-1570172619666-114317a402f6?auto=format&fit=crop&q=80&w=1200", title: "Premium Facial Treatment", subtitle: "Wujudkan kulit impian Anda hari ini." },
   { id: 2, image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=1200", title: "Luxury Eyelash & Nails", subtitle: "Tampil mempesona di setiap kesempatan." },
-  { id: 3, image: "https://images.unsplash.com/photo-1598446401943-7f99994c5f72?auto=format&fit=crop&q=80&w=1200", title: "Beauty Care Products", subtitle: "Perawatan profesional di rumah Anda." },
 ];
 
 export default function CustomerPortalPage() {

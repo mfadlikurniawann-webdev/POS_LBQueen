@@ -12,25 +12,24 @@ import Image from "next/image";
 const TYPES = [
   "Treatment Care & Beauty",
   "Product Care & Beauty",
-  "Retail products",
-  "Retail products nail",
-  "Retail products eyelash",
-  "Retail products beauty",
+  "Stok Bahan Klinik",
   "Barang Klinik",
-  "Aset Karyawan",
 ] as const;
 
 type TType = typeof TYPES[number];
 
 const TYPE_META: Record<TType, { icon: React.ReactNode; color: string }> = {
-  "Treatment Care & Beauty": { icon: <Sparkles className="w-3.5 h-3.5" />,    color: "text-purple-500" },
-  "Product Care & Beauty":   { icon: <Package className="w-3.5 h-3.5" />,     color: "text-rose-400" },
-  "Retail products":         { icon: <Gem className="w-3.5 h-3.5" />,         color: "text-pink-400" },
-  "Retail products nail":    { icon: <Paintbrush2 className="w-3.5 h-3.5" />, color: "text-red-400" },
-  "Retail products eyelash": { icon: <Eye className="w-3.5 h-3.5" />,         color: "text-violet-400" },
-  "Retail products beauty":  { icon: <Heart className="w-3.5 h-3.5" />,        color: "text-pink-500" },
-  "Barang Klinik":           { icon: <Package className="w-3.5 h-3.5" />,     color: "text-blue-400" },
-  "Aset Karyawan":           { icon: <Package className="w-3.5 h-3.5" />,     color: "text-amber-400" },
+  "Treatment Care & Beauty": { icon: <Sparkles className="w-3.5 h-3.5" />, color: "text-purple-500" },
+  "Product Care & Beauty":   { icon: <Package className="w-3.5 h-3.5" />, color: "text-rose-400" },
+  "Stok Bahan Klinik":       { icon: <Package className="w-3.5 h-3.5" />, color: "text-rose-400" },
+  "Barang Klinik":           { icon: <Package className="w-3.5 h-3.5" />, color: "text-blue-400" },
+};
+
+const SUB_CATEGORIES: Record<TType, string[]> = {
+  "Treatment Care & Beauty": ["eyelash", "breash", "nail art", "eyebrow", "Skin care Clinic"],
+  "Product Care & Beauty": ["Produk eyelash", "Produk nail", "Produk eyebrow", "Produk skincare"],
+  "Stok Bahan Klinik": ["eyelash", "breash", "nail art", "eyebrow", "Skin care Clinic"],
+  "Barang Klinik": ["Alat Medis", "Alat Kantor"],
 };
 
 type ProductVariant = {
@@ -181,7 +180,7 @@ export default function StokPage() {
   };
 
   const filtered = products.filter(p => p.type === activeTab && p.name.toLowerCase().includes(search.toLowerCase()));
-  const meta = (t: string) => TYPE_META[t as TType] ?? TYPE_META["Product Care & Beauty"];
+  const meta = (t: string) => TYPE_META[t as TType] ?? TYPE_META["Stok Bahan Klinik"];
 
   return (
     <div className="h-full flex flex-col bg-[#fdfcfc]">
@@ -437,9 +436,12 @@ export default function StokPage() {
                 </div>
                 <div>
                   <label className="label-form">Sub Kategori</label>
-                  <input className="input-form" list="sub-cats" placeholder="Pilih atau ketik"
-                    value={form.sub_category} onChange={e => setForm(f => ({ ...f, sub_category: e.target.value }))} />
-                  <datalist id="sub-cats">{existingSubCats.map(s => <option key={s} value={s} />)}</datalist>
+                  <select className="input-form bg-white" value={form.sub_category} onChange={e => setForm(f => ({ ...f, sub_category: e.target.value }))}>
+                    <option value="">-- Pilih --</option>
+                    {(SUB_CATEGORIES[form.type as TType] || []).map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
