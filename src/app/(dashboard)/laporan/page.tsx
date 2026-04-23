@@ -10,7 +10,8 @@ import { FileDown, DownloadCloud, TrendingUp, ShoppingBag, Users, Tag, Loader2, 
 
 type Transaction = {
   id: number; invoice_number: string; created_at: string;
-  total_amount: number; discount_applied: number; payment: number;
+  subtotal: number; total_amount: number; discount_applied: number; 
+  payment: number; change_amount: number;
   customers: { name: string } | null;
   vouchers: { code: string } | null;
 };
@@ -20,6 +21,10 @@ export default function LaporanPage() {
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState(format(subDays(new Date(), 30), "yyyy-MM-dd"));
   const [endDate, setEndDate] = useState(format(new Date(), "yyyy-MM-dd"));
+
+  const [editingTxn, setEditingTxn] = useState<Transaction | null>(null);
+  const [editForm, setEditForm] = useState({ discount: 0, payment: 0 });
+  const [actionLoading, setActionLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -32,6 +37,72 @@ export default function LaporanPage() {
     setTransactions(data || []);
     setLoading(false);
   }, [startDate, endDate]);
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Hapus invoice ini? (Aksi ini tidak bisa dibatalkan dan STOK BARANG AKAN DIKEMBALIKAN otomatis)")) return;
+    setActionLoading(true);
+    try {
+      // Ambil detail transaksi untuk mengembalikan stok
+      const { data: details } = await supabase.from("transaction_details").select("*").eq("transaction_id", id);
+      
+      if (details && details.length > 0) {
+        for (const item of details) {
+          if (item.variant_id) {
+            const { data: v } = await supabase.from("product_variants").select("stock").eq("id", item.variant_id).single();
+            if (v) await supabase.from("product_variants").update({ stock: v.stock + item.quantity }).eq("id", item.variant_id);
+          } else {
+            const { data: p } = await supabase.from("products").select("stock, type").eq("id", item.product_id).single();
+            if (p && p.type !== "Treatment Care & Beauty") {
+              await supabase.from("products").update({ stock: p.stock + item.quantity }).eq("id", item.product_id);
+            }
+          }
+        }
+      }
+      
+      // Hapus transaksi (detail akan terhapus otomatis jika ada relasi CASCADE, tapi kita hapus manual untuk aman)
+      await supabase.from("transaction_details").delete().eq("transaction_id", id);
+      const { error } = await supabase.from("transactions").delete().eq("id", id);
+      if (error) throw error;
+      
+      fetchData();
+    } catch (e: any) {
+      console.error(e);
+      alert("Gagal menghapus invoice: " + e.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const openEdit = (t: Transaction) => {
+    setEditingTxn(t);
+    setEditForm({ discount: t.discount_applied, payment: t.payment });
+  };
+
+  const handleEditSave = async () => {
+    if (!editingTxn) return;
+    setActionLoading(true);
+    try {
+      const newTotal = Math.max(0, editingTxn.subtotal - editForm.discount);
+      const newChange = Math.max(0, editForm.payment - newTotal);
+
+      const { error } = await supabase.from("transactions").update({
+        discount_applied: editForm.discount,
+        total_amount: newTotal,
+        payment: editForm.payment,
+        change_amount: newChange
+      }).eq("id", editingTxn.id);
+
+      if (error) throw error;
+      
+      setEditingTxn(null);
+      fetchData();
+    } catch (e: any) {
+      console.error(e);
+      alert("Gagal memperbarui invoice: " + e.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -137,7 +208,7 @@ export default function LaporanPage() {
                 <div className={`${i === 0 ? "bg-rose-50 text-[#C94F78]" : "bg-white/20 text-white"} p-3 rounded-2xl backdrop-blur-sm border border-transparent ${i === 0 ? "group-hover:border-rose-100" : ""}`}>{s.icon}</div>
               </div>
               <div className="flex items-baseline gap-2 mb-1.5">
-                 <span className="text-xl font-semibold">Rp</span>
+                 {(s.label === "Total Omzet" || s.label === "Potongan Diskon") && <span className="text-xl font-semibold">Rp</span>}
                  <p className="text-3xl font-semibold tracking-tight">{s.value}</p>
               </div>
               <p className={`${i === 0 ? "text-rose-300" : "text-white/40"} text-[10px] font-semibold capitalize tracking-wider`}>{s.sub}</p>
@@ -165,6 +236,7 @@ export default function LaporanPage() {
                   <th className="px-4 md:px-12 py-4 md:py-6 text-left whitespace-nowrap">Voucher</th>
                   <th className="px-4 md:px-12 py-4 md:py-6 text-right whitespace-nowrap">Potongan</th>
                   <th className="px-4 md:px-12 py-4 md:py-6 text-right whitespace-nowrap">Settlement</th>
+                  <th className="px-4 md:px-12 py-4 md:py-6 text-right whitespace-nowrap">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50 font-medium">
@@ -194,6 +266,16 @@ export default function LaporanPage() {
                     <td className="px-4 md:px-12 py-4 md:py-5 text-right font-semibold text-slate-800 text-[14px] md:text-[16px] tracking-tight whitespace-nowrap">
                        Rp {t.total_amount.toLocaleString("id-ID")}
                     </td>
+                    <td className="px-4 md:px-12 py-4 md:py-5 text-right font-semibold whitespace-nowrap">
+                       <div className="flex items-center justify-end gap-2">
+                         <button onClick={() => openEdit(t)} disabled={actionLoading} className="px-3 py-1.5 bg-slate-50 text-slate-500 hover:text-[#C94F78] hover:bg-rose-50 rounded-xl text-[11px] transition-colors border border-slate-100">
+                           Edit
+                         </button>
+                         <button onClick={() => handleDelete(t.id)} disabled={actionLoading} className="px-3 py-1.5 bg-slate-50 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-xl text-[11px] transition-colors border border-slate-100">
+                           Hapus
+                         </button>
+                       </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -207,6 +289,51 @@ export default function LaporanPage() {
           </div>
         </div>
       </div>
+
+      {/* ── MODAL EDIT INVOICE ── */}
+      {editingTxn && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded-[32px] w-full max-w-sm shadow-2xl p-6 md:p-8 animate-in zoom-in-95">
+            <h2 className="text-lg font-bold text-slate-800 mb-1">Edit Invoice</h2>
+            <p className="text-xs text-slate-400 mb-6">{editingTxn.invoice_number}</p>
+            
+            <div className="space-y-4 mb-8">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-widest">Subtotal (Fix)</label>
+                <div className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-semibold text-slate-500">
+                  Rp {editingTxn.subtotal.toLocaleString("id-ID")}
+                </div>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-[#C94F78] mb-1.5 uppercase tracking-widest">Potongan / Diskon Baru (Rp)</label>
+                <input type="number" value={editForm.discount} onChange={e => setEditForm(f => ({ ...f, discount: parseInt(e.target.value) || 0 }))}
+                  className="w-full px-4 py-3 bg-rose-50 border border-rose-100 rounded-2xl text-sm font-semibold text-[#C94F78] focus:outline-none focus:ring-4 focus:ring-rose-50" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-emerald-600 mb-1.5 uppercase tracking-widest">Pembayaran Uang Tunai/Transfer (Rp)</label>
+                <input type="number" value={editForm.payment} onChange={e => setEditForm(f => ({ ...f, payment: parseInt(e.target.value) || 0 }))}
+                  className="w-full px-4 py-3 bg-emerald-50 border border-emerald-100 rounded-2xl text-sm font-semibold text-emerald-600 focus:outline-none focus:ring-4 focus:ring-emerald-50" />
+              </div>
+              <div className="pt-3 border-t border-slate-100 flex justify-between items-center">
+                <span className="text-xs font-bold text-slate-400">Total Akhir Baru</span>
+                <span className="text-lg font-bold text-slate-800">Rp {Math.max(0, editingTxn.subtotal - editForm.discount).toLocaleString("id-ID")}</span>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button onClick={() => setEditingTxn(null)} disabled={actionLoading}
+                className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl text-[12px] font-bold transition-all">
+                Batal
+              </button>
+              <button onClick={handleEditSave} disabled={actionLoading}
+                className="flex-1 py-3.5 bg-[#C94F78] hover:bg-[#A83E60] text-white rounded-xl text-[12px] font-bold shadow-pink-sm transition-all flex items-center justify-center gap-2">
+                {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Simpan"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
