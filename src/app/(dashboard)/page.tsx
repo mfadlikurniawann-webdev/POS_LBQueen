@@ -4,10 +4,11 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import {
   Search, ShoppingCart, Trash2, Package, CreditCard, UserCheck, X,
-  Loader2, Flower2, Plus, Minus, CheckCircle2, Tag, Crown,
+  Loader2, Flower2, Plus, Minus, CheckCircle2, Tag, Crown, Printer,
   Paintbrush2, Eye, Gem, Sparkles, Heart,
 } from "lucide-react";
 import Image from "next/image";
+import { bluetoothPrinter } from "@/lib/bluetoothPrinter";
 
 type ProductVariant = {
   id: number; product_id: number; variant_name: string;
@@ -48,6 +49,7 @@ export default function KasirPage() {
   const [showCartModal,      setShowCartModal]      = useState(false);
   const [variantTarget,      setVariantTarget]      = useState<Product | null>(null);
   const [paymentAmount,    setPaymentAmount]    = useState("");
+  const [customDiscount,   setCustomDiscount]   = useState("");
   const [loading,    setLoading]    = useState(true);
   const [processing, setProcessing] = useState(false);
   const [toastMsg,   setToastMsg]   = useState("");
@@ -98,7 +100,8 @@ export default function KasirPage() {
   const removeFromCart = (k: string)             => setCart(p => p.filter(i => i.cartKey !== k));
 
   const subtotal = cart.reduce((a, i) => a + i.selling_price * i.qty, 0);
-  const total    = subtotal;
+  const discountValue = parseFloat(customDiscount) || 0;
+  const total    = Math.max(0, subtotal - discountValue);
   const change   = Math.max(0, (parseFloat(paymentAmount) || 0) - total);
 
   const handleCheckout = async () => {
@@ -110,7 +113,7 @@ export default function KasirPage() {
       const inv = `INV-${Date.now()}`;
       const { data: txn, error } = await supabase.from("transactions").insert({
         invoice_number: inv, customer_id: selectedCustomer?.id || null,
-        subtotal, discount_applied: 0, total_amount: total, payment: paid, change_amount: change,
+        subtotal, discount_applied: discountValue, total_amount: total, payment: paid, change_amount: change,
       }).select().single();
       if (error) throw error;
 
@@ -137,7 +140,15 @@ export default function KasirPage() {
         }
       }
 
-      setCart([]); setSelectedCustomer(null); setPaymentAmount("");
+      try {
+        if (bluetoothPrinter.isConnected()) {
+          await bluetoothPrinter.printReceipt(inv, selectedCustomer?.name || "", cart, subtotal, discountValue, total, paid, change);
+        }
+      } catch (printErr) {
+        console.error("Gagal mencetak ke bluetooth", printErr);
+      }
+
+      setCart([]); setSelectedCustomer(null); setPaymentAmount(""); setCustomDiscount("");
       setShowPaymentModal(false);
       setSuccessTxnId(txn.id);
       fetchData();
@@ -439,8 +450,16 @@ export default function KasirPage() {
               </button>
             </div>
             <div className="bg-rose-50 border border-rose-100 rounded-xl p-4 mb-4">
-              <p className="text-[10px] text-slate-400 mb-1 capitalize tracking-wider">Total Tagihan</p>
-              <p className="text-2xl font-semibold text-[#C94F78]">Rp {total.toLocaleString("id-ID")}</p>
+              <p className="text-[10px] text-slate-400 mb-1 capitalize tracking-wider">Subtotal</p>
+              <p className="text-xl font-semibold text-slate-700 mb-3">Rp {subtotal.toLocaleString("id-ID")}</p>
+              
+              <label className="label-form mb-1 block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Potongan Harga Custom (Rp)</label>
+              <input type="number" value={customDiscount} onChange={e => setCustomDiscount(e.target.value)}
+                placeholder="0"
+                className="w-full px-3 py-2.5 bg-white border border-rose-200 rounded-lg text-[14px] mb-4 focus:outline-none focus:border-[#C94F78]" />
+                
+              <p className="text-[10px] text-[#C94F78] font-bold mb-1 uppercase tracking-widest">Total Tagihan</p>
+              <p className="text-2xl font-bold text-[#C94F78]">Rp {total.toLocaleString("id-ID")}</p>
             </div>
             <div className="mb-4">
               <label className="label-form">Jumlah Bayar (Rp)</label>
@@ -458,8 +477,8 @@ export default function KasirPage() {
             <button onClick={handleCheckout}
               disabled={processing || !paymentAmount || parseFloat(paymentAmount) < total}
               className="w-full py-3 bg-[#C94F78] text-white rounded-xl text-[13px] font-semibold
-                hover:bg-[#A83E60] transition-colors disabled:opacity-40 shadow-pink-sm">
-              {processing ? "Memproses..." : "Konfirmasi Transaksi"}
+                hover:bg-[#A83E60] transition-colors disabled:opacity-40 shadow-pink-sm flex items-center justify-center gap-2">
+              <Printer className="w-4 h-4" /> {processing ? "Memproses..." : "Cetak Invoice"}
             </button>
           </div>
         </div>
