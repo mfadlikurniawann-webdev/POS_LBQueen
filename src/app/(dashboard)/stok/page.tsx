@@ -54,6 +54,7 @@ export default function StokPage() {
   const [products,            setProducts]            = useState<Product[]>([]);
   const [existingSubCats,     setExistingSubCats]     = useState<string[]>([]);
   const [activeTab,           setActiveTab]           = useState<TType>("Treatment Care & Beauty");
+  const [activeSubCategory,   setActiveSubCategory]   = useState<string | null>(null);
   const [search,              setSearch]              = useState("");
   const [loading,             setLoading]             = useState(true);
   const [showModal,           setShowModal]           = useState(false);
@@ -179,7 +180,11 @@ export default function StokPage() {
     fetchData();
   };
 
-  const filtered = products.filter(p => p.type === activeTab && p.name.toLowerCase().includes(search.toLowerCase()));
+  const filtered = products.filter(p => 
+    p.type === activeTab && 
+    (activeSubCategory ? p.sub_category === activeSubCategory : true) &&
+    p.name.toLowerCase().includes(search.toLowerCase())
+  );
   const meta = (t: string) => TYPE_META[t as TType] ?? TYPE_META["Stok Bahan Klinik"];
 
   return (
@@ -219,7 +224,7 @@ export default function StokPage() {
             const m = meta(t);
             const active = activeTab === t;
             return (
-              <button key={t} onClick={() => setActiveTab(t)}
+              <button key={t} onClick={() => { setActiveTab(t); setActiveSubCategory(null); }}
                 className={`flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-lg text-[11px] transition-all ${
                   active
                     ? "bg-[#fff0f5] text-[#d4508a] border border-[#ffd6e7] font-medium"
@@ -231,6 +236,33 @@ export default function StokPage() {
             );
           })}
         </div>
+
+        {/* Sub-category Filter (Only for Barang Klinik) */}
+        {activeTab === "Barang Klinik" && (
+          <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-hide px-1">
+            <button onClick={() => setActiveSubCategory(null)}
+              className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${
+                !activeSubCategory
+                  ? "bg-[#d4508a] text-white shadow-pink"
+                  : "bg-white text-[#a8a4a4] border border-[#f0ecec] hover:border-[#ffd6e7] hover:text-[#d4508a]"
+              }`}>
+              Semua
+            </button>
+            {SUB_CATEGORIES["Barang Klinik"].map(sub => {
+              const active = activeSubCategory === sub;
+              return (
+                <button key={sub} onClick={() => setActiveSubCategory(sub)}
+                  className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${
+                    active
+                      ? "bg-[#d4508a] text-white shadow-pink"
+                      : "bg-white text-[#a8a4a4] border border-[#f0ecec] hover:border-[#ffd6e7] hover:text-[#d4508a]"
+                  }`}>
+                  {sub}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* List */}
