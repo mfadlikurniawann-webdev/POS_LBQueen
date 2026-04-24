@@ -17,10 +17,6 @@ type Voucher = {
   min_purchase: number; is_active: boolean; product_id: number | null;
   products?: { name: string } | null;
 };
-type CustomerOrder = {
-  id: number; customer_name: string; product_name: string;
-  ordered_at: string; status: string;
-  customers: { name: string } | null;
 };
 
 const emptyCustomer = { name: "", phone: "", is_member: false, nik: "", address: "" };
@@ -56,10 +52,9 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; Icon: React.
 export default function PelangganPage() {
   const [customers, setCustomers]   = useState<Customer[]>([]);
   const [vouchers, setVouchers]     = useState<Voucher[]>([]);
-  const [orders, setOrders]         = useState<CustomerOrder[]>([]);
   const [loading, setLoading]       = useState(true);
   const [search, setSearch]         = useState("");
-  const [tab, setTab]               = useState<"pelanggan" | "voucher" | "pesanan">("pelanggan");
+  const [tab, setTab]               = useState<"pelanggan" | "voucher">("pelanggan");
 
   const [showCustModal, setShowCustModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -74,15 +69,13 @@ export default function PelangganPage() {
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
-    const [{ data: custs }, { data: vouchs }, { data: ords }, { data: prods }] = await Promise.all([
+    const [{ data: custs }, { data: vouchs }, { data: prods }] = await Promise.all([
       supabase.from("customers").select("*").order("name"),
       supabase.from("vouchers").select("*, products(name)").order("created_at", { ascending: false }),
-      supabase.from("customer_orders").select("*, customers(name)").order("ordered_at", { ascending: false }).limit(100),
       supabase.from("products").select("id, name").in("type", ["Treatment", "Retail Produk"]).order("name"),
     ]);
     setCustomers(custs || []);
     setVouchers(vouchs || []);
-    setOrders((ords as CustomerOrder[]) || []);
     setProducts(prods || []);
     setLoading(false);
   }, []);
@@ -187,9 +180,6 @@ export default function PelangganPage() {
     fetchAll();
   };
 
-  const updateOrderStatus = async (id: number, status: string) => {
-    await supabase.from("customer_orders").update({ status }).eq("id", id);
-    showToast(status === "confirmed" ? "Pesanan dikonfirmasi ✓" : "Pesanan dibatalkan");
     fetchAll();
   };
 
@@ -206,12 +196,11 @@ export default function PelangganPage() {
       )}
 
       {/* Stats Board */}
-      <div className="px-6 py-5 grid grid-cols-2 md:grid-cols-4 gap-4 shrink-0">
+      <div className="px-6 py-5 grid grid-cols-2 md:grid-cols-3 gap-4 shrink-0">
         {[
           { label: "Total Pelanggan", value: customers.length, icon: <Users className="w-5 h-5" />, color: "from-blue-400 to-blue-600" },
           { label: "Member Aktif", value: customers.filter(c => c.is_member).length, icon: <Crown className="w-5 h-5" />, color: "from-amber-400 to-orange-500" },
           { label: "Voucher Aktif", value: vouchers.filter(v => v.is_active).length, icon: <Tag className="w-5 h-5" />, color: "from-lb-pink to-lb-pink-dark" },
-          { label: "Pesanan Masuk", value: orders.filter(o => o.status === "pending").length, icon: <MessageCircle className="w-5 h-5" />, color: "from-emerald-400 to-emerald-600" },
         ].map(s => (
           <div key={s.label} className={`bg-gradient-to-br ${s.color} text-white p-4 rounded-3xl shadow-premium border border-white/10 relative overflow-hidden group`}>
             <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-bl-full transition-transform group-hover:scale-110" />
@@ -232,7 +221,6 @@ export default function PelangganPage() {
           {([
             { key: "pelanggan", label: "Pelanggan" },
             { key: "voucher", label: "Voucher" },
-            { key: "pesanan", label: `Pesanan${orders.filter(o => o.status === "pending").length > 0 ? ` (${orders.filter(o => o.status === "pending").length})` : ""}` },
           ] as const).map(t => (
             <button key={t.key} onClick={() => setTab(t.key)}
               className={`px-6 py-2 rounded-2xl text-[11px] font-semibold capitalize tracking-widest transition-all whitespace-nowrap border-2 ${
@@ -244,8 +232,7 @@ export default function PelangganPage() {
             </button>
           ))}
         </div>
-        {tab !== "pesanan" && (
-          <button
+        <button
             onClick={() => {
               if (tab === "pelanggan") { setCustForm(emptyCustomer); setIsEditing(false); setShowCustModal(true); }
               else setShowVouchModal(true);
@@ -253,7 +240,6 @@ export default function PelangganPage() {
             className="bg-[#C94F78] hover:bg-lb-rose-dark text-white font-semibold px-6 py-2.5 rounded-2xl flex items-center gap-2 text-[11px] capitalize tracking-widest transition-all shadow-luxury-pink shrink-0">
             <Plus className="w-4 h-4 text-rose-100" /> {tab === "pelanggan" ? "Tambah" : "Buat Voucher"}
           </button>
-        )}
       </div>
 
       {/* Content */}
@@ -459,128 +445,6 @@ export default function PelangganPage() {
           </div>
         )}
 
-        {/* ── TAB PESANAN WA ── */}
-        {tab === "pesanan" && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                 <div className="w-10 h-10 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 shadow-inner">
-                    <MessageCircle className="w-5 h-5" />
-                 </div>
-                 <div>
-                    <h2 className="font-semibold text-slate-800 tracking-tight capitalize text-sm">Pesanan via Portal</h2>
-                    <p className="text-[10px] text-slate-400 font-semibold capitalize tracking-widest">Real-time Dashboard</p>
-                 </div>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
-                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                 <span className="text-[10px] font-semibold text-emerald-600 capitalize tracking-widest">Live Updates</span>
-              </div>
-            </div>
-
-            {loading ? (
-              <div className="flex justify-center py-20"><Loader2 className="w-10 h-10 text-emerald-200 animate-spin" /></div>
-            ) : orders.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-24 text-gray-200">
-                <div className="w-20 h-20 bg-gray-50 rounded-[40px] flex items-center justify-center mb-6">
-                   <MessageCircle className="w-10 h-10 opacity-20" />
-                </div>
-                <p className="font-semibold capitalize tracking-widest text-xs">Belum ada pesanan masuk</p>
-              </div>
-            ) : (
-              <>
-                {/* Mobile Orders View */}
-                <div className="grid grid-cols-1 gap-4 md:hidden">
-                  {orders.map(o => {
-                    const cfg = STATUS_CONFIG[o.status] ?? STATUS_CONFIG.pending;
-                    return (
-                      <div key={o.id} className="bg-white rounded-[32px] p-5 shadow-sm border border-gray-100 relative">
-                        <div className="flex items-center justify-between mb-4">
-                           <div className={`px-3 py-1 rounded-full text-[9px] font-semibold capitalize tracking-widest ${cfg.color}`}>
-                             {cfg.label}
-                           </div>
-                           <span className="text-[10px] text-gray-400 font-semibold">
-                             {new Date(o.ordered_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
-                           </span>
-                        </div>
-                        <h4 className="font-semibold text-gray-800 text-sm mb-1">{o.product_name}</h4>
-                        <div className="flex items-center gap-2 mb-5">
-                           <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-semibold text-gray-400">{o.customer_name?.charAt(0)}</div>
-                           <p className="text-[11px] text-gray-500 font-semibold">{o.customer_name}</p>
-                        </div>
-                        {o.status === "pending" && (
-                          <div className="flex gap-2">
-                             <button onClick={() => updateOrderStatus(o.id, "confirmed")} className="flex-1 py-2.5 rounded-2xl bg-emerald-500 text-white font-semibold text-[10px] capitalize tracking-widest shadow-lg shadow-emerald-100">Diterima</button>
-                             <button onClick={() => updateOrderStatus(o.id, "cancelled")} className="flex-1 py-2.5 rounded-2xl bg-gray-50 text-gray-400 font-semibold text-[10px] capitalize tracking-widest">Tolak</button>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Desktop Orders View */}
-                <div className="hidden md:block bg-white rounded-[32px] border border-gray-100 shadow-premium overflow-hidden">
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-50/50 border-b border-gray-100">
-                      <tr className="text-[10px] font-semibold text-gray-400 capitalize tracking-widest">
-                        <th className="px-6 py-5 text-left">Pelanggan</th>
-                        <th className="px-6 py-5 text-left">Produk / Layanan</th>
-                        <th className="px-6 py-5 text-center">Waktu Pesan</th>
-                        <th className="px-6 py-5 text-center">Status</th>
-                        <th className="px-6 py-5 text-right">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      {orders.map(o => {
-                        const cfg = STATUS_CONFIG[o.status] ?? STATUS_CONFIG.pending;
-                        const Icon = cfg.Icon;
-                        return (
-                          <tr key={o.id} className="hover:bg-rose-50/10 transition-colors group">
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-[12px] bg-emerald-500 flex items-center justify-center text-white font-semibold text-xs shadow-lg shadow-emerald-100">
-                                  {o.customer_name?.charAt(0) ?? "?"}
-                                </div>
-                                <span className="font-semibold text-gray-800 text-sm italic">{o.customer_name}</span>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                               <p className="font-semibold text-gray-700 text-sm tracking-tight">{o.product_name}</p>
-                            </td>
-                            <td className="px-6 py-4 text-center">
-                               <div className="flex flex-col items-center">
-                                  <span className="text-[11px] font-semibold text-gray-800">{new Date(o.ordered_at).toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}</span>
-                                  <span className="text-[9px] font-semibold text-gray-400 capitalize">{new Date(o.ordered_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</span>
-                               </div>
-                            </td>
-                            <td className="px-6 py-4 text-center">
-                              <span className={`inline-flex items-center gap-2 text-[9px] font-semibold capitalize tracking-widest px-3 py-1.5 rounded-full ${cfg.color}`}>
-                                <Icon className="w-3.5 h-3.5" />{cfg.label}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 text-right">
-                              {o.status === "pending" && (
-                                <div className="flex gap-2 justify-end">
-                                  <button onClick={() => updateOrderStatus(o.id, "confirmed")}
-                                    className="px-4 py-2 rounded-xl text-[10px] font-semibold capitalize tracking-widest bg-emerald-500 text-white shadow-lg shadow-emerald-100 hover:scale-105 transition-all">
-                                    Konfirmasi
-                                  </button>
-                                  <button onClick={() => updateOrderStatus(o.id, "cancelled")}
-                                    className="px-4 py-2 rounded-xl text-[10px] font-semibold capitalize tracking-widest bg-white border border-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all">
-                                    Tolak
-                                  </button>
-                                </div>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </>
-            )}
           </div>
         )}
       </div>

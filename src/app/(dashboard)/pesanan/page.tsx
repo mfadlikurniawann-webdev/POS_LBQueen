@@ -82,7 +82,7 @@ export default function AdminOrdersPage() {
     <div className="p-6 space-y-6 bg-slate-50/50 min-h-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-800">Manajemen Pesanan Online</h1>
+          <h1 className="text-xl font-bold text-slate-800">Pesanan</h1>
           <p className="text-xs text-slate-500 mt-1">Kelola booking dan pesanan masuk dari portal pelanggan.</p>
         </div>
 

@@ -11,7 +11,7 @@ const navItems = [
   { Icon: Package,      label: "Inventori", href: "/stok" },
   { Icon: Users,        label: "Pelanggan", href: "/pelanggan" },
   { Icon: FileText,     label: "Laporan",   href: "/laporan" },
-  { Icon: Bell,         label: "Pesanan Online", href: "/pesanan" },
+  { Icon: Bell,         label: "Pesanan",   href: "/pesanan" },
   { Icon: Settings,     label: "Pengaturan",href: "/pengaturan" },
 ];
 
@@ -20,7 +20,7 @@ const PAGE_TITLE: Record<string, string> = {
   "/stok":      "Inventori Produk",
   "/pelanggan": "Pelanggan & Member",
   "/laporan":   "Laporan Keuangan",
-  "/pesanan":   "Manajemen Pesanan Online",
+  "/pesanan":   "Pesanan",
   "/pengaturan":"Pengaturan Sistem",
 };
 
@@ -157,13 +157,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Link>
           );
         })}
-        <button onClick={handleLogout}
-          className="flex-1 flex flex-col items-center justify-center gap-1 active:bg-rose-50 transition-colors">
-          <div className="p-1.5 rounded-lg">
-            <LogOut className="w-5 h-5 text-slate-300" />
-          </div>
-          <span className="text-[9px] text-slate-300">Keluar</span>
-        </button>
       </nav>
     </div>
   );
