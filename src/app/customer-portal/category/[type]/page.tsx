@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import {
-  ChevronLeft, Loader2, Plus, Minus, ShoppingBag, ArrowRight, Search as SearchIcon
+  ChevronLeft, Loader2, Plus, Minus, ShoppingBag, ArrowRight, Search as SearchIcon, AlertTriangle
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -39,6 +39,7 @@ export default function CategoryPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [selectionQty,    setSelectionQty]    = useState(1);
+  const [isAgreed,        setIsAgreed]        = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -85,6 +86,7 @@ export default function CategoryPage() {
     setSelectedProduct(product);
     setSelectedVariant(product.variants && product.variants.length > 0 ? product.variants[0] : null);
     setSelectionQty(1);
+    setIsAgreed(false);
   };
 
   const handleAddToCart = () => {
@@ -276,7 +278,7 @@ export default function CategoryPage() {
                  </div>
                )}
 
-               {/* Quantity */}
+                {/* Quantity */}
                <div className="flex items-center justify-between">
                   <h4 className="text-[12px] font-semibold text-gray-900 capitalize tracking-widest">Jumlah</h4>
                   <div className="flex items-center gap-6 bg-gray-50 rounded-2xl px-5 py-2.5 border border-gray-100">
@@ -285,6 +287,28 @@ export default function CategoryPage() {
                      <button onClick={() => setSelectionQty(Math.min(10, selectionQty + 1))} className="text-gray-400 active:scale-125 transition-all"><Plus className="w-4 h-4" /></button>
                   </div>
                </div>
+
+               {/* Treatment Reminder */}
+               {selectedProduct.type === "Treatment Care & Beauty" && (
+                 <div className="bg-orange-50 rounded-[24px] p-4 border border-orange-100 shadow-sm flex flex-col gap-3">
+                    <div className="flex items-start gap-3">
+                       <AlertTriangle className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
+                       <p className="text-[11px] text-orange-800 leading-relaxed font-medium">
+                         <strong className="block mb-1 text-orange-900">Perhatian Sebelum Treatment!</strong>
+                         H-7 sebelum dan juga H+7 setelah treatment dilarang mengkonsumsi alkohol dan obat-obatan terlarang. Pasien harus jujur akan kondisi tubuh ke therapist. Jika berbohong risiko ditanggung sendiri.
+                       </p>
+                    </div>
+                    <label className="flex items-center gap-3 pt-2 border-t border-orange-200/50 cursor-pointer">
+                       <input 
+                         type="checkbox" 
+                         checked={isAgreed} 
+                         onChange={(e) => setIsAgreed(e.target.checked)}
+                         className="w-4 h-4 rounded border-orange-300 text-[#C94F78] focus:ring-[#C94F78] bg-white"
+                       />
+                       <span className="text-[11px] font-semibold text-orange-900">Saya mengerti & setuju</span>
+                    </label>
+                 </div>
+               )}
             </div>
 
             {/* Bottom Buttons */}
@@ -292,7 +316,15 @@ export default function CategoryPage() {
                <button onClick={handleAddToCart} className="h-[64px] border-2 border-[#C94F78] text-[#C94F78] rounded-[24px] font-semibold text-[12px] tracking-widest flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
                   <ShoppingBag className="w-5 h-5" /> CART
                </button>
-               <button onClick={handleBuyNow} className="h-[64px] bg-[#C94F78] text-white rounded-[24px] font-semibold text-[12px] tracking-widest flex items-center justify-center gap-3 shadow-xl shadow-rose-100 active:scale-[0.98] transition-all">
+               <button 
+                 onClick={handleBuyNow} 
+                 disabled={selectedProduct.type === "Treatment Care & Beauty" && !isAgreed}
+                 className={`h-[64px] text-white rounded-[24px] font-semibold text-[12px] tracking-widest flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:active:scale-100 ${
+                   (selectedProduct.type === "Treatment Care & Beauty" && !isAgreed) 
+                     ? "bg-gray-400 cursor-not-allowed shadow-none" 
+                     : "bg-[#C94F78] shadow-xl shadow-rose-100"
+                 }`}
+               >
                   BELI SEKARANG <ArrowRight className="w-5 h-5" />
                </button>
             </div>

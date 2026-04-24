@@ -13,6 +13,7 @@ export type CartItem = {
   is_consultation: boolean;
   voucher_discount: number;
   is_set: boolean;
+  type?: string;
 };
 
 type CartContextType = {
@@ -56,7 +57,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         image_url: product.image_url,
         is_consultation: false,
         voucher_discount: product.voucher_discount || 0,
-        is_set: product.is_set || false
+        is_set: product.is_set || false,
+        type: product.type
       }];
     });
   };

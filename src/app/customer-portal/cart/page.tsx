@@ -3,7 +3,7 @@
 import { useCart } from "@/context/CartContext";
 import { 
   ChevronLeft, ShoppingBag, Trash2, Plus, Minus, 
-  ArrowRight, Loader2, Sparkles, User, Ticket
+  ArrowRight, Loader2, Sparkles, User, Ticket, AlertTriangle
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,6 +16,13 @@ export default function CartPage() {
   const { cart, removeFromCart, updateQty, clearCart, totalItems } = useCart();
   const [customer, setCustomer] = useState<any>(null);
   const [processing, setProcessing] = useState(false);
+  const [isAgreed, setIsAgreed] = useState(false);
+
+  // Check if there is any treatment in the cart to show the disclaimer
+  const hasTreatment = cart.some(item => 
+    item.type === "Treatment Care & Beauty" || 
+    (!item.type && (item.name.toLowerCase().includes("treatment") || item.name.toLowerCase().includes("facial") || item.name.toLowerCase().includes("laser")))
+  );
 
   useEffect(() => {
     const stored = localStorage.getItem("lbqueen_customer");
@@ -171,14 +178,36 @@ export default function CartPage() {
               <span className="text-xl font-semibold text-[#C94F78]">Rp {cartTotal.toLocaleString("id-ID")}</span>
            </div>
         </div>
+
+        {/* Treatment Reminder */}
+        {hasTreatment && (
+          <div className="bg-orange-50 rounded-[32px] p-5 border border-orange-100 shadow-sm flex flex-col gap-4">
+             <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
+                <p className="text-[12px] text-orange-800 leading-relaxed font-medium">
+                  <strong className="block mb-1 text-orange-900">Perhatian Sebelum Treatment!</strong>
+                  H-7 sebelum dan juga H+7 setelah treatment dilarang mengkonsumsi alkohol dan obat-obatan terlarang agar terhindar dari hal tidak diinginkan (pasien harus jujur akan kondisi tubuh ke therapist). Apabila Anda merasa aman silakan lanjutkan, tapi jika Anda berbohong risiko ditanggung sendiri bukan pihak klinik.
+                </p>
+             </div>
+             <label className="flex items-center gap-3 pt-3 border-t border-orange-200/50 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={isAgreed} 
+                  onChange={(e) => setIsAgreed(e.target.checked)}
+                  className="w-5 h-5 rounded-md border-orange-300 text-[#C94F78] focus:ring-[#C94F78] bg-white"
+                />
+                <span className="text-[13px] font-semibold text-orange-900">Saya mengerti dan menyetujui risiko tersebut</span>
+             </label>
+          </div>
+        )}
       </div>
 
       {/* Checkout Bar */}
       <div className="fixed bottom-24 left-0 right-0 px-5 z-50">
          <button 
            onClick={handleWAOrder}
-           disabled={processing}
-           className="w-full bg-[#C94F78] h-[72px] rounded-3xl text-white font-semibold text-[14px] tracking-widest shadow-2xl shadow-rose-200 flex items-center justify-between px-8 active:scale-[0.98] transition-all disabled:opacity-50"
+           disabled={processing || (hasTreatment && !isAgreed)}
+           className={`w-full h-[72px] rounded-3xl text-white font-semibold text-[14px] tracking-widest shadow-2xl flex items-center justify-between px-8 active:scale-[0.98] transition-all disabled:active:scale-100 ${processing || (hasTreatment && !isAgreed) ? "bg-gray-400 shadow-none cursor-not-allowed" : "bg-[#C94F78] shadow-rose-200"}`}
          >
            <div className="flex items-center gap-3">
               {processing ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShoppingBag className="w-5 h-5" />}
