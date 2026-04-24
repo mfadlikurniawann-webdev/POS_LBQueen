@@ -160,7 +160,7 @@ export default function LaporanPage() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white overflow-hidden font-sans">
+    <div className="min-h-full flex flex-col bg-white font-sans">
 
       {/* Toolbar: Filter + Export (Ref Image 1 style) */}
       <div className="bg-white border-b border-slate-50 px-5 md:px-8 py-4 md:py-5 flex flex-wrap items-center justify-between gap-4 md:gap-5 shrink-0 z-10 font-sans">
@@ -218,7 +218,7 @@ export default function LaporanPage() {
       </div>
 
       {/* Transaction Table (Luxury styling) */}
-      <div className="flex-1 overflow-auto px-5 md:px-8 pb-32 md:pb-12 bg-white">
+      <div className="flex-1 px-5 md:px-8 pb-32 md:pb-12 bg-white">
         <div className="bg-white rounded-[24px] md:rounded-[40px] border border-slate-100 shadow-premium overflow-hidden relative">
           <div className="px-5 md:px-12 py-5 md:py-8 border-b border-slate-50 flex items-center justify-between">
             <h3 className="font-semibold text-slate-800 capitalize tracking-widest text-xs">Jurnal Penjualan</h3>
