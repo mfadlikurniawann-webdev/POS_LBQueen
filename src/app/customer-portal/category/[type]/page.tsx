@@ -107,7 +107,7 @@ export default function CategoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent font-sans pb-32 max-w-7xl mx-auto md:px-8">
+    <div className="min-h-screen bg-transparent font-sans pb-6 max-w-7xl mx-auto md:px-8">
       {/* ── HEADER ── */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-5 pt-12 pb-4 flex items-center gap-4">
         <button onClick={() => router.push("/customer-portal")} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-[#C94F78] transition-all">

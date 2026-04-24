@@ -203,7 +203,7 @@ export default function CartPage() {
       </div>
 
       {/* Checkout Bar */}
-      <div className="fixed bottom-24 left-0 right-0 px-5 z-50">
+      <div className="fixed bottom-[88px] left-0 right-0 px-5 z-50">
          <button 
            onClick={handleWAOrder}
            disabled={processing || (hasTreatment && !isAgreed)}
@@ -220,8 +220,6 @@ export default function CartPage() {
          </button>
       </div>
 
-      {/* Decorative Spacer */}
-      <div className="h-20" />
     </div>
   );
 }

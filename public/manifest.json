@@ -1,0 +1,21 @@
+{
+  "name": "LBQueen Beauty",
+  "short_name": "LBQueen",
+  "description": "Aplikasi Khusus Pelanggan LBQueen Beauty Clinic",
+  "start_url": "/customer-portal",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#C94F78",
+  "icons": [
+    {
+      "src": "/lbqueen_logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/lbqueen_logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

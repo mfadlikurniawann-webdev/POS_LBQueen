@@ -149,7 +149,7 @@ export default function CustomerPortalPage() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent font-sans pb-32 max-w-7xl mx-auto md:px-8">
+    <div className="min-h-screen bg-transparent font-sans pb-6 max-w-7xl mx-auto md:px-8">
 
       {/* ── HEADER (Pink Wave Gradient) ── */}
       <header className="relative bg-gradient-to-r from-[#D95F87] via-[#C94F78] to-[#A83E60] px-5 pt-12 pb-6 sticky top-0 z-50 rounded-b-[32px] md:rounded-b-[48px] md:mt-4 md:rounded-t-[48px] shadow-lg shadow-rose-200/50 flex flex-col gap-4 overflow-hidden">

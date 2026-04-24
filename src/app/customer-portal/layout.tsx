@@ -55,7 +55,7 @@ function InnerLayout({ children, customer, handleLogout, pathname }: {
       </header>
 
       {/* ── CONTENT ── */}
-      <main className="flex-1 w-full pb-32 md:pb-8 max-w-[1920px] mx-auto">
+      <main className="flex-1 w-full pb-24 md:pb-8 max-w-[1920px] mx-auto">
         {children}
       </main>
 
