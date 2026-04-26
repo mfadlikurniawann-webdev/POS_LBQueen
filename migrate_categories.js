@@ -15,7 +15,7 @@ async function main() {
   const { error: err1 } = await supabase.from('products')
     .update({ type: 'Stok Bahan Klinik' })
     .eq('type', 'Product Care & Beauty');
-    
+
   if (err1) console.error('Error updating Product Care & Beauty:', err1);
   else console.log('Updated Product Care & Beauty -> Stok Bahan Klinik');
 
@@ -26,7 +26,7 @@ async function main() {
 
   if (err2) console.error('Error updating Barang Kantor:', err2);
   else console.log('Updated Barang Kantor -> Barang Klinik');
-  
+
   // Any others that need mapping? Let's check Retail products
   const { error: err3 } = await supabase.from('products')
     .update({ type: 'Treatment Care & Beauty' })
